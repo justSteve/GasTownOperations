@@ -1,0 +1,39 @@
+{
+  "name": "vscode-command-bridge",
+  "displayName": "VSCode Command Bridge",
+  "description": "Allows external processes to trigger VSCode commands via file-based IPC",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "commandBridge.openTmuxTerminal",
+        "title": "Bridge: Open TMux Terminal"
+      },
+      {
+        "command": "commandBridge.executeFromFile",
+        "title": "Bridge: Execute Command from File"
+      }
+    ],
+    "configuration": {
+      "title": "Command Bridge",
+      "properties": {
+        "commandBridge.commandFile": {
+          "type": "string",
+          "default": "/tmp/vscode-bridge-commands",
+          "description": "Path to the command file to watch"
+        },
+        "commandBridge.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable file watcher for external commands"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# GasTownOperations .gitignore
+
+# Logs
+*.log
+daemon/daemon.log
+
+# Lock files
+*.lock
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Temp files
+*.tmp
+*.swp
+
+# OS files
+.DS_Store
