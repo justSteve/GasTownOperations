@@ -327,4 +327,49 @@ Branch: polecat/obsidian/wt-9q2@mkojaquz
 **Next**: Test actual work completion scenario - does witness act on DEFERRED?
 
 ---
+## Run 6: Multi-Agent Dynamics Observation
+
+Started: Wed Jan 21 03:29 PM CST 2026
+
+### Observation 19: Witness Detects Pattern and Escalates
+**Trigger**: Two DEFERRED exits in a row (wt-91f, wt-9q2)
+**Witness action**:
+- Checked polecat worktree
+- Found "no commits" (worktree was nuked after first run)
+- Filed escalation: "ESCALATION: Repeated incomplete polecat exits"
+- Sent detailed report to Mayor
+
+**Learning**: Witness performs post-exit verification and escalates patterns.
+
+### Observation 20: Mayor Corrects Witness Diagnosis
+**Mayor's analysis**:
+- Reviewed escalation
+- Determined witness was wrong: "Work IS being committed properly"
+- Identified actual root cause: "all failures are push failures"
+- Proposed fix: `gh auth login`
+
+**Mayor's summary table**:
+| Issue | Reality |
+|-------|---------|
+| Zombie processes | 5 stale processes |
+| Git auth | ROOT CAUSE |
+| Witness accuracy | Reporting false negatives |
+
+**Learning**: Mayor provides meta-oversight, can correct agent misdiagnoses.
+
+### Observation 21: Multi-Agent Communication Working
+**Flow observed**:
+1. Polecat → Witness: POLECAT_DONE notification
+2. Witness → Mayor: ESCALATION when pattern detected
+3. Mayor: Root cause analysis and correction
+
+**Learning**: The GT agent ecosystem has working escalation paths.
+
+### Run 6 Summary
+**Major insight**: Multi-agent oversight is operational:
+- Witness monitors and escalates
+- Mayor analyzes and corrects
+- Communication via gt mail works
+
+---
 ## Testing sling with fresh task
