@@ -253,4 +253,37 @@ Fresh rig doesn't help. The issues are:
 **Hypothesis**: If we copy mol-polecat-work.formula.toml to rig/.beads/formulas/, will polecat follow protocol?
 
 ---
+## Run 4: Protocol Test with Explicit Instructions
+
+Started: Wed Jan 21 03:01 PM CST 2026
+
+### Observation 14: Polecats CAN Follow Protocol from Task Title
+**Task**: wt-91f "Protocol test: create README and follow gt done"
+**Observed**:
+- Polecat understood "follow gt done" from title
+- Created README, committed locally
+- Actually ran `gt done`!
+
+**Learning**: Polecats don't NEED the molecule if instructions are explicit. The molecule provides workflow knowledge, but explicit task descriptions can substitute.
+
+### Observation 15: Git Push Auth Failure
+**Error**: `fatal: could not read Username for 'https://github.com': No such device or address`
+**Root cause**: Rigs cloned via HTTPS, gtuser has no git credentials
+**Impact**: Even when polecat runs `gt done`, push fails → bead stays HOOKED
+
+**Learning**: This is a setup issue independent of the bead/formula bugs. Need either:
+1. SSH URLs for remotes
+2. Git credential helper for gtuser
+3. gh CLI auth for gtuser
+
+### Run 4 Summary
+**Major finding**: The molecule attachment isn't strictly required - explicit task instructions work.
+**New blocker identified**: Git auth prevents polecats from completing the gt done flow.
+
+---
+## Run 4 Complete - Moving to Run 5
+
+**Next**: Try DReader rig (different repo) or fix git auth issue.
+
+---
 ## Testing sling with fresh task
