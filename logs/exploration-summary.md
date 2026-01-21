@@ -452,4 +452,88 @@ Both ran simultaneously. Wave 2 could not see Wave 1's uncommitted work.
 **This is the bug from the original gt-zlr bead.**
 
 ---
-## Testing sling with fresh task
+## Run 9: Summary and Enforcement Analysis
+
+Started: Wed Jan 21 03:40 PM CST 2026
+
+### Observation 28: Witness Detection is Reactive
+**Witness behavior**:
+- Detected dependency chain failure AFTER both polecats exited
+- Created escalation table showing cascade
+- Escalated to Mayor
+
+**Learning**: Witness is a post-hoc monitor, NOT a gate. It catches problems after they occur.
+
+### Observation 29: Mayor Analysis
+**Mayor found**:
+- VERSION file DOES exist (at `/home/gtuser/gt/wavetest/polecats/obsidian/wavetest/VERSION`)
+- But uncommitted - polecats bail early when push fails
+- Root cause: git auth
+
+**Mayor's diagnosis**:
+- Polecats detect push will fail → exit before full commit
+- Fix remains: `gh auth login`
+
+**Learning**: Even the Mayor doesn't prevent blocked tasks from slinging. It analyzes failures after the fact.
+
+### Observation 30: No Preventive Enforcement Found
+**Searched for enforcement at**:
+1. `gt sling` - NO check for blocked status
+2. Witness - reactive, not preventive
+3. Mayor - analyzes escalations, doesn't gate dispatches
+
+**Conclusion**: Wave ordering must be enforced by:
+- The swarm dispatcher (mayor/witness should check before auto-dispatch)
+- Manual discipline (don't sling blocked tasks)
+- Or code fix needed in gt sling
+
+---
+# EXPLORATION SUMMARY
+
+## Bugs Confirmed
+
+| Bug | Description | Impact |
+|-----|-------------|--------|
+| **Prefix Detection** | `bd create` defaults to hq- regardless of directory | Agent beads fail validation |
+| **Formula Path** | `bd cook` from rig dir doesn't find town-level formulas | Polecats lack workflow knowledge |
+| **Route Overwrite** | Adding rig with same prefix overwrites existing route | Can orphan beads |
+| **Wave Ordering** | `gt sling` has no dependency check | Blocked tasks can run in parallel |
+| **Agent Bead Cascade** | No agent bead → no molecule → no protocol | Polecats don't follow GT workflow |
+
+## Working Features
+
+| Feature | Status |
+|---------|--------|
+| Polecat spawning | ✅ Works |
+| Task execution | ✅ Polecats do work |
+| DEFERRED exit | ✅ Works for local testing |
+| gt mail communication | ✅ Agents communicate |
+| Witness monitoring | ✅ Detects patterns, escalates |
+| Mayor analysis | ✅ Provides root cause |
+
+## Key Learnings
+
+1. **Multi-agent oversight works** - Witness → Mayor escalation operational
+2. **Explicit instructions can substitute for molecules** - Polecats follow task titles
+3. **DEFERRED is the local-only pattern** - Skips push, keeps bead open
+4. **Dependencies are advisory** - Not enforced at dispatch time
+5. **Prefix detection is the root cause** - Cascades to agent beads → molecules
+
+## Recommended Fixes
+
+1. **Priority 1**: `gt sling` should pass `--rig` flag to bd commands
+2. **Priority 2**: `bd cook` should search parent directories for formulas
+3. **Priority 3**: `gt sling` should check dependency status before dispatch
+4. **Setup**: Configure git auth for gtuser (gh auth login or SSH keys)
+
+## Session Stats
+
+- **Runs completed**: 9
+- **Observations logged**: 30
+- **Bugs found**: 5 major
+- **Features confirmed working**: 6
+- **Polecats spawned**: 8+
+- **Agent beads created successfully**: 0 (all failed prefix validation)
+
+---
+End of exploration log.
