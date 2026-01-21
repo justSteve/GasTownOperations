@@ -8,65 +8,79 @@ Your mission: **Expand understanding of how Gas Town works and grow alongside it
 
 ---
 
+## Priority Task for Next Session
+
+**Create a plan to implement bead `gt-zlr`** - Design GT workflow experiment based on Discord mental model post.
+
+A community member described their expected GT workflow:
+1. Create spec/plan with crew member
+2. Crew creates beads (epics/tasks) from plan
+3. Sling epic to rig's polecats
+4. Mayor creates **convoy** of **waves** with **gates** watching merge queue
+5. Refinery merge → message to gate → gate closes → next wave releases
+
+**The problem:** Wave 2 kicks off before Wave 1 merges. Polecats sync from main without dependent work. Everything falls apart.
+
+**Your task:** Design a controlled experiment to test this workflow on our GT instance and document actual behavior vs expected behavior.
+
+---
+
 ## What We Accomplished This Session
 
-### 1. Upstream Sync
-Pulled latest from both repositories:
+### 1. Fixed GitHub Archive System
+The `gh-archive.sh` script was silently failing on PRs (returning 0 items).
 
-| Component | Version | Changes |
-|-----------|---------|---------|
-| **gt** (gastown) | 0.4.0 | 21 commits merged - config-based roles, zombie-scan, doctor routing-mode check |
-| **bd** (beads) | 0.48.0 | Upgraded from 0.47.1 |
+**Root cause:** GitHub API returns `.comments` as an array, not a count. The jq scoring was comparing arrays to numbers.
 
-Rebuilt and installed both binaries to `/usr/local/bin/`.
+**Fixes applied:**
+- Changed `.comments // 0` to `(.comments // []) | length`
+- Added `set -o pipefail` for proper error catching
+- Added validation for 0-result warnings
+- Fixed stderr contamination in output files
 
-### 2. Fixed Beads Daemon Path Mismatch
-The beads daemon was serving old path `/root/gt/.beads/beads.db` after directory rename. Fixed by stopping daemon and letting it restart with correct path `/root/gtOps/.beads/beads.db`.
+**Archive now working:**
+| Type | Count | High | Medium | Low |
+|------|-------|------|--------|-----|
+| Issues | 245 | 1 | 55 | 189 |
+| PRs | 571 | 0 | 50 | 521 |
+| Discussions | 24 | 0 | 9 | 15 |
 
-### 3. GT Doctor - All Clear
-Ran `gt doctor --fix` on `/home/gtuser/gt`:
-- **55 passed, 2 warnings, 0 failed**
-- Fixed: formulas, routing.mode, orphan sessions, themes
-- Remaining warnings: shell integration (optional), orphan processes (expected - VSCode Claude sessions)
+### 2. Beads Closed
+- `gt-jhf` - Fix gh-archive.sh error handling
+- `gt-6jz` - GitHub community archive
+- `gt-e79` - Rename /root/gt to /root/gtOps
 
-### 4. Tracer Experiment - Static Mail Flow
-Executed first "tracer task" to understand GT internals:
+### 3. New Bead Created
+- `gt-zlr` - Design GT workflow experiment (see Priority Task above)
 
-**Key Discoveries:**
-- **Mail ≠ Hooks**: Mail sits passively in inbox. Hooks are active work triggers. Message in inbox does NOT auto-appear on hook.
-- **ID Prefixes**: Messages use `hq-` (town level) regardless of recipient. Session names use rig prefixes (`dr-`).
-- **Address Resolution**: `DReader/crew/steve` → stored as `DReader/steve`
-
-**Artifacts Created:**
-- [docs/GT-Mail-Flow-Observations.md](docs/GT-Mail-Flow-Observations.md) - Full findings
-- [LearnedSomethingNewToday.md](LearnedSomethingNewToday.md) - 3 new entries
-
-### 5. Created Epic: tmux Enhancements
-Bead **gt-7ub** created as ongoing category for tmux integration work. Currently empty - awaiting actionable items.
+### 4. Documentation Updated
+- [LearnedSomethingNewToday.md](LearnedSomethingNewToday.md) - Added entry on GT expected workflow vs reality
 
 ---
 
 ## Current State
 
+### Open Beads
+```bash
+bd list --all
+```
+- `gt-zlr` [P2] - **Design GT workflow experiment** ← START HERE
+- `gt-7ub` [epic] - tmux Enhancements
+- `gt-7ub.1` - Explore muxile plugin
+
 ### GT Dashboard
 ```bash
 /root/gtOps/daemon/gt-dashboard.sh status
 ```
-- `gt-root` session: **RUNNING**
-- `gt-user` session: **RUNNING**
+- `gt-root` session: Check status
+- `gt-user` session: May need restart
 
-### GT Town (`/home/gtuser/gt`)
+### Archive Commands
 ```bash
-sudo -u gtuser bash -c 'cd /home/gtuser/gt && gt status'
+/root/gtOps/scripts/gh-archive.sh stats    # View archive stats
+/root/gtOps/scripts/gh-archive.sh top 10   # Top significant items
+/root/gtOps/scripts/gh-archive.sh sync     # Daily incremental sync
 ```
-- All agents: **STOPPED** (idle)
-- Mail: 3 unread to overseer, 1 tracer message to DReader/crew/steve
-
-### Beads
-```bash
-bd daemons list
-```
-- Daemon running for `/root/gtOps` (correct path)
 
 ---
 
@@ -75,50 +89,30 @@ bd daemons list
 | Path | Purpose |
 |------|---------|
 | `/root/gtOps/AGENTS.md` | Mission, philosophy, objectives |
-| `/root/gtOps/docs/GT-Mail-Flow-Observations.md` | **NEW** - Tracer experiment findings |
-| `/root/gtOps/LearnedSomethingNewToday.md` | Discoveries log (3 new entries) |
-| `/root/gtOps/daemon/gt-dashboard.sh` | Dual-session launcher |
-| `/root/gtOps/scripts/gt-sync.sh` | Daily GT update script |
-| `/root/.claude/plans/PlanTracerTask.md` | Tracer experiment plan |
+| `/root/gtOps/scripts/gh-archive.sh` | **FIXED** - GitHub archive with significance scoring |
+| `/root/gtOps/archive/github/` | Archived issues, PRs, discussions |
+| `/root/gtOps/LearnedSomethingNewToday.md` | Discoveries log |
+| `/root/gtOps/docs/GT-Mail-Flow-Observations.md` | Tracer experiment findings |
 
 ---
 
-## Pending Work
-
-### From This Session
-- **Dynamic tracer observation** - Run `gt up` to see how agents discover and process mail (deferred due to API costs)
-- Questions to answer:
-  1. How do agents discover mail on startup?
-  2. What triggers hook assignment?
-  3. How does the nudge/tmux interaction work?
-  4. How does the merge queue function?
-
-### From Previous Sessions
-- DReader Windows Migration
-- Mayor/Deacon startup timing issues
-- Dashboard enhancements (token graphs, polecat visualizer)
-
----
-
-## Quick Start for Next Session
+## Quick Start
 
 ```bash
-# Check dashboard status
-/root/gtOps/daemon/gt-dashboard.sh status
+# Check beads
+bd list --all
+
+# Check archive
+/root/gtOps/scripts/gh-archive.sh stats
 
 # Check GT town status
 sudo -u gtuser bash -c 'cd /home/gtuser/gt && gt status'
 
-# Check for GT updates
-/root/gtOps/scripts/gt-sync.sh --check-only
-
-# Check mail
-sudo -u gtuser bash -c 'cd /home/gtuser/gt && gt mail inbox'
-
-# Check beads daemon
-bd daemons list
+# Top priority issue to watch
+/root/gtOps/scripts/gh-archive.sh top 1
+# → #764 "The Fragility of Beads in Gas Town" (only high-significance issue)
 ```
 
 ---
 
-*Handoff complete. Welcome, COO.*
+*Handoff complete. Priority: Plan the workflow experiment (gt-zlr).*
