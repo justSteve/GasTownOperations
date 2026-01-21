@@ -286,4 +286,45 @@ Started: Wed Jan 21 03:01 PM CST 2026
 **Next**: Try DReader rig (different repo) or fix git auth issue.
 
 ---
+## Run 5: Local-Only Testing with DEFERRED
+
+Started: Wed Jan 21 03:27 PM CST 2026
+
+### Observation 16: DEFERRED Works for Local Testing
+**Task**: wt-9q2 "Local test: create file, commit, run gt done --status DEFERRED"
+**Observed**:
+- Polecat created file, ran git status
+- Committed changes locally
+- Ran `gt done --status DEFERRED`
+- Sent POLECAT_DONE notification to witness
+- Session exited cleanly
+
+**Key insight**: DEFERRED doesn't require push - it's designed for "pause" scenarios.
+
+### Observation 17: DEFERRED Leaves Bead Open (Intentional)
+**Bead status**: Still HOOKED after DEFERRED exit
+**This is correct behavior**: DEFERRED = "paused, not completed"
+- Work can be resumed later
+- Different from COMPLETED which requires MR submission
+
+### Observation 18: Witness Received Notification
+**Mail**: hq-4v5l from wavetest/obsidian
+**Content**:
+```
+Exit: DEFERRED
+Issue: wt-9q2
+Branch: polecat/obsidian/wt-9q2@mkojaquz
+```
+**Learning**: The gt done → witness notification flow works even without push.
+
+### Run 5 Summary
+**Success**: Found a local-only test pattern using DEFERRED status.
+**Insight**: For exploration without git push, use explicit DEFERRED instructions.
+
+---
+## Run 5 Complete - Moving to Run 6
+
+**Next**: Test actual work completion scenario - does witness act on DEFERRED?
+
+---
 ## Testing sling with fresh task
