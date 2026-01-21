@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GT Exploration Report - 2026-01-21</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --card: #16213e;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --success: #4ecca3;
+            --warning: #ffc107;
+            --text: #eaeaea;
+            --muted: #a0a0a0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--highlight), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: var(--muted); margin-bottom: 2rem; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid var(--highlight);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--highlight);
+        }
+        .stat-label { color: var(--muted); font-size: 0.9rem; }
+        section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            color: var(--success);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        h3 {
+            color: var(--highlight);
+            margin: 1.5rem 0 0.75rem;
+            font-size: 1.1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--accent);
+        }
+        th {
+            background: var(--accent);
+            color: var(--success);
+            font-weight: 600;
+        }
+        tr:hover { background: rgba(233, 69, 96, 0.1); }
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .tag-bug { background: var(--highlight); color: white; }
+        .tag-works { background: var(--success); color: var(--bg); }
+        .tag-warning { background: var(--warning); color: var(--bg); }
+        .observation {
+            background: var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            border-left: 3px solid var(--success);
+        }
+        .observation-title {
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        .learning {
+            background: rgba(78, 204, 163, 0.1);
+            border-left: 3px solid var(--success);
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        code {
+            background: var(--bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--warning);
+        }
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--highlight);
+            border: 2px solid var(--card);
+        }
+        .run-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .run-time { color: var(--muted); font-size: 0.85rem; }
+        .priority-1 { border-left-color: var(--highlight); }
+        .priority-2 { border-left-color: var(--warning); }
+        .priority-3 { border-left-color: var(--success); }
+        .fix-item {
+            background: var(--accent);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            border-left: 4px solid var(--highlight);
+        }
+        .agent-flow {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .agent-box {
+            background: var(--accent);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .agent-arrow {
+            color: var(--success);
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GT Exploration Report</h1>
+        <p class="subtitle">Gas Town Workflow System Analysis - January 21, 2026</p>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">9</div>
+                <div class="stat-label">Runs Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">30</div>
+                <div class="stat-label">Observations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Bugs Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Features Working</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">8+</div>
+                <div class="stat-label">Polecats Spawned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Agent Beads Created</div>
+            </div>
+        </div>
+
+        <!-- Bugs Summary -->
+        <section>
+            <h2>Bugs Confirmed</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bug</th>
+                        <th>Description</th>
+                        <th>Impact</th>
+                        <th>Severity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Prefix Detection</strong></td>
+                        <td><code>bd create</code> defaults to hq- regardless of directory</td>
+                        <td>Agent beads fail validation</td>
+                        <td><span class="tag tag-bug">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Formula Path</strong></td>
+                        <td><code>bd cook</code> from rig dir doesn't find town-level formulas</td>
+                        <td>Polecats lack workflow knowledge</td>
+                        <td><span class="tag tag-bug">High</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Route Overwrite</strong></td>
+                        <td>Adding rig with same prefix overwrites existing route</td>
+                        <td>Can orphan beads</td>
+                        <td><span class="tag tag-warning">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wave Ordering</strong></td>
+                        <td><code>gt sling</code> has no dependency check</td>
+                        <td>Blocked tasks can run in parallel</td>
+                        <td><span class="tag tag-bug">High</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agent Bead Cascade</strong></td>
+                        <td>No agent bead → no molecule → no protocol</td>
+                        <td>Polecats don't follow GT workflow</td>
+                        <td><span class="tag tag-bug">Critical</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Working Features -->
+        <section>
+            <h2>Working Features</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Polecat Spawning</td>
+                        <td><span class="tag tag-works">Works</span></td>
+                        <td>Polecats spawn successfully via gt sling</td>
+                    </tr>
+                    <tr>
+                        <td>Task Execution</td>
+                        <td><span class="tag tag-works">Works</span></td>
+                        <td>Polecats understand and complete tasks</td>
+                    </tr>
+                    <tr>
+                        <td>DEFERRED Exit</td>
+                        <td><span class="tag tag-works">Works</span></td>
+                        <td>Works for local testing without push</td>
+                    </tr>
+                    <tr>
+                        <td>gt mail Communication</td>
+                        <td><span class="tag tag-works">Works</span></td>
+                        <td>Agents send/receive messages properly</td>
+                    </tr>
+                    <tr>
+                        <td>Witness Monitoring</td>
+                        <td><span class="tag tag-works">Works</span></td>
+                        <td>Detects patterns and escalates to Mayor</td>
+                    </tr>
+                    <tr>
+                        <td>Mayor Analysis</td>
+                        <td><span class="tag tag-works">Works</span></td>
+                        <td>Provides root cause analysis</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Multi-Agent Flow -->
+        <section>
+            <h2>Multi-Agent Communication Flow</h2>
+            <p>Observed working escalation pathway:</p>
+            <div class="agent-flow">
+                <div class="agent-box">
+                    <strong>Polecat</strong><br>
+                    <small>Does work, sends DONE</small>
+                </div>
+                <span class="agent-arrow">→</span>
+                <div class="agent-box">
+                    <strong>Witness</strong><br>
+                    <small>Monitors, detects patterns</small>
+                </div>
+                <span class="agent-arrow">→</span>
+                <div class="agent-box">
+                    <strong>Mayor</strong><br>
+                    <small>Root cause analysis</small>
+                </div>
+            </div>
+            <div class="learning">
+                <strong>Key Insight:</strong> Multi-agent oversight is reactive, not preventive.
+                Witness catches problems after they occur; Mayor analyzes but doesn't gate dispatches.
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section>
+            <h2>Exploration Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 1: DReader Baseline</h3>
+                        <span class="run-time">14:34 CST</span>
+                    </div>
+                    <p>Initial exploration with DReader rig. Discovered agent bead prefix mismatch and formula path resolution issues.</p>
+                    <div class="observation">
+                        <div class="observation-title">Observations 1-11</div>
+                        <ul>
+                            <li>Agent beads try dr- prefix but town expects hq-</li>
+                            <li>Formula path looks in wrong directory</li>
+                            <li>Polecats spawn but don't follow GT protocol</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 2: Prefix Routing Investigation</h3>
+                        <span class="run-time">14:45 CST</span>
+                    </div>
+                    <p>Deep dive into prefix detection. Found root cause: bd uses working directory prefix which returns 'hq'.</p>
+                    <div class="observation">
+                        <div class="observation-title">Key Discovery</div>
+                        <code>--rig</code> flag required for correct prefix resolution.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 3: Fresh Rig (wavetest)</h3>
+                        <span class="run-time">14:55 CST</span>
+                    </div>
+                    <p>Created wavetest rig with unique prefix (wt-). Confirmed bugs are systemic, not rig-specific.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 4: Protocol Test</h3>
+                        <span class="run-time">15:01 CST</span>
+                    </div>
+                    <p>Major finding: Polecats CAN follow protocol from explicit task instructions. Molecule not strictly required.</p>
+                    <div class="learning">
+                        Explicit task titles can substitute for workflow molecules.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 5: DEFERRED Testing</h3>
+                        <span class="run-time">15:27 CST</span>
+                    </div>
+                    <p>Found working pattern for local-only testing using <code>gt done --status DEFERRED</code>.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 6: Multi-Agent Dynamics</h3>
+                        <span class="run-time">15:29 CST</span>
+                    </div>
+                    <p>Observed Witness → Mayor escalation flow. Mayor corrected Witness misdiagnosis about incomplete exits.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 7: DReader Confirmation</h3>
+                        <span class="run-time">15:31 CST</span>
+                    </div>
+                    <p>Confirmed same patterns across different rigs. Prefix bug is universal.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 8: Wave Dependency Test</h3>
+                        <span class="run-time">15:35 CST</span>
+                    </div>
+                    <p><strong>MAJOR BUG CONFIRMED:</strong> gt sling has no dependency check. Blocked tasks can be dispatched freely.</p>
+                    <div class="observation">
+                        <div class="observation-title">gt-zlr Bug Confirmed</div>
+                        <ul>
+                            <li>Created Wave 1 → Wave 2 dependency</li>
+                            <li>Both tasks slung in parallel</li>
+                            <li>Wave 2 ran before Wave 1 completed</li>
+                            <li>Dependencies are stored but NOT enforced</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="run-header">
+                        <h3>Run 9: Summary & Analysis</h3>
+                        <span class="run-time">15:40 CST</span>
+                    </div>
+                    <p>Final analysis. No preventive enforcement found at any level (sling, witness, or mayor).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommended Fixes -->
+        <section>
+            <h2>Recommended Fixes</h2>
+
+            <div class="fix-item priority-1">
+                <h3>Priority 1: Pass --rig flag</h3>
+                <p><code>gt sling</code> should pass <code>--rig &lt;rigname&gt;</code> to bd commands when creating agent beads.</p>
+                <p><small>Impact: Fixes agent bead creation → enables molecule attachment → polecats follow protocol</small></p>
+            </div>
+
+            <div class="fix-item priority-1">
+                <h3>Priority 2: Formula path resolution</h3>
+                <p><code>bd cook</code> should search parent directories for formulas (town-level .beads/formulas/).</p>
+                <p><small>Impact: Polecats get workflow knowledge without manual formula copying</small></p>
+            </div>
+
+            <div class="fix-item priority-2">
+                <h3>Priority 3: Dependency enforcement</h3>
+                <p><code>gt sling</code> should check dependency status before dispatch. Reject blocked tasks or require --force flag.</p>
+                <p><small>Impact: Prevents wave ordering issues (gt-zlr bug)</small></p>
+            </div>
+
+            <div class="fix-item priority-3">
+                <h3>Setup: Git authentication</h3>
+                <p>Configure git auth for gtuser: <code>gh auth login</code> or SSH keys.</p>
+                <p><small>Impact: Enables full gt done flow with push and MR submission</small></p>
+            </div>
+        </section>
+
+        <!-- Key Learnings -->
+        <section>
+            <h2>Key Learnings</h2>
+            <ol>
+                <li><strong>Multi-agent oversight works</strong> - Witness → Mayor escalation is operational</li>
+                <li><strong>Explicit instructions substitute for molecules</strong> - Polecats follow task titles</li>
+                <li><strong>DEFERRED is the local-only pattern</strong> - Skips push, keeps bead open for resumption</li>
+                <li><strong>Dependencies are advisory</strong> - Not enforced at dispatch time</li>
+                <li><strong>Prefix detection is root cause</strong> - Cascades to agent beads → molecules → protocol compliance</li>
+            </ol>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem; color: var(--muted);">
+            <p>Generated by COO Exploration Session</p>
+            <p>Gas Town Operations - January 21, 2026</p>
+        </footer>
+    </div>
+</body>
+</html>
