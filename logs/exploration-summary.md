@@ -406,4 +406,50 @@ Started: Wed Jan 21 03:31 PM CST 2026
 - DEFERRED works for local testing
 
 ---
+## Run 8: Wave Dependency Test
+
+Started: Wed Jan 21 03:35 PM CST 2026
+
+### Observation 25: Can Sling Blocked Tasks - No Guardrail
+**Setup**:
+- wt-kn6: Epic "Wave test: Task A blocks Task B"
+- wt-d18: Wave 1 (blocks wt-5nq)
+- wt-5nq: Wave 2 (depends on wt-d18)
+
+**Test**:
+- Slung wt-d18 (Wave 1) → obsidian spawned
+- Immediately slung wt-5nq (Wave 2) → quartz spawned
+
+**Expected**: "Cannot sling blocked task" error
+**Actual**: Both polecats spawned in parallel!
+
+**Learning**: `gt sling` does NOT check dependency status. Blocked tasks can be slung freely.
+
+### Observation 26: Parallel Execution of Dependent Tasks
+**Wave 1** (obsidian): Create VERSION=1 file
+**Wave 2** (quartz): Verify VERSION=1 exists
+
+Both ran simultaneously. Wave 2 could not see Wave 1's uncommitted work.
+
+**This confirms the original bug hypothesis**:
+- Dependencies are stored but NOT enforced at sling time
+- Polecats can run blocked tasks
+- Without push/merge, dependent tasks see stale state
+
+### Observation 27: Both Exited DEFERRED (As Instructed)
+- obsidian: DEFERRED with branch polecat/obsidian/wt-d18@...
+- quartz: DEFERRED with branch polecat/quartz/wt-5nq@...
+
+**Learning**: Task instructions override dependency logic. Polecats follow explicit directions even when dependency chain is broken.
+
+### Run 8 Summary
+**MAJOR BUG CONFIRMED**:
+1. `gt sling` has no dependency check
+2. Blocked tasks can be dispatched
+3. Wave ordering relies on external enforcement (witness? mayor?)
+4. Without enforcement, dependent tasks run on stale state
+
+**This is the bug from the original gt-zlr bead.**
+
+---
 ## Testing sling with fresh task
