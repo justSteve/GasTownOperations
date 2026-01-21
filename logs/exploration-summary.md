@@ -372,4 +372,38 @@ Started: Wed Jan 21 03:29 PM CST 2026
 - Communication via gt mail works
 
 ---
+## Run 7: DReader Rig Test
+
+Started: Wed Jan 21 03:31 PM CST 2026
+
+### Observation 22: Prefix Bug Confirmed Across Rigs
+**From DReader/mayor/rig directory**:
+- `bd create` without flag → hq-cec (WRONG)
+- `bd create --rig DReader` → dr-xcv (CORRECT)
+
+**Learning**: Prefix detection bug is systemic, not rig-specific.
+
+### Observation 23: JSONL Hash Mismatch Warning
+**New warning during sling**: "JSONL file hash mismatch detected"
+**Action taken**: "Clearing export_hashes to force full re-export"
+**Learning**: GT has integrity checking for JSONL databases.
+
+### Observation 24: DReader DEFERRED Works Same as wavetest
+**Task**: dr-xcv "DReader test with flag: gt done --status DEFERRED"
+**Result**:
+- Polecat jasper spawned
+- Explored codebase
+- Ran gt done --status DEFERRED
+- Sent POLECAT_DONE to witness
+- Bead stays HOOKED (expected)
+
+**Learning**: DEFERRED behavior consistent across rigs.
+
+### Run 7 Summary
+**Confirmed**: Same bugs, same patterns across different rigs.
+- Prefix detection always defaults to hq-
+- Agent bead creation always fails same way
+- DEFERRED works for local testing
+
+---
 ## Testing sling with fresh task
