@@ -63,3 +63,135 @@ As Chief Operating Officer (COO) of GasTownOperations, my role is to oversee and
 - Documenting our findings and learnings in real-time
 - Exploring the resources offered by tmux
 
+---
+
+# GT Interaction UI (Primary Interface)
+
+**This is the standard way for COO to interact with Gas Town.**
+
+## Overview
+
+GT runs as `gtuser`, not `root`. Rather than using `sudo -u gtuser bash -c '...'` for every command, we use a shared tmux terminal that both COO and human can see.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  VSCode                                                      │
+│  ├── Claude Code (COO) ──────► send-keys ──────┐            │
+│  │                                              │            │
+│  └── Keyboard Shortcuts                         ▼            │
+│       Ctrl+Shift+R ──► gt-root (red)    ┌─────────────┐     │
+│       Ctrl+Shift+M ──► gt-user (blue) ◄─┤ gt-user:main│     │
+│                                          └─────────────┘     │
+│                                               │              │
+│                              capture-pane ◄───┘              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Terminal Sessions
+
+Initialize with: `/root/gtOps/daemon/gt-dashboard.sh`
+
+| Session | Context | Color | Purpose |
+|---------|---------|-------|---------|
+| `gt-root` | root | Red | Daemon monitoring, root operations |
+| `gt-user` | gtuser | Blue | **Primary GT interaction** |
+
+### gt-user Layout
+
+- **main.0** (user-shell): Where COO sends GT commands
+- **main.1** (mail-watch): For monitoring GT mail
+- **work** window: Additional panes for tests/scratch
+
+## COO Command Pattern
+
+### Sending Commands
+```bash
+sudo -u gtuser tmux send-keys -t gt-user:main.0 'gt ready' Enter
+```
+
+### Capturing Output
+```bash
+sudo -u gtuser tmux capture-pane -t gt-user:main.0 -p -S -20
+```
+The `-S -20` captures the last 20 lines of scrollback.
+
+### Canceling Hung Commands
+```bash
+sudo -u gtuser tmux send-keys -t gt-user:main.0 C-c
+```
+
+### Full Interaction Example
+```bash
+# Send command
+sudo -u gtuser tmux send-keys -t gt-user:main.0 'gt mayor status' Enter
+
+# Wait for output
+sleep 2
+
+# Capture result
+sudo -u gtuser tmux capture-pane -t gt-user:main.0 -p -S -15
+```
+
+## Why This Pattern?
+
+1. **Visibility**: Human sees exactly what COO is doing in real-time
+2. **Shared Context**: Both parties watch the same terminal
+3. **User Context**: Commands run as gtuser, which GT requires
+4. **Interactive**: Supports commands that need input or produce streaming output
+5. **Debugging**: Easy to spot issues when you can see the actual terminal
+
+## Common GT Commands via gt-user
+
+```bash
+# Check services
+gt daemon status
+gt agents
+gt mayor status
+
+# View work
+gt ready
+gt trail
+
+# Manage services
+gt up
+gt down
+gt doctor --fix --verbose
+
+# Interact with mayor
+gt mayor attach
+gt nudge mayor "message"
+```
+
+## Troubleshooting
+
+### Popup/overlay blocking terminal
+Send Escape, q, or Enter to dismiss:
+```bash
+sudo -u gtuser tmux send-keys -t gt-user:main.0 Escape
+sudo -u gtuser tmux send-keys -t gt-user:main.0 q
+```
+
+### Terminal seems stale
+Send a simple command to refresh:
+```bash
+sudo -u gtuser tmux send-keys -t gt-user:main.0 'echo "refresh"' Enter
+```
+
+### Verify session exists
+```bash
+sudo -u gtuser tmux list-sessions
+sudo -u gtuser tmux list-panes -t gt-user:main
+```
+
+## Initialization (via /gt-update)
+
+The `/gt-update` slash command includes steps to:
+1. Run `gt-dashboard.sh` to create the terminals
+2. Start GT services via send-keys to gt-user
+3. Verify services are running
+4. Optionally attach to mayor
+
+---
+
