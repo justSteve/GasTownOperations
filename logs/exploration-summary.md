@@ -614,4 +614,72 @@ The fix in #733 may not cover all code paths.
 **Remaining workaround**: Copy formula to rig-level `.beads/formulas/`
 
 ---
+## Run 11: Full Pipeline Success with SSH Auth
+
+Started: Wed Jan 22 06:52 AM CST 2026
+
+### Setup
+- Copied SSH keys from root to gtuser
+- Updated DReader remote URLs from HTTPS to SSH
+- Verified SSH auth: `Hi justSteve!`
+
+### Observation 36: Complete Polecat Lifecycle Works
+
+**Task**: dr-aog "SSH test: create file and run gt done"
+
+**Full flow executed:**
+1. Task created with `--rig DReader` → dr-aog ✅
+2. Polecat slung → quartz spawned ✅
+3. Formula attached (mol-polecat-work) → dr-wisp-1pu ✅
+4. Polecat followed molecule workflow steps ✅
+   - Updated wisp steps (in_progress → closed)
+   - Set up branch, verified tests, implemented solution
+   - Created SSH_TEST.md, updated .gitignore
+   - Self-reviewed changes
+5. Git push to remote ✅
+6. `gt done` executed ✅
+7. Bead closed → dr-aog CLOSED ✅
+8. MR submitted → dr-71e in merge queue (status: ready) ✅
+
+### Observation 37: Workaround Required for Polecat Worktrees
+
+Initial push failed because polecat worktree still used HTTPS URL.
+Fixed by updating remote in worktree: `git remote set-url origin git@github.com:...`
+
+**Learning**: When main rig remote is changed, existing polecat worktrees don't inherit the change. Need to update each worktree's remote or nuke/recreate polecats.
+
+### Observation 38: MR Bead Structure
+
+MR bead (dr-71e) contains full metadata:
+```
+branch: polecat/quartz/dr-aog@mkp3h1wc
+target: master
+source_issue: dr-aog
+rig: DReader
+worker: quartz
+agent_bead: dr-DReader-polecat-quartz
+```
+
+### Run 11 Summary
+
+**FULL PIPELINE SUCCESS** 🎉
+
+| Stage | Status |
+|-------|--------|
+| Task creation | ✅ |
+| Polecat spawn | ✅ |
+| Formula attach | ✅ |
+| Molecule workflow | ✅ |
+| Git commit | ✅ |
+| Git push | ✅ |
+| gt done | ✅ |
+| Bead close | ✅ |
+| MR in queue | ✅ |
+
+**Remaining issues:**
+- Formula workaround still needed (copy to rig-level)
+- Polecat worktrees need manual remote URL update
+- Prefix bug still present (but --rig flag works around it)
+
+---
 End of exploration log.
