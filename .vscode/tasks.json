@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "GT: Initialize Dashboard",
+      "type": "shell",
+      "command": "/root/gtOps/daemon/gt-dashboard.sh",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "GT: Open Root Terminal",
+      "type": "shell",
+      "command": "echo 'Opening gt-root terminal...'",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never"
+      },
+      "dependsOn": ["GT: Initialize Dashboard"],
+      "dependsOrder": "sequence"
+    }
+  ]
+}
