@@ -536,4 +536,82 @@ Started: Wed Jan 21 03:40 PM CST 2026
 - **Agent beads created successfully**: 0 (all failed prefix validation)
 
 ---
+## Run 10: Post-Update Testing (GT b612df04)
+
+Started: Wed Jan 22 00:30 AM CST 2026
+
+### GT Update Summary
+
+**60+ commits pulled** including key fixes:
+- `fix(sling): auto-apply mol-polecat-work (#288)` - Auto-attach molecule to polecats
+- `fix: updateAgentHookBead uses wrong directory for rig-level beads (#733)` - Prefix fix attempt
+- `Fix GT_ROOT export for beads formula search compatibility (#718)` - Formula path fix attempt
+
+### Observation 31: Auto-Apply mol-polecat-work Works (with workaround)
+
+**New behavior**: `gt sling` now auto-applies mol-polecat-work for polecat work
+**But**: Formula path resolution still fails - needs GT_ROOT for cook step too
+
+**Workaround still required**: Copy formula to rig-level `.beads/formulas/`
+```bash
+cp /home/gtuser/gt/.beads/formulas/mol-polecat-work.formula.toml \
+   /home/gtuser/gt/DReader/mayor/rig/.beads/formulas/
+```
+
+**After workaround**: Formula instantiation succeeds:
+```
+✓ Formula wisp created: dr-wisp-0jl
+✓ Formula bonded to dr-rdl
+```
+
+### Observation 32: Polecat Now Follows Molecule Steps
+
+**With molecule attached**, polecat behavior changed:
+1. Checked hook with attached molecule
+2. Ran `bd update <step> --status=in_progress`
+3. Ran `gt prime && bd prime` for context
+4. Closed molecule steps with `bd close`
+5. Did the work (`echo hello`)
+6. Attempted `gt done`
+
+**Learning**: Molecule attachment enables structured workflow. Polecat follows steps instead of ad-hoc completion.
+
+### Observation 33: Same Git Auth Blocker
+
+Push still fails: `fatal: could not read Username for 'https://github.com'`
+
+Polecat attempted escalation but `gt escalate` syntax has changed.
+
+### Observation 34: Prefix Bug Still Present
+
+Agent bead creation still fails:
+```
+Error: validate issue ID prefix: issue ID 'dr-DReader-polecat-obsidian' does not match configured prefix 'hq'
+```
+
+The fix in #733 may not cover all code paths.
+
+### Observation 35: Incomplete GT_ROOT Fix
+
+**Issue in sling_helpers.go line 489**:
+- `cookCmd` runs `bd cook` WITHOUT GT_ROOT env var
+- `wispCmd` at line 506 DOES set GT_ROOT
+
+**Result**: Formula search fails at cook step before GT_ROOT is available.
+
+### Run 10 Summary
+
+**Improvements from update**:
+- Auto-apply mol-polecat-work implemented ✅
+- Formula instantiation works (with workaround) ✅
+- Polecat follows molecule-guided workflow ✅
+
+**Still broken**:
+- Formula path resolution (GT_ROOT not set for cook) ❌
+- Agent bead prefix validation ❌
+- Git push auth (setup issue) ❌
+
+**Remaining workaround**: Copy formula to rig-level `.beads/formulas/`
+
+---
 End of exploration log.
