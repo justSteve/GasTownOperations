@@ -1,8 +1,32 @@
--- ECC (Entity-Centric Communication) Schema
+-- ============================================================================
+-- dbECC: Entity-Centric Communication Schema
 -- Database: ClaudeConfig
 -- Generated: 2026-01-27
+-- ============================================================================
 --
--- This schema models Claude Code configuration as interconnected entities:
+-- FOUNDING PROMPT:
+-- ----------------
+-- "Next step is to replicate the same set of actions against other repos. We
+-- will be applying this or a very similar pattern across each new and all the
+-- couple dozen that already exist. And given the number, it makes sense to
+-- manage the process with code instead of ad hoc prompting. So let's look at
+-- coding a framework with greater detail than we otherwise might. I prefer to
+-- overbuild a system like this at the beginning. If we look at the .md of
+-- everything-cc as a collection of entities instead of just string of prompts -
+-- how can we define them using Entity Relation patterns and conventions. So
+-- let's start there - express the repo as a .NET Entity Relation model."
+--
+-- PURPOSE:
+-- --------
+-- This schema models Claude Code configuration (.claude/ folder contents) as
+-- interconnected entities, enabling:
+--   1. Centralized management of configurations across multiple repositories
+--   2. Reusable components (skills, rules, hooks) shared between projects
+--   3. Code-driven configuration instead of ad-hoc prompting
+--   4. Entity-Relationship patterns for Claude Code's conceptual model
+--
+-- ENTITIES:
+-- ---------
 -- Plugins, Agents, Commands, Skills, Rules, Hooks, Contexts, McpServers, Tools
 
 USE ClaudeConfig;
