@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "mssql": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@liangshanli/mcp-server-mssqlserver"
+      ],
+      "env": {
+        "MSSQL_SERVER": "YOUR_SQL_SERVER_IP",
+        "MSSQL_PORT": "1433",
+        "MSSQL_DATABASE": "ClaudeConfig",
+        "MSSQL_USER": "claude_mcp",
+        "MSSQL_PASSWORD": "YOUR_SECURE_PASSWORD",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
+      }
+    }
+  }
+}

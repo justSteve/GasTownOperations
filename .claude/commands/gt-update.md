@@ -11,7 +11,7 @@ Sync justSteve/gastown fork with steveyegge/gastown upstream, install the new ve
 
 1. **Check for updates**
    ```bash
-   cd /root/gastown && git fetch upstream 2>&1
+   cd /root/projects/gastown && git fetch upstream 2>&1
    ```
 
 2. **Compare versions**
@@ -22,7 +22,7 @@ Sync justSteve/gastown fork with steveyegge/gastown upstream, install the new ve
 
 3. **Sync fork with upstream**
    ```bash
-   cd /root/gastown && git stash push -m "Pre-sync $(date +%Y-%m-%d)" 2>/dev/null
+   cd /root/projects/gastown && git stash push -m "Pre-sync $(date +%Y-%m-%d)" 2>/dev/null
    git checkout main
    git merge upstream/main --ff-only
    git push origin main
@@ -30,7 +30,7 @@ Sync justSteve/gastown fork with steveyegge/gastown upstream, install the new ve
 
 4. **Build and install**
    ```bash
-   cd /root/gastown && go build -o /tmp/gt-new ./cmd/gt
+   cd /root/projects/gastown && go build -o /tmp/gt-new ./cmd/gt
    /tmp/gt-new version
    sudo cp /tmp/gt-new /usr/local/bin/gt
    gt version
@@ -56,7 +56,7 @@ Sync justSteve/gastown fork with steveyegge/gastown upstream, install the new ve
 
 7. **Initialize dashboard terminals**
    ```bash
-   /root/gtOps/daemon/gt-dashboard.sh
+   /root/projects/gtOps/daemon/gt-dashboard.sh
    ```
    This creates:
    - `gt-root` (red background) - root context for daemon monitoring
@@ -75,7 +75,7 @@ Sync justSteve/gastown fork with steveyegge/gastown upstream, install the new ve
 
 9. **Final status report**
 
-   Provide a summary table (and save to `/root/gtOps/CurrentStatus.md`):
+   Provide a summary table (and save to `/root/projects/gtOps/CurrentStatus.md`):
 
    | Category | Status |
    |----------|--------|
@@ -107,7 +107,7 @@ sudo -u gtuser bash -c 'cd /home/gtuser/gt && sleep 10 && gt mayor status'
 
 **File Permissions**: Files in `/root/` are not accessible to GT agents. To share files with agents:
 ```bash
-cp /root/gtOps/somefile.md /home/gtuser/gt/<rig>/
+cp /root/projects/gtOps/somefile.md /home/gtuser/gt/<rig>/
 chown gtuser:gtuser /home/gtuser/gt/<rig>/somefile.md
 ```
 
