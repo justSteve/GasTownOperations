@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Rotate GT logs - keeps last 7 days, truncates files > 10MB
-LOGDIR="/root/gtOps/logs"
+LOGDIR="/root/projects/gtOps/logs"
 MAX_SIZE=$((10 * 1024 * 1024))  # 10MB
 
 cd "$LOGDIR" || exit 1

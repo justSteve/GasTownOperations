@@ -2,13 +2,13 @@
   "terminal.integrated.profiles.linux": {
     "gt-root": {
       "path": "/usr/bin/bash",
-      "args": ["-c", "tmux attach -t gt-root || /root/gtOps/daemon/gt-dashboard.sh && tmux attach -t gt-root"],
+      "args": ["-c", "tmux attach -t gt-root || /root/projects/gtOps/daemon/gt-dashboard.sh && tmux attach -t gt-root"],
       "icon": "shield",
       "color": "terminal.ansiRed"
     },
     "gt-user": {
       "path": "/usr/bin/bash",
-      "args": ["-c", "sudo -u gtuser tmux attach -t gt-user || /root/gtOps/daemon/gt-dashboard.sh && sudo -u gtuser tmux attach -t gt-user"],
+      "args": ["-c", "sudo -u gtuser tmux attach -t gt-user || /root/projects/gtOps/daemon/gt-dashboard.sh && sudo -u gtuser tmux attach -t gt-user"],
       "icon": "account",
       "color": "terminal.ansiBlue"
     }

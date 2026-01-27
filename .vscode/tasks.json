@@ -4,7 +4,7 @@
     {
       "label": "GT: Initialize Dashboard",
       "type": "shell",
-      "command": "/root/gtOps/daemon/gt-dashboard.sh",
+      "command": "/root/projects/gtOps/daemon/gt-dashboard.sh",
       "problemMatcher": [],
       "presentation": {
         "reveal": "silent",

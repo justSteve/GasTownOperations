@@ -21,13 +21,13 @@
 
 ```bash
 # Initialize both tmux sessions
-/root/gtOps/daemon/gt-dashboard.sh
+/root/projects/gtOps/daemon/gt-dashboard.sh
 
 # Check status
-/root/gtOps/daemon/gt-dashboard.sh status
+/root/projects/gtOps/daemon/gt-dashboard.sh status
 
 # Kill sessions
-/root/gtOps/daemon/gt-dashboard.sh kill
+/root/projects/gtOps/daemon/gt-dashboard.sh kill
 
 # Attach directly (from terminal)
 tmux attach -t gt-root
@@ -65,12 +65,12 @@ Automatic logging for main panes (ANSI codes stripped):
 | `logs/gt-user-shell.log` | User shell (symlink to /var/log/gt/) |
 | `logs/gt-user-mail.log` | User mail pane (symlink to /var/log/gt/) |
 
-Watch live: `tail -f /root/gtOps/logs/gt-root-shell.log`
+Watch live: `tail -f /root/projects/gtOps/logs/gt-root-shell.log`
 
 ## Files
 
 - Keybindings: `%APPDATA%/Code/User/keybindings.json`
 - User settings: `%APPDATA%/Code/User/settings.json`
-- Dashboard script: `/root/gtOps/daemon/gt-dashboard.sh`
-- Workspace settings: `/root/gtOps/.vscode/settings.json`
-- Log rotation: `/root/gtOps/daemon/gt-log-rotate.sh`
+- Dashboard script: `/root/projects/gtOps/daemon/gt-dashboard.sh`
+- Workspace settings: `/root/projects/gtOps/.vscode/settings.json`
+- Log rotation: `/root/projects/gtOps/daemon/gt-log-rotate.sh`

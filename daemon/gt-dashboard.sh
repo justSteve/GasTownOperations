@@ -21,7 +21,7 @@
 set -euo pipefail
 
 # === Configuration ===
-ROOT_DIR="/root/gtOps"
+ROOT_DIR="/root/projects/gtOps"
 USER_DIR="/home/gtuser/gt"
 GT_BIN="/usr/local/bin/gt"
 

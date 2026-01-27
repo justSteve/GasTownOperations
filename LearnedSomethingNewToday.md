@@ -59,7 +59,7 @@ Each entry should include:
 **Context**: GT is iterating rapidly (80 commits in 4 days, 0.2.6 → 0.4.0). Need daily sync to stay current.
 
 **Application**: Created `/gt-update` slash command and `scripts/gt-sync.sh` for daily updates. Key paths:
-- Source: `/root/gastown` (with upstream and origin remotes)
+- Source: `/root/projects/gastown` (with upstream and origin remotes)
 - Binary: `/usr/local/bin/gt` (accessible to gtuser)
 - Managed instance: `/home/gtuser/gt`
 
@@ -147,6 +147,20 @@ The `/crew/` segment is part of the addressing but not always in the stored assi
 - Current workaround: manual sequencing, one wave at a time
 - This is a key feature gap to watch for in GT releases
 - Bead `gt-zlr` created to design experiment replicating this workflow
+
+---
+
+### 2026-01-23: Orphaned Agent Input in TMux Buffers
+
+**Discovery**: When GT agent sessions timeout, crash, or get interrupted mid-response, Claude Code may leave partial typed input in the tmux input buffer. This appears as mystery text in the prompt area with `↵ send` indicator.
+
+**Context**: Observed unexplained messages in `hq-mayor` ("tell me what mayor does") and `gt-claude_monitor-refinery` ("check the other rigs") that neither user nor COO sent. Investigation revealed these were orphaned inputs from agents that started typing but didn't complete.
+
+**Application**:
+- When investigating mystery input, check if sessions recently crashed/restarted
+- Use `Escape` then `C-u` to clear orphaned input (Ctrl+C alone may not work)
+- Agents that show "Sautéed/Baked/Crunched for Xm" followed by idle prompt may have orphaned input
+- This is a GT/Claude Code quirk, not a security concern
 
 ---
 
