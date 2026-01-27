@@ -10,7 +10,7 @@
             "command": "/root/projects/gtOps/.claude/hooks/scripts/session-start.sh"
           }
         ],
-        "description": "Check for handoff files and remind to follow session-hygiene rule"
+        "description": "Check DaysActivity.md status and remind to follow session-hygiene rule"
       }
     ]
   }

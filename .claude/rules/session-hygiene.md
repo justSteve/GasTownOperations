@@ -2,24 +2,28 @@
 
 ## Session Start
 
-1. **Check for handoff files**
+1. **Check DaysActivity.md**
+   ```bash
+   head -5 /root/projects/gtOps/DaysActivity.md 2>/dev/null
+   ```
+   - Read recent entries for context on what was done previously
+   - Note any open work items
+
+2. **Review CurrentStatus.md** for operational context
+
+3. **Check for legacy HANDOFF files** (transitional)
    ```bash
    ls /root/projects/gtOps/HANDOFF-*.md 2>/dev/null
    ```
-
-2. **If handoff exists**: Read it, then rename to remove "HANDOFF-" prefix
-   ```bash
-   mv HANDOFF-COO-2026-01-23.md COO-2026-01-23.md
-   ```
-
-3. **Review CurrentStatus.md** for operational context
+   - If found: Read content, then delete (migrate info to DaysActivity.md)
 
 ## Session End
 
 1. **Update CurrentStatus.md** if state changed significantly
 
-2. **Create handoff** if substantive work was done:
-   - Use `/handoff` command or create `HANDOFF-COO-YYYY-MM-DD.md`
+2. **Run `/handoff`** if substantive work was done
+   - Prepends session summary to DaysActivity.md
+   - Include files changed, open work, state
 
 3. **Consider knowledge capture**:
    - Learned anything new? Update LearnedSomethingNewToday.md
@@ -33,12 +37,17 @@ Update `CurrentStatus.md` after:
 - Adding/removing rigs
 - Significant investigations
 
-## Handoff Contents
+## DaysActivity.md Contents
 
-A good handoff includes:
-- Session summary (what was done)
-- Current state (doctor status, version, services)
-- Known issues (non-blocking)
-- Open work (what's in progress)
-- Key patterns (relevant discoveries)
-- Quick start commands
+Each handoff entry includes:
+- **Timestamp**: HH:MM in 24-hour format
+- **Summary**: What was accomplished (1-2 sentences)
+- **State**: GT version, doctor status (compact)
+- **Open Work**: In-progress items
+- **Files Changed**: One per line (if any)
+
+## Daily Housekeeping
+
+Run `/daily-housekeeping` at start of day (or it runs automatically):
+- Archives yesterday's DaysActivity.md
+- Creates fresh file for today
