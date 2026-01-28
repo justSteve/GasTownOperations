@@ -1,0 +1,31 @@
+{
+  "$schema": "../../../../schema/ecc-mcp-servers.schema.json",
+  "description": "Complete plugin fixture - MCP server with all fields",
+  "mcpServers": [
+    {
+      "id": "test-mcp-1",
+      "pluginId": "complete-plugin",
+      "name": "test-server",
+      "description": "A test MCP server",
+      "command": "node",
+      "args": ["server.js", "--port", "3000"],
+      "env": {
+        "NODE_ENV": "test",
+        "DEBUG": "true"
+      },
+      "serverType": "stdio",
+      "enabled": true,
+      "category": "testing",
+      "tools": [
+        {
+          "id": "tool-1",
+          "mcpServerId": "test-mcp-1",
+          "name": "test-tool",
+          "description": "A test tool",
+          "category": "utility",
+          "riskLevel": "safe"
+        }
+      ]
+    }
+  ]
+}

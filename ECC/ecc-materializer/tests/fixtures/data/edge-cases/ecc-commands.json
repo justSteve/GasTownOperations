@@ -1,0 +1,18 @@
+{
+  "$schema": "../../../../schema/ecc-commands.schema.json",
+  "description": "Edge cases fixture - minimal command and command without phases",
+  "commands": [
+    {
+      "id": "minimal-command",
+      "pluginId": "edge-plugin",
+      "name": "minimal-command",
+      "description": "Command with only required fields"
+    },
+    {
+      "id": "content-only-command",
+      "pluginId": "edge-plugin",
+      "name": "content-only-command",
+      "content": "Simple command content without phases"
+    }
+  ]
+}

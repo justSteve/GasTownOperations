@@ -1,0 +1,5 @@
+{
+  "$schema": "../../../../schema/ecc-rules.schema.json",
+  "description": "Minimal plugin fixture - empty rules",
+  "rules": []
+}

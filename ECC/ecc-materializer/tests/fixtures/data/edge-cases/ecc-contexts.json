@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../../schema/ecc-contexts.schema.json",
+  "description": "Edge cases fixture - allow-only and deny-only restrictions",
+  "contexts": [
+    {
+      "id": "allow-only-context",
+      "pluginId": "edge-plugin",
+      "name": "allow-only-context",
+      "toolRestrictions": {
+        "allow": ["Read"]
+      }
+    },
+    {
+      "id": "deny-only-context",
+      "pluginId": "edge-plugin",
+      "name": "deny-only-context",
+      "toolRestrictions": {
+        "deny": ["Bash", "Write"]
+      }
+    },
+    {
+      "id": "empty-restrictions-context",
+      "pluginId": "edge-plugin",
+      "name": "empty-restrictions-context",
+      "description": "Context with empty tool restrictions object",
+      "toolRestrictions": {}
+    }
+  ]
+}

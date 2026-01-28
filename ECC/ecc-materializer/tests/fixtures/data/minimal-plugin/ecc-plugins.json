@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../../schema/ecc-plugins.schema.json",
+  "description": "Minimal plugin fixture - bare minimum required fields",
+  "plugins": [
+    {
+      "id": "minimal-plugin",
+      "name": "minimal-plugin",
+      "repositoryPath": "/tmp/test/minimal"
+    }
+  ]
+}

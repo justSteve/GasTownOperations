@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../../schema/ecc-zgent-instances.schema.json",
+  "description": "Complete plugin fixture - zgent instance",
+  "zgents": [
+    {
+      "id": "complete-zgent",
+      "pluginId": "complete-plugin",
+      "name": "complete-zgent",
+      "description": "A fully configured zgent instance",
+      "targetPath": "/tmp/test/complete/.claude",
+      "status": "pending",
+      "version": "1.0.0",
+      "configOverrides": {
+        "variables": {
+          "{{TARGET}}": "test-target",
+          "{{MODE}}": "verbose"
+        }
+      },
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-15T00:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../../schema/ecc-skills.schema.json",
+  "description": "Complete plugin fixture - skill with patterns and workflows",
+  "skills": [
+    {
+      "id": "test-skill-1",
+      "pluginId": "complete-plugin",
+      "name": "test-skill",
+      "title": "Test Skill Title",
+      "description": "A comprehensive test skill",
+      "content": "This is the main content of the test skill.\n\nIt provides guidance on how to perform specific tasks.",
+      "category": "testing",
+      "patterns": [
+        {
+          "id": "pattern-1",
+          "skillId": "test-skill-1",
+          "name": "Standard Pattern",
+          "description": "A standard implementation pattern",
+          "applicability": "Use when implementing standard features",
+          "implementation": "1. Define the interface\n2. Implement the core logic\n3. Add error handling"
+        }
+      ],
+      "workflows": [
+        {
+          "id": "workflow-1",
+          "skillId": "test-skill-1",
+          "name": "Standard Workflow",
+          "steps": [
+            "Analyze requirements",
+            "Design solution",
+            "Implement code",
+            "Run tests",
+            "Deploy"
+          ],
+          "expectedOutcome": "A fully working feature deployed to production"
+        }
+      ]
+    }
+  ]
+}

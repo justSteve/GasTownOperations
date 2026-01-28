@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../../schema/ecc-plugins.schema.json",
+  "description": "Edge cases fixture - special characters and Unicode",
+  "plugins": [
+    {
+      "id": "edge-plugin",
+      "name": "edge-plugin",
+      "description": "Plugin with special chars: \"quotes\", <brackets>, #markdown, & ampersand",
+      "repositoryPath": "/tmp/test/edge"
+    }
+  ]
+}

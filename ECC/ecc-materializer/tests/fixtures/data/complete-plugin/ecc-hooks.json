@@ -1,0 +1,49 @@
+{
+  "$schema": "../../../../schema/ecc-hooks.schema.json",
+  "description": "Complete plugin fixture - hooks with actions",
+  "hooks": [
+    {
+      "id": "test-hook-1",
+      "pluginId": "complete-plugin",
+      "name": "pre-commit-hook",
+      "description": "Run checks before committing",
+      "eventType": "PreToolUse",
+      "matcher": "Bash",
+      "enabled": true,
+      "priority": 10,
+      "actions": [
+        {
+          "id": "action-1",
+          "hookId": "test-hook-1",
+          "actionType": "command",
+          "command": "npm run lint",
+          "actionOrder": 1
+        },
+        {
+          "id": "action-2",
+          "hookId": "test-hook-1",
+          "actionType": "command",
+          "command": "npm test",
+          "actionOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "test-hook-2",
+      "pluginId": "complete-plugin",
+      "name": "session-start-hook",
+      "description": "Initialize session",
+      "eventType": "SessionStart",
+      "enabled": true,
+      "actions": [
+        {
+          "id": "action-3",
+          "hookId": "test-hook-2",
+          "actionType": "command",
+          "command": "echo 'Session started'",
+          "actionOrder": 1
+        }
+      ]
+    }
+  ]
+}

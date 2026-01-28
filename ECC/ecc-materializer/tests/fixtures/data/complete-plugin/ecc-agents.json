@@ -1,0 +1,41 @@
+{
+  "$schema": "../../../../schema/ecc-agents.schema.json",
+  "description": "Complete plugin fixture - agent with all fields",
+  "agents": [
+    {
+      "id": "test-agent-1",
+      "pluginId": "complete-plugin",
+      "name": "test-agent",
+      "description": "A test agent with all fields populated",
+      "model": "sonnet",
+      "instructions": "Follow these detailed instructions for the test agent.\n\nBe helpful and precise.",
+      "roleDescription": "A test agent for validation purposes",
+      "tools": ["Read", "Write", "Bash"],
+      "checklistItems": [
+        {
+          "id": "checklist-1",
+          "agentId": "test-agent-1",
+          "item": "Verify input parameters",
+          "priority": "required",
+          "itemOrder": 1
+        },
+        {
+          "id": "checklist-2",
+          "agentId": "test-agent-1",
+          "item": "Execute main logic",
+          "priority": "required",
+          "itemOrder": 2
+        },
+        {
+          "id": "checklist-3",
+          "agentId": "test-agent-1",
+          "item": "Clean up resources",
+          "priority": "recommended",
+          "itemOrder": 3
+        }
+      ],
+      "skillRefs": ["test-skill"],
+      "ruleRefs": ["test-rule"]
+    }
+  ]
+}

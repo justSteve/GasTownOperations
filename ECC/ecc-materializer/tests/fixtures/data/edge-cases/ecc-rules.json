@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../../schema/ecc-rules.schema.json",
+  "description": "Edge cases fixture - all severity levels",
+  "rules": [
+    {
+      "id": "required-rule",
+      "pluginId": "edge-plugin",
+      "name": "required-severity",
+      "severity": "required",
+      "content": "This is a required rule"
+    },
+    {
+      "id": "recommended-rule",
+      "pluginId": "edge-plugin",
+      "name": "recommended-severity",
+      "severity": "recommended",
+      "content": "This is a recommended rule"
+    },
+    {
+      "id": "optional-rule",
+      "pluginId": "edge-plugin",
+      "name": "optional-severity",
+      "severity": "optional",
+      "content": "This is an optional rule"
+    }
+  ]
+}

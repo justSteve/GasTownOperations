@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../../schema/ecc-zgent-instances.schema.json",
+  "description": "Minimal plugin fixture - zgent instances",
+  "zgents": [
+    {
+      "id": "minimal-zgent",
+      "pluginId": "minimal-plugin",
+      "name": "minimal-zgent",
+      "targetPath": "/tmp/test/minimal/.claude",
+      "status": "pending"
+    }
+  ]
+}

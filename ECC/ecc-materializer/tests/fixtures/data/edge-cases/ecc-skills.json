@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../../schema/ecc-skills.schema.json",
+  "description": "Edge cases fixture - deep category nesting",
+  "skills": [
+    {
+      "id": "deep-skill",
+      "pluginId": "edge-plugin",
+      "name": "deep-nested-skill",
+      "title": "Deeply Nested Skill",
+      "description": "A skill with deep category path",
+      "category": "category/subcategory/deep/nested"
+    },
+    {
+      "id": "special-skill",
+      "pluginId": "edge-plugin",
+      "name": "special-chars-skill",
+      "title": "Skill with \"Quotes\" & <Brackets>",
+      "content": "Content with special markdown:\n\n# Heading\n\n- Bullet with `code`\n- **Bold** and *italic*\n\n```javascript\nconst x = \"test\";\n```"
+    }
+  ]
+}

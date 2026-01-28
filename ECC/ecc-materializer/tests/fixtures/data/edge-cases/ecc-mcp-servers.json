@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../../schema/ecc-mcp-servers.schema.json",
+  "description": "Edge cases fixture - SSE server type",
+  "mcpServers": [
+    {
+      "id": "sse-server",
+      "pluginId": "edge-plugin",
+      "name": "sse-test-server",
+      "serverType": "sse",
+      "url": "http://localhost:8080/sse",
+      "enabled": false
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 {
   "name": "ecc-materializer",
   "version": "1.0.0",
+  "type": "module",
   "description": "CLI tool to materialize ECC Plugin templates into Claude Code .claude/ folder structures",
   "main": "dist/ecc-cli-entry.js",
   "bin": {
@@ -10,7 +11,13 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "materialize": "node dist/ecc-cli-entry.js",
-    "test": "node --test tests/"
+    "test": "bash tests/run-fast-tests.sh",
+    "test:all": "bash tests/run-all-tests.sh",
+    "test:validators": "node --test --experimental-strip-types 'tests/validators/*.test.ts'",
+    "test:unit": "node --test --experimental-strip-types 'tests/unit/**/*.test.ts'",
+    "test:integration": "node --test --experimental-strip-types 'tests/integration/*.test.ts'",
+    "test:pressure": "node --test --experimental-strip-types 'tests/pressure/*.test.ts'",
+    "test:contract": "bash tests/contract/claude-load.test.sh"
   },
   "keywords": [
     "claude-code",

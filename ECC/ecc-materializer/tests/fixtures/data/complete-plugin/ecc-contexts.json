@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../../schema/ecc-contexts.schema.json",
+  "description": "Complete plugin fixture - context with all fields",
+  "contexts": [
+    {
+      "id": "test-context-1",
+      "pluginId": "complete-plugin",
+      "name": "test-context",
+      "description": "A test context for validation",
+      "systemPromptOverride": "You are operating in a test context. Be extra careful with changes.",
+      "applicableWhen": "Working on test files or running test suites",
+      "priority": 5,
+      "toolRestrictions": {
+        "allow": ["Read", "Grep", "Glob"],
+        "deny": ["Write", "Bash"]
+      }
+    }
+  ]
+}

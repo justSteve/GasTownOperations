@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../schema/ecc-rules.schema.json",
+  "description": "Complete plugin fixture - rule with all fields",
+  "rules": [
+    {
+      "id": "test-rule-1",
+      "pluginId": "complete-plugin",
+      "name": "test-rule",
+      "title": "Test Rule Title",
+      "content": "This rule defines important behaviors:\n\n1. Always validate input\n2. Never expose sensitive data\n3. Log all significant actions",
+      "severity": "required",
+      "category": "security",
+      "applicability": "All code changes"
+    }
+  ]
+}

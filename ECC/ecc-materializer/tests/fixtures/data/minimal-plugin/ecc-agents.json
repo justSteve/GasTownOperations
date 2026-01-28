@@ -1,0 +1,5 @@
+{
+  "$schema": "../../../../schema/ecc-agents.schema.json",
+  "description": "Minimal plugin fixture - empty agents",
+  "agents": []
+}

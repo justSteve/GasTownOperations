@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../../schema/ecc-hooks.schema.json",
+  "description": "Edge cases fixture - disabled hooks and all event types",
+  "hooks": [
+    {
+      "id": "disabled-hook",
+      "pluginId": "edge-plugin",
+      "name": "disabled-hook",
+      "eventType": "PreToolUse",
+      "enabled": false,
+      "actions": []
+    },
+    {
+      "id": "notification-hook",
+      "pluginId": "edge-plugin",
+      "name": "notification-hook",
+      "eventType": "Notification",
+      "enabled": true,
+      "actions": [
+        {
+          "id": "block-action",
+          "hookId": "notification-hook",
+          "actionType": "block",
+          "actionOrder": 1
+        }
+      ]
+    }
+  ]
+}

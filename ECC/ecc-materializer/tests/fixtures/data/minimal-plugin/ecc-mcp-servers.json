@@ -1,0 +1,5 @@
+{
+  "$schema": "../../../../schema/ecc-mcp-servers.schema.json",
+  "description": "Minimal plugin fixture - empty MCP servers",
+  "mcpServers": []
+}

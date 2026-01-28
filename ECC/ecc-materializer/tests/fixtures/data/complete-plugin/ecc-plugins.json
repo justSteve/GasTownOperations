@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../../schema/ecc-plugins.schema.json",
+  "description": "Complete plugin fixture - all fields populated",
+  "plugins": [
+    {
+      "id": "complete-plugin",
+      "name": "complete-plugin",
+      "description": "A fully populated test plugin",
+      "version": "1.0.0",
+      "author": "Test Author",
+      "authorUrl": "https://example.com/author",
+      "license": "MIT",
+      "homepage": "https://example.com/plugin",
+      "repositoryUrl": "https://github.com/example/complete-plugin",
+      "repositoryPath": "/tmp/test/complete",
+      "keywords": ["test", "complete", "ecc"],
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-15T00:00:00Z"
+    }
+  ]
+}

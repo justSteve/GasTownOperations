@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../schema/ecc-zgent-instances.schema.json",
+  "description": "Edge cases fixture - zgent with exclude config",
+  "zgents": [
+    {
+      "id": "edge-zgent",
+      "pluginId": "edge-plugin",
+      "name": "edge-zgent",
+      "targetPath": "/tmp/test/edge/.claude",
+      "status": "pending",
+      "configOverrides": {
+        "exclude": ["hooks/", "settings.json"]
+      }
+    }
+  ]
+}

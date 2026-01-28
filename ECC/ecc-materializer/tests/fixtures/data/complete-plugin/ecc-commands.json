@@ -1,0 +1,54 @@
+{
+  "$schema": "../../../../schema/ecc-commands.schema.json",
+  "description": "Complete plugin fixture - command with phases",
+  "commands": [
+    {
+      "id": "test-command-1",
+      "pluginId": "complete-plugin",
+      "name": "test-command",
+      "description": "A test command with phases",
+      "content": "Execute the test command workflow with the following parameters:\n\n- Target: {{TARGET}}\n- Mode: {{MODE}}",
+      "allowedTools": ["Read", "Write", "Bash"],
+      "waitForConfirmation": true,
+      "invokesAgentRef": "test-agent",
+      "phases": [
+        {
+          "id": "phase-1",
+          "commandId": "test-command-1",
+          "number": 1,
+          "name": "Preparation",
+          "description": "Prepare the environment",
+          "steps": [
+            "Check prerequisites",
+            "Load configuration",
+            "Validate inputs"
+          ]
+        },
+        {
+          "id": "phase-2",
+          "commandId": "test-command-1",
+          "number": 2,
+          "name": "Execution",
+          "description": "Execute the main logic",
+          "steps": [
+            "Run main process",
+            "Monitor progress",
+            "Handle errors"
+          ]
+        },
+        {
+          "id": "phase-3",
+          "commandId": "test-command-1",
+          "number": 3,
+          "name": "Cleanup",
+          "description": "Clean up after execution",
+          "steps": [
+            "Release resources",
+            "Generate report",
+            "Notify completion"
+          ]
+        }
+      ]
+    }
+  ]
+}

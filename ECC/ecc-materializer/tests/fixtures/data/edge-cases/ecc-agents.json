@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../../schema/ecc-agents.schema.json",
+  "description": "Edge cases fixture - Unicode and special characters in agents",
+  "agents": [
+    {
+      "id": "unicode-agent",
+      "pluginId": "edge-plugin",
+      "name": "unicode-agent",
+      "description": "Agent with Unicode: cafe, naive, resume, Munchen, Beijing",
+      "instructions": "Handle names like: Jose, Francois, Bjorn\n\nSpecial symbols: arrows, checkmark, star"
+    },
+    {
+      "id": "minimal-agent",
+      "pluginId": "edge-plugin",
+      "name": "minimal-fields-agent",
+      "description": null
+    }
+  ]
+}

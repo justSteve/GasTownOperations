@@ -1,0 +1,5 @@
+{
+  "$schema": "../../../../schema/ecc-skills.schema.json",
+  "description": "Minimal plugin fixture - empty skills",
+  "skills": []
+}
