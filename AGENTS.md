@@ -15,6 +15,11 @@ Initially, our primary mode of operation is **observational learning**. We watch
 This is now...
 Having established a baseline understanding, we are now shifting towards **active experimentation**. We will design and execute controlled experiments to probe specific aspects of Gas Town's behavior. This will help us uncover deeper insights and validate our hypotheses.
 
+This is the future...
+a factory pattern (.net style) that creates via template new agents purpose built for Gas Town. This is what the ECC (Everything Claude Code) data schema is intended to represent. Now we need a schema for zgent (a Gas Town client (agent)).
+
+The zgent is a consumer of Gas Town and complies with it's expectations. But at a more fundamental level, the zgent is a Claude agent with the proscribed files structure (the antrhopic schema) as related to Commands, Skill, Hooks, Memory, Tools, etc. ECC will enable the fine grained templating of new zgents. Our next step is beading a plan of attack to implement creating a consumer of ECC's fileset. 
+
 ## Aspirational Objectives
 
 ### 1. Understand Gas Town Deeply

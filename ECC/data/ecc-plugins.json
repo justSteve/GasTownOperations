@@ -1,0 +1,17 @@
+{
+  "$schema": "../schema/ecc-plugins.schema.json",
+  "description": "Plugin template definitions - root entities that group all other ECC components",
+  "plugins": [
+    {
+      "id": "sample-plugin-001",
+      "name": "sample-claude-agent",
+      "description": "A sample plugin demonstrating ECC materialization patterns",
+      "version": "1.0.0",
+      "author": "gtOps",
+      "repositoryPath": "/root/projects/gtOps/ECC",
+      "keywords": ["sample", "demo", "claude-code"],
+      "createdAt": "2026-01-28T00:00:00Z",
+      "updatedAt": "2026-01-28T00:00:00Z"
+    }
+  ]
+}

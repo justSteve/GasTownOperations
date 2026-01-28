@@ -1,0 +1,34 @@
+{
+  "name": "ecc-materializer",
+  "version": "1.0.0",
+  "description": "CLI tool to materialize ECC Plugin templates into Claude Code .claude/ folder structures",
+  "main": "dist/ecc-cli-entry.js",
+  "bin": {
+    "ecc-materialize": "dist/ecc-cli-entry.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "materialize": "node dist/ecc-cli-entry.js",
+    "test": "node --test tests/"
+  },
+  "keywords": [
+    "claude-code",
+    "ecc",
+    "zgent",
+    "materializer",
+    "agent-factory"
+  ],
+  "author": "gtOps",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

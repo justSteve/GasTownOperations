@@ -1,0 +1,32 @@
+{
+  "$schema": "../schema/ecc-agents.schema.json",
+  "description": "Agent subagent templates - specialized AI personas for delegation",
+  "agents": [
+    {
+      "id": "agent-001",
+      "pluginId": "sample-plugin-001",
+      "name": "code-reviewer",
+      "description": "A specialized agent for reviewing code quality and suggesting improvements",
+      "model": "sonnet",
+      "instructions": "You are a code reviewer. Focus on:\n1. Code quality and readability\n2. Potential bugs or issues\n3. Performance considerations\n4. Best practices",
+      "roleDescription": "Code quality reviewer and improvement advisor",
+      "tools": ["Read", "Grep", "Glob"],
+      "checklistItems": [
+        {
+          "id": "check-001",
+          "agentId": "agent-001",
+          "item": "Check for obvious bugs",
+          "priority": "required",
+          "itemOrder": 1
+        },
+        {
+          "id": "check-002",
+          "agentId": "agent-001",
+          "item": "Review code style consistency",
+          "priority": "recommended",
+          "itemOrder": 2
+        }
+      ]
+    }
+  ]
+}

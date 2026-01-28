@@ -1,46 +1,22 @@
-# DaysActivity - 2026-01-27
+# DaysActivity - 2026-01-28
 
-## 13:30 - Session Handoff
+## 14:18 - Session Handoff
 
-**Summary**: Implemented DaysActivity.md system replacing per-session HANDOFF files. Created skills, commands, hooks, and daemon script for cumulative daily logging.
+**Summary**: Planned ECC verification framework adapting obra/superpowers testing patterns. Created 5-layer test architecture (Data Integrity → Unit → Integration → Contract → Pressure) and scaffolded test directory structure.
 
-**State**: GT v0.5.0, Doctor 17/1/1
-
-**Open Work**:
-- Sync ECC patterns to database
-- Test hourly automation via cron
-- Migrate legacy HANDOFF-COO-2026-01-27.md content
-
-**Files Changed**:
-ECC/buildECCDb.sql (renamed from schema.sql)
-.claude/skills/daysactivity-format.md
-.claude/commands/handoff.md
-.claude/commands/daily-housekeeping.md
-.claude/rules/session-hygiene.md
-.claude/hooks/hooks.json
-.claude/hooks/scripts/session-start.sh
-daemon/hourly-activity-summary.sh
-DaysActivity.md
-
----
-
-## 12:37 - Session Handoff
-
-**Summary**: ECC folder setup, repo cleanup, created GitHub epics #1 (Revised Handoff Patterns) and #2 (Entities of Everything-Claude-Code).
-
-**State**: GT v0.5.0, Doctor 17/1/1
+**State**: GT v0.5.0, Doctor 15P/1W (daemon not running)
 
 **Open Work**:
-- Implement DaysActivity.md system (now done)
-- Sync patterns to dbECC
+- Implement assertion library (assertions.ts + test-helpers.sh)
+- Create test fixtures (minimal-plugin, complete-plugin, edge-cases)
+- Implement Layer 1-5 tests (validators, unit, integration, contract, pressure)
+- Create test runners and update package.json
+- Hand off to GT for implementation
 
 **Files Changed**:
-ECC/schema.sql
-ECC/setup-mcp-connection.sql
-ECC/.mcp.json.example
-ECC/scripts/discover-sql.ps1
-ECC/scripts/enable-sql-tcp.ps1
-.gitignore
-HANDOFF-COO-2026-01-27.md
+.claude/plans/ecc-verification-framework.md (created - verification plan)
+ECC/ecc-materializer/tests/ (created - 13 directories)
+
+**Reference Plan**: [ecc-verification-framework.md](/root/.claude/plans/ecc-verification-framework.md)
 
 ---

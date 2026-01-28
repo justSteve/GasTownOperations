@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/ecc-skills.schema.json",
+  "description": "Skills with patterns and workflows - domain knowledge and procedures",
+  "skills": []
+}

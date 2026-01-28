@@ -1,0 +1,18 @@
+{
+  "$schema": "../schema/ecc-zgent-instances.schema.json",
+  "description": "Zgent instances - materialized deployments of Plugin templates",
+  "zgents": [
+    {
+      "id": "zgent-test-001",
+      "pluginId": "sample-plugin-001",
+      "name": "test-zgent",
+      "description": "Test zgent for verifying materializer output",
+      "targetPath": "/tmp/ecc-test-output/.claude",
+      "status": "materialized",
+      "version": "1.0.0",
+      "createdAt": "2026-01-28T00:00:00Z",
+      "updatedAt": "2026-01-28T19:36:55.350Z",
+      "materializedAt": "2026-01-28T19:36:55.350Z"
+    }
+  ]
+}

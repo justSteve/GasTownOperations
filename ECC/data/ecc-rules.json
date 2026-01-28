@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema/ecc-rules.schema.json",
+  "description": "Behavioral rule definitions - always-active constraints",
+  "rules": [
+    {
+      "id": "rule-001",
+      "pluginId": "sample-plugin-001",
+      "name": "no-hardcoded-secrets",
+      "title": "No Hardcoded Secrets",
+      "content": "Never commit hardcoded secrets, API keys, or passwords to the codebase.\n\n## What to check\n- Environment variables should be used for sensitive values\n- No API keys in source files\n- No passwords in configuration files\n\n## Exceptions\n- Example/placeholder values clearly marked as such",
+      "severity": "required",
+      "category": "security",
+      "applicability": "All code changes"
+    }
+  ]
+}

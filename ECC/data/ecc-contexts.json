@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/ecc-contexts.schema.json",
+  "description": "Dynamic context definitions - situational system prompt injection",
+  "contexts": []
+}

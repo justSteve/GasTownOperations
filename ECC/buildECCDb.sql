@@ -27,7 +27,14 @@
 --
 -- ENTITIES:
 -- ---------
--- Plugins, Agents, Commands, Skills, Rules, Hooks, Contexts, McpServers, Tools
+-- Plugins, Agents, Commands, Skills, Rules, Hooks, Contexts, McpServers, Tools, Zgents
+--
+-- ZGENT CONCEPT:
+-- --------------
+-- A zgent is a materialized instance of an ECC Plugin. While Plugins define the
+-- template (what agents, commands, skills, etc. should exist), Zgents represent
+-- actual deployments of those templates to specific target paths. The materializer
+-- reads a Zgent record and generates the corresponding .claude/ folder structure.
 
 USE ClaudeConfig;
 GO
@@ -244,6 +251,34 @@ CREATE TABLE dbo.PluginSettings (
 GO
 
 -- ============================================================================
+-- MATERIALIZATION ENTITIES (deployment instances)
+-- ============================================================================
+
+-- Zgents: Materialized instances of Plugins
+-- A zgent represents a specific deployment of a Plugin template to a target path.
+-- The materializer CLI uses this entity to know:
+--   1. Which Plugin to materialize
+--   2. Where to write the generated .claude/ folder
+--   3. What instance-specific overrides to apply
+--   4. The current status of the materialized instance
+CREATE TABLE dbo.Zgents (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    PluginId UNIQUEIDENTIFIER NOT NULL,       -- Which Plugin template to materialize
+    Name NVARCHAR(200) NOT NULL,              -- Instance name (e.g., 'my-project-agent')
+    Description NVARCHAR(MAX) NULL,           -- Purpose of this specific instance
+    TargetPath NVARCHAR(1000) NOT NULL,       -- Where to write files (e.g., '/home/user/myproject/.claude')
+    Status NVARCHAR(40) DEFAULT 'pending',    -- pending, materialized, deployed, archived
+    MaterializedAt DATETIME2 NULL,            -- When files were last generated
+    DeployedAt DATETIME2 NULL,                -- When instance was activated/deployed
+    Version NVARCHAR(40) NULL,                -- Track which ECC schema version produced this
+    ConfigOverrides NVARCHAR(MAX) NULL,       -- JSON: instance-specific variable substitutions and overrides
+    CreatedAt DATETIME2 DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 DEFAULT GETDATE(),
+    CONSTRAINT FK_Zgents_Plugin FOREIGN KEY (PluginId) REFERENCES dbo.Plugins(Id)
+);
+GO
+
+-- ============================================================================
 -- JUNCTION TABLES (many-to-many relationships)
 -- ============================================================================
 
@@ -324,4 +359,6 @@ CREATE INDEX IX_Phases_CommandId ON dbo.Phases(CommandId);
 CREATE INDEX IX_Patterns_SkillId ON dbo.Patterns(SkillId);
 CREATE INDEX IX_Workflows_SkillId ON dbo.Workflows(SkillId);
 CREATE INDEX IX_ChecklistItems_AgentId ON dbo.ChecklistItems(AgentId);
+CREATE INDEX IX_Zgents_PluginId ON dbo.Zgents(PluginId);
+CREATE INDEX IX_Zgents_Status ON dbo.Zgents(Status);
 GO

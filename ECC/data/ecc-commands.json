@@ -1,0 +1,34 @@
+{
+  "$schema": "../schema/ecc-commands.schema.json",
+  "description": "Slash command definitions - user-invocable actions",
+  "commands": [
+    {
+      "id": "cmd-001",
+      "pluginId": "sample-plugin-001",
+      "name": "review",
+      "description": "Review the current codebase for quality issues",
+      "content": "Review the code in this project. Focus on quality, readability, and potential issues. Provide actionable suggestions for improvement.",
+      "allowedTools": ["Read", "Grep", "Glob"],
+      "waitForConfirmation": false,
+      "invokesAgentRef": "code-reviewer",
+      "phases": [
+        {
+          "id": "phase-001",
+          "commandId": "cmd-001",
+          "number": 1,
+          "name": "Discovery",
+          "description": "Find relevant files to review",
+          "steps": ["Use Glob to find source files", "Prioritize recently modified files"]
+        },
+        {
+          "id": "phase-002",
+          "commandId": "cmd-001",
+          "number": 2,
+          "name": "Analysis",
+          "description": "Analyze code quality",
+          "steps": ["Read each file", "Check against style guide", "Note potential issues"]
+        }
+      ]
+    }
+  ]
+}

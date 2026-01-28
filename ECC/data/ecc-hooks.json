@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/ecc-hooks.schema.json",
+  "description": "Event hook definitions - trigger-based automations",
+  "hooks": []
+}

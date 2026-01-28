@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/ecc-mcp-servers.schema.json",
+  "description": "MCP server configurations - external tool integrations",
+  "mcpServers": []
+}
