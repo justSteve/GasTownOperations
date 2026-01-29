@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../../schema/ecc-context-profiles.schema.json",
+  "description": "Complete plugin fixture - sample context profile",
+  "profiles": [
+    {
+      "id": "complete-profile",
+      "name": "Complete Test Profile",
+      "description": "A fully populated context profile for testing",
+      "variables": {
+        "{{RIG_PATH}}": "/tmp/test/complete",
+        "{{PROJECT_NAME}}": "Complete Test Project",
+        "{{BEAD_PREFIX}}": "ct"
+      },
+      "terminology": {
+        "project": "test-project",
+        "rig": "test-rig"
+      },
+      "enrichments": {
+        "rule:test-rule": {
+          "prepend": "This rule has been customized for the test context.\n\n",
+          "append": "\n\n---\n*Enriched by complete-profile*"
+        }
+      }
+    }
+  ]
+}

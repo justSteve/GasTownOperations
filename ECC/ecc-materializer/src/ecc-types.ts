@@ -189,6 +189,33 @@ export interface EccPluginSettings {
 }
 
 // ============================================================================
+// Context Profile (Translation Layer)
+// ============================================================================
+
+/**
+ * Enrichment - content to inject into specific entities during translation
+ */
+export interface EccEnrichment {
+  sections?: Array<{ heading: string; content: string }>;
+  prepend?: string;   // Add before existing content
+  append?: string;    // Add after existing content
+}
+
+/**
+ * Context Profile - defines how to customize output for a specific target rig
+ *
+ * Enables the factory pattern: one plugin + multiple profiles = multiple customized outputs
+ */
+export interface EccContextProfile {
+  id: string;
+  name: string;
+  description?: string;
+  variables: Record<string, string>;           // {{VAR}} → value substitution
+  enrichments?: Record<string, EccEnrichment>; // "entityType:name" → extra content
+  terminology?: Record<string, string>;        // generic term → domain-specific term
+}
+
+// ============================================================================
 // Materialization Entity
 // ============================================================================
 
@@ -203,6 +230,7 @@ export interface EccZgent {
   deployedAt?: string;
   version?: string;
   configOverrides?: EccConfigOverrides;
+  contextProfileId?: string;  // Reference to context profile for translation
   createdAt?: string;
   updatedAt?: string;
 }
@@ -269,6 +297,12 @@ export interface EccZgentsFile {
   $schema?: string;
   description?: string;
   zgents: EccZgent[];
+}
+
+export interface EccContextProfilesFile {
+  $schema?: string;
+  description?: string;
+  profiles: EccContextProfile[];
 }
 
 // ============================================================================

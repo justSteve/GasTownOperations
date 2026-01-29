@@ -22,6 +22,7 @@ const REQUIRED_FILES = [
   'ecc-contexts.json',
   'ecc-commands.json',
   'ecc-zgent-instances.json',
+  'ecc-context-profiles.json',
 ];
 
 interface FileStructure {
@@ -39,6 +40,7 @@ const FILE_STRUCTURES: FileStructure[] = [
   { file: 'ecc-contexts.json', rootKey: 'contexts' },
   { file: 'ecc-commands.json', rootKey: 'commands' },
   { file: 'ecc-zgent-instances.json', rootKey: 'zgents' },
+  { file: 'ecc-context-profiles.json', rootKey: 'profiles' },
 ];
 
 async function loadJson(path: string): Promise<unknown> {
@@ -124,6 +126,23 @@ describe('JSON Schema Validation', () => {
             `Duplicate zgent ID: ${zgent.id}`
           );
           zgentIds.add(zgent.id);
+        }
+      }
+    });
+
+    it('all profiles have unique IDs across fixtures', async () => {
+      const profileIds = new Set<string>();
+
+      for (const fixtureSet of FIXTURE_SETS) {
+        const filePath = join(FIXTURES_DIR, fixtureSet, 'ecc-context-profiles.json');
+        const data = (await loadJson(filePath)) as { profiles: Array<{ id: string }> };
+
+        for (const profile of data.profiles) {
+          assert.ok(
+            !profileIds.has(profile.id),
+            `Duplicate profile ID: ${profile.id}`
+          );
+          profileIds.add(profile.id);
         }
       }
     });

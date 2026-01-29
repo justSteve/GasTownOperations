@@ -65,6 +65,12 @@ interface Command {
 interface Zgent {
   id: string;
   pluginId: string;
+  contextProfileId?: string;
+}
+
+interface Profile {
+  id: string;
+  name: string;
 }
 
 interface FixtureData {
@@ -77,6 +83,7 @@ interface FixtureData {
   contexts: Context[];
   commands: Command[];
   zgents: Zgent[];
+  profiles: Profile[];
 }
 
 async function loadFixture(fixtureSet: string): Promise<FixtureData> {
@@ -97,6 +104,7 @@ async function loadFixture(fixtureSet: string): Promise<FixtureData> {
     contextsFile,
     commandsFile,
     zgentsFile,
+    profilesFile,
   ] = await Promise.all([
     loadJson<{ plugins: Plugin[] }>('ecc-plugins.json'),
     loadJson<{ agents: Agent[] }>('ecc-agents.json'),
@@ -107,6 +115,7 @@ async function loadFixture(fixtureSet: string): Promise<FixtureData> {
     loadJson<{ contexts: Context[] }>('ecc-contexts.json'),
     loadJson<{ commands: Command[] }>('ecc-commands.json'),
     loadJson<{ zgents: Zgent[] }>('ecc-zgent-instances.json'),
+    loadJson<{ profiles: Profile[] }>('ecc-context-profiles.json'),
   ]);
 
   return {
@@ -119,6 +128,7 @@ async function loadFixture(fixtureSet: string): Promise<FixtureData> {
     contexts: contextsFile.contexts,
     commands: commandsFile.commands,
     zgents: zgentsFile.zgents,
+    profiles: profilesFile.profiles,
   };
 }
 
@@ -232,6 +242,20 @@ describe('Foreign Key Validation', () => {
             pluginIds.has(zgent.pluginId),
             `Zgent '${zgent.id}' references invalid plugin: ${zgent.pluginId}`
           );
+        }
+      });
+
+      it('zgent context profile references are valid', async () => {
+        if (!data) data = await loadFixture(fixtureSet);
+        const profileIds = new Set(data.profiles.map((p) => p.id));
+
+        for (const zgent of data.zgents) {
+          if (zgent.contextProfileId) {
+            assert.ok(
+              profileIds.has(zgent.contextProfileId),
+              `Zgent '${zgent.id}' references unknown profile: ${zgent.contextProfileId}`
+            );
+          }
         }
       });
 

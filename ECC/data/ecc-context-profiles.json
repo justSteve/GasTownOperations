@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/ecc-context-profiles.schema.json",
+  "description": "Context profiles for customizing materialization output per target rig",
+  "profiles": []
+}

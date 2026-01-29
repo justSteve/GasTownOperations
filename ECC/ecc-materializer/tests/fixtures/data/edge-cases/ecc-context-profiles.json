@@ -1,0 +1,53 @@
+{
+  "$schema": "../../../../schema/ecc-context-profiles.schema.json",
+  "description": "Edge cases fixture - profiles with edge case content",
+  "profiles": [
+    {
+      "id": "edge-profile-variables-only",
+      "name": "Variables Only Profile",
+      "variables": {
+        "{{VAR1}}": "value1",
+        "{{VAR2}}": "value2"
+      }
+    },
+    {
+      "id": "edge-profile-terminology-only",
+      "name": "Terminology Only Profile",
+      "variables": {},
+      "terminology": {
+        "generic-term": "specific-term",
+        "placeholder": "actual-value"
+      }
+    },
+    {
+      "id": "edge-profile-unicode",
+      "name": "Unicode Profile",
+      "description": "Profile with Unicode in values: cafe, Munchen, Beijing",
+      "variables": {
+        "{{CITY}}": "Munchen",
+        "{{GREETING}}": "Hello World"
+      },
+      "terminology": {
+        "coffee": "cafe",
+        "city": "Beijing"
+      }
+    },
+    {
+      "id": "edge-profile-enrichments",
+      "name": "Enrichments Profile",
+      "variables": {},
+      "enrichments": {
+        "skill:deep-nested-skill": {
+          "sections": [
+            {
+              "heading": "Additional Context",
+              "content": "This section was added by the edge profile."
+            }
+          ],
+          "prepend": "<!-- Enriched -->\n",
+          "append": "\n<!-- End Enrichment -->"
+        }
+      }
+    }
+  ]
+}
