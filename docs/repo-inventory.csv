@@ -1,0 +1,77 @@
+name,on_github,on_local,fork,gh_default_branch,gh_last_pushed,local_path,local_branch,local_commit_date,local_commit_hash,sync_status,source_of_truth,description
+ActionableLogLines,Yes,Yes,No,main,2026-01-05T19:15:33Z,/mnt/c/myStuff/_infra/ActionableLogLines,main,2026-01-05 13:15:13 -0600,a8db2148,Present in both,GitHub,
+agents,Yes,Yes,Yes,main,2026-01-05T10:58:48Z,/mnt/c/myStuff/_infra/agents,main,2026-01-05 04:58:40 -0600,e684d6bc,Present in both,GitHub,Intelligent automation and multi-agent orchestration for Claude Code
+ApiEndpoints,Yes,No,Yes,master,2020-08-17T13:49:50Z,,,,,GitHub only,GitHub,A project for supporting API Endpoints in ASP.NET Core web applications.
+awesome-claude-skills,Yes,No,Yes,master,2025-11-20T14:48:15Z,,,,,GitHub only,GitHub,"A curated list of awesome Claude Skills, resources, and tools for customizing Cl"
+azure-quickstart-templates,Yes,No,Yes,master,2019-03-21T09:04:30Z,,,,,GitHub only,GitHub,Azure Quickstart Templates
+AzureFunctionsLogging,Yes,No,Yes,master,2018-03-30T19:32:39Z,,,,,GitHub only,GitHub,
+bankwebinars,Yes,No,No,master,2025-09-15T21:19:37Z,,,,,GitHub only,GitHub,
+beads,Yes,Yes,Yes,main,2026-01-29T17:48:29Z,/mnt/c/myStuff/_infra/beads,main,2026-01-29 11:46:26 -0600,6ab43bce,Present in both,GitHub,Beads - A memory upgrade for your coding agent
+beads_viewer,Yes,Yes,Yes,main,2025-12-14T10:31:12Z,/mnt/c/myStuff/_infra/beads/beads_viewer,main,2025-12-14 04:31:06 -0600,ffdbf05e,Present in both,GitHub,View your beads (Steve Yegge's task management system for coding agents) like a 
+Bitwarden,No,Yes,No,,,/mnt/c/myStuff/Bitwarden,main,2025-11-28 14:13:32 -0600,fc72733b,Local only,Local only (no GitHub match),
+BlazorHealthApp,Yes,No,Yes,master,2019-09-13T16:18:16Z,,,,,GitHub only,GitHub,Example application ported from Angular 2 to Blazor
+buildClaudeUI,Yes,No,No,main,2025-11-16T15:26:56Z,,,,,GitHub only,GitHub,
+BuilderTestSample,Yes,No,Yes,master,2020-06-08T19:11:44Z,,,,,GitHub only,GitHub,Show how to use a builder with unit tests.
+bunit,Yes,No,Yes,master,2020-03-02T23:03:13Z,,,,,GitHub only,GitHub,A unit testing library for Blazor Components. You can easily define components u
+claude-code-hooks-multi-agent-observability,Yes,No,Yes,main,2025-10-26T15:50:20Z,,,,,GitHub only,GitHub,Real-time monitoring for Claude Code agents through simple hook event tracking.
+claude-code-infrastructure-showcase,Yes,No,Yes,main,2025-10-31T01:41:31Z,,,,,GitHub only,GitHub,"Examples of my Claude Code infrastructure with skill auto-activation, hooks, and"
+claude-code-sandbox,Yes,No,Yes,main,2025-06-19T16:30:10Z,,,,,GitHub only,GitHub,Run Claude Code safely in local Docker containers without having to approve ever
+claude-code-templates,Yes,No,Yes,main,2025-09-12T22:59:44Z,,,,,GitHub only,GitHub,CLI tool for configuring and monitoring Claude Code
+claude-config-editor,Yes,No,Yes,main,2025-11-20T18:41:55Z,,,,,GitHub only,GitHub,Claude Config Editor is a lightweight web tool that helps you clean and optimize
+claude-flow,Yes,No,Yes,main,2025-10-22T02:36:24Z,,,,,GitHub only,GitHub,🌊 The leading agent orchestration platform for Claude. Deploy intelligent multi-
+claude-hub,Yes,No,Yes,main,2025-10-20T13:24:43Z,,,,,GitHub only,GitHub,"  A webhook service that connects Claude Code to GitHub repositories, enabling A"
+claude-monitor,Yes,Yes,No,master,2026-01-27T14:18:31Z,/mnt/c/myStuff/_infra/claude-monitor,master,2026-01-27 08:18:30 -0600,1e77a5f6,Present in both,GitHub,
+codegraph,Yes,No,Yes,main,2026-01-21T19:40:30Z,,,,,GitHub only,GitHub,
+coding_agent_session_search,Yes,No,Yes,main,2026-01-27T14:03:27Z,,,,,GitHub only,GitHub,
+Daemon,Yes,Yes,Yes,main,2025-12-16T07:24:20Z,/mnt/c/myStuff/Daemon,main,2025-12-15 23:24:07 -0800,d3d92298,Present in both,GitHub,An open-source personal API framework.
+DataArchive,Yes,Yes,No,main,2026-01-23T23:02:41Z,/mnt/c/myStuff/DataArchive,main,2026-01-10 09:02:15 -0600,f79f03a1,Present in both,GitHub,
+discord.js,Yes,No,Yes,main,2022-08-02T16:27:38Z,,,,,GitHub only,GitHub,A powerful JavaScript library for interacting with the Discord API
+DiscordScraper,Yes,No,No,feature/scraper-orchestration,2025-10-30T17:45:03Z,,,,,GitHub only,GitHub,
+docs,Yes,No,Yes,main,2021-10-04T14:24:48Z,,,,,GitHub only,GitHub,
+DReader,Yes,Yes,No,master,2026-01-23T22:59:44Z,/mnt/c/myStuff/DReader,master,2026-01-18 06:00:57 -0600,6fbcf1e5,Present in both,GitHub,
+dspy,Yes,Yes,Yes,main,2025-11-01T19:46:36Z,/mnt/c/myStuff/myDSPy,main,2025-11-01 14:40:08 -0500,5730e16b,Present in both,GitHub,DSPy: The framework for programming—not prompting—language models
+Easy-Request-Log,Yes,No,Yes,master,2020-03-13T09:26:53Z,,,,,GitHub only,GitHub,An easy .net core HTTP request logging library
+everything-claude-code,Yes,No,Yes,main,2026-01-25T06:44:21Z,,,,,GitHub only,GitHub,"Complete Claude Code configuration collection - agents, skills, hooks, commands,"
+Fabric,Yes,Yes,Yes,main,2025-12-20T07:58:10Z,/mnt/c/myStuff/Fabric,main,2025-12-20 07:58:09 +0000,fe0a1731,Present in both,GitHub,Fabric is an open-source framework for augmenting humans using AI. It provides a
+gastown,Yes,No,Yes,main,2026-02-06T20:03:58Z,,,,,GitHub only,GitHub,Gas Town - multi-agent workspace manager
+gastown_ui,Yes,No,Yes,main,2026-01-10T17:19:17Z,,,,,GitHub only,GitHub,
+GasTownOperations,Yes,No,No,master,2026-02-06T20:18:16Z,,,,,GitHub only,GitHub,
+gt,Yes,No,No,main,2026-01-14T19:33:04Z,,,,,GitHub only,GitHub,
+guide,Yes,No,Yes,main,2022-08-01T11:56:21Z,,,,,GitHub only,GitHub,"The official guide for discord.js, created and maintained by core members of its"
+IDEasPlatform,Yes,Yes,No,main,2026-01-17T22:58:17Z,/mnt/c/myStuff/IDEasPlatform,master,2026-01-17 16:56:37 -0600,9e14b56f,Present in both,GitHub,
+judge0,Yes,Yes,Yes,master,2026-01-07T12:20:09Z,/mnt/c/myStuff/_tooling/Judge0,master,2026-01-07 06:20:05 -0600,976ed258,Present in both,GitHub,"🔥 Robust, scalable, and open-source online code execution system."
+justSteveSite,Yes,No,No,main,2024-04-03T10:20:47Z,,,,,GitHub only,GitHub,
+lemmy,Yes,No,Yes,main,2025-08-13T15:58:02Z,,,,,GitHub only,GitHub,Wrapper around tool using LLMs for agentic workflows
+LinkedInDeveloperToolkit,Yes,No,Yes,master,2013-07-21T19:55:59Z,,,,,GitHub only,GitHub,Originally a clone of the LinkedIn Toolkit sitting on CodePlex
+MailChimp.Net,Yes,No,Yes,master,2018-10-12T12:14:27Z,,,,,GitHub only,GitHub,Mail Chimp 3.0 Wrapper
+Mandrill.net,Yes,No,Yes,master,2016-05-03T16:24:05Z,,,,,GitHub only,GitHub,Mandrill api wrapper for .net
+MinerU-HTML,Yes,No,Yes,main,2025-11-28T12:23:21Z,,,,,GitHub only,GitHub,MinerU-HTML: An SLM-powered HTML main content extractor that outputs clean HTML 
+MyClaudeUI,Yes,No,No,main,2025-10-29T17:21:08Z,,,,,GitHub only,GitHub,My vision of a better ClaudeCode interface.
+myDSPy,Yes,No,No,main,2025-11-26T20:02:14Z,,,,,GitHub only,GitHub,"A progressive learning environment for mastering DSPy through scripting, not pro"
+myFireplace,Yes,Yes,No,master,2026-02-02T23:50:45Z,/mnt/c/myStuff/myFireplace,master,2026-01-07 10:31:47 -0600,6ce6947b,Present in both,GitHub,Custom masonry fireplace insert project - high-efficiency firebox design with hy
+myOrchestration,Yes,No,No,main,2025-10-29T22:29:27Z,,,,,GitHub only,GitHub,My strategy for organizing my agents. Currently comparing 2 different repos that
+myStuff,Yes,Yes,No,master,2026-01-24T11:53:54Z,/mnt/c/myStuff,master,2026-01-24 05:52:21 -0600,1968a679,Present in both,GitHub,
+OpenStock,Yes,No,Yes,main,2025-10-11T07:10:55Z,,,,,GitHub only,GitHub,OpenStock is an open-source alternative to expensive market platforms. Track rea
+ParseClipmate,Yes,Yes,No,master,2026-01-24T00:05:56Z,/mnt/c/myStuff/ParseClipmate,master,2025-12-15 14:35:49 -0600,09e9239b,Present in both,GitHub,
+paulaslifeisabook,Yes,No,No,main,2025-11-18T17:39:22Z,,,,,GitHub only,GitHub,
+Posh-ACME,Yes,No,Yes,master,2020-03-10T00:31:43Z,,,,,GitHub only,GitHub,ACME v2 protocol client for generating certificates using Let's Encrypt (or othe
+RAGinDSPy,Yes,No,No,main,2025-10-29T22:29:18Z,,,,,GitHub only,GitHub,DSPy framework recipes for building RAG applications - extracted from weaviate/r
+repo_updater,Yes,No,Yes,main,2026-01-24T07:57:12Z,,,,,GitHub only,GitHub,"A beautiful, automation-friendly CLI for synchronizing GitHub repositories. Keep"
+RudderPositionViaComputerVision,Yes,No,No,master,2020-04-02T20:25:55Z,,,,,GitHub only,GitHub,
+schwab-py,Yes,No,Yes,main,2024-09-14T11:29:43Z,,,,,GitHub only,GitHub,Unofficial API wrapper for the upcoming Schwab HTTP API 
+server,Yes,No,Yes,main,2025-04-25T20:25:19Z,,,,,GitHub only,GitHub,"Bitwarden infrastructure/backend (API, database, Docker, etc)."
+Skill_Seekers,Yes,No,Yes,development,2025-12-30T09:10:41Z,,,,,GitHub only,GitHub,Single powerful tool to convert ANY documentation website into a Claude skill
+SteerageForMyBoat,Yes,No,No,master,2020-01-23T01:26:35Z,,,,,GitHub only,GitHub,Towards a dedicated hydrualic system where digital input at the helm is transpos
+Steve-s_Sites,Yes,Yes,No,master,2026-01-25T13:03:47Z,/mnt/c/myStuff/Steve-s_Sites,master,2026-01-24 17:23:54 -0600,a49a7096,Present in both,GitHub,
+Substrate,Yes,Yes,Yes,main,2025-12-10T22:40:33Z,/mnt/c/myStuff/Substrate,main,2025-12-10 14:40:25 -0800,9a181ae4,Present in both,GitHub,"An Open-source Framework for Human Understanding, Meaning, and Progress."
+superpowers,Yes,No,Yes,main,2026-01-25T18:00:53Z,,,,,GitHub only,GitHub,An agentic skills framework & software development methodology that works.
+Telos,Yes,Yes,Yes,main,2025-11-09T11:05:06Z,/mnt/c/myStuff/Telos,main,2025-11-09 03:04:13 -0800,c805a983,Present in both,GitHub,Telos is an open-sourced framework for creating Deep Context about things that m
+tesseract,Yes,No,Yes,main,2025-10-09T16:14:28Z,,,,,GitHub only,GitHub,Tesseract Open Source OCR Engine (main repository)
+tradestation-py,Yes,No,No,main,2024-12-14T19:47:19Z,,,,,GitHub only,GitHub,
+ts-api,Yes,No,Yes,main,2025-01-05T12:25:08Z,,,,,GitHub only,GitHub,An unofficial wrapper for the TradeStation API.
+ts-trades,Yes,No,No,main,2025-06-12T17:03:44Z,,,,,GitHub only,GitHub,
+voicemode,Yes,No,Yes,master,2025-10-21T23:54:34Z,,,,,GitHub only,GitHub,VoiceMode MCP brings natural conversations to Claude Code
+vuestic,Yes,No,No,main,2024-04-03T23:26:54Z,,,,,GitHub only,GitHub,
+wsl-4-claude,Yes,No,No,main,2025-10-12T16:05:53Z,,,,,GitHub only,GitHub,A best known configuration for WSL environments optimized for Claude Code and Gi
+XState-Skill,Yes,No,No,main,2025-10-29T22:29:32Z,,,,,GitHub only,GitHub,Claude Code skill for XState v5 - state management and orchestration with state 
+YOLODocker,Yes,No,No,master,2025-10-24T12:39:56Z,,,,,GitHub only,GitHub,Run Claude Code inside Docker to safely YOLO.
