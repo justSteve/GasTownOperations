@@ -3,6 +3,34 @@
   "description": "Slash command definitions - user-invocable actions",
   "commands": [
     {
+      "id": "dr-cmd-001",
+      "pluginId": "dreader-plugin",
+      "name": "validate-schema",
+      "description": "Validate Dolt schema integrity and consistency",
+      "content": "Run schema validation on the Dolt database. Check table definitions, foreign keys, and data types.",
+      "allowedTools": ["Read", "Grep", "Glob", "Bash"],
+      "waitForConfirmation": false,
+      "invokesAgentRef": "data-validator",
+      "phases": [
+        {
+          "id": "dr-phase-001",
+          "commandId": "dr-cmd-001",
+          "number": 1,
+          "name": "Discovery",
+          "description": "Find schema files and table definitions",
+          "steps": ["Locate .sql and schema files", "List all Dolt tables"]
+        },
+        {
+          "id": "dr-phase-002",
+          "commandId": "dr-cmd-001",
+          "number": 2,
+          "name": "Validation",
+          "description": "Validate schema consistency",
+          "steps": ["Check column types", "Verify FK relationships", "Report issues"]
+        }
+      ]
+    },
+    {
       "id": "cmd-001",
       "pluginId": "sample-plugin-001",
       "name": "review",

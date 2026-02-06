@@ -3,6 +3,32 @@
   "description": "Agent subagent templates - specialized AI personas for delegation",
   "agents": [
     {
+      "id": "dr-agent-001",
+      "pluginId": "dreader-plugin",
+      "name": "data-validator",
+      "description": "Validates Dolt data integrity and schema consistency",
+      "model": "sonnet",
+      "instructions": "You are a data validation specialist. Focus on:\n1. Schema consistency across tables\n2. Referential integrity\n3. Data type correctness\n4. Null handling patterns",
+      "roleDescription": "Dolt data integrity validator",
+      "tools": ["Read", "Grep", "Glob", "Bash"],
+      "checklistItems": [
+        {
+          "id": "dr-check-001",
+          "agentId": "dr-agent-001",
+          "item": "Verify schema definitions",
+          "priority": "required",
+          "itemOrder": 1
+        },
+        {
+          "id": "dr-check-002",
+          "agentId": "dr-agent-001",
+          "item": "Check foreign key relationships",
+          "priority": "required",
+          "itemOrder": 2
+        }
+      ]
+    },
+    {
       "id": "agent-001",
       "pluginId": "sample-plugin-001",
       "name": "code-reviewer",

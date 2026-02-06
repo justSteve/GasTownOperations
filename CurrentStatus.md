@@ -1,49 +1,49 @@
 # GT Current Status
 
-**Generated:** 2026-01-28 14:26
+**Generated:** 2026-02-06 14:05
 
 | Category | Status |
 |----------|--------|
-| GT Version | `v0.5.0-86-gb49f08f7` (67 new commits) |
-| Upstream | Synced with steveyegge/gastown@b49f08f7 |
-| Doctor Passed | 55 |
-| Doctor Warnings | 1 (patrol-not-stuck - false positive, wisp is closed) |
-| Doctor Failed | 1 (agent-beads-exist - prefix mismatch, known upstream issue) |
+| GT Version | `v0.5.0-317-g2811f49c` |
+| Previous Version | `v0.5.0-270-gacc4eb66` |
+| Upstream | Synced with steveyegge/gastown@2811f49c |
+| Doctor Passed | 62 |
+| Doctor Warnings | 3 (global-state disabled, migration-readiness, unmigrated-rigs) |
+| Doctor Failed | 0 |
+| Rigs | None (fresh install) |
 
 ## This Session
 
 | Action | Result |
 |--------|--------|
-| Upstream sync | 67 commits pulled (be96bb00 → b49f08f7) |
-| Build method | `make build` (new `go build` guard added) |
-| Stuck wisp | Closed ParseClipmate-wisp-qdn |
-| Services | All 9 started (mayor + 4 witnesses + 4 refineries) |
+| Re-pave | Complete - fresh GT install |
+| Upstream sync | 46 commits pulled (acc4eb66 → 2811f49c) |
+| Build method | `make build` |
+| Services | Running (daemon, deacon, mayor) |
 
 ## Notable Changes in Update
 
-- **SQLite removal**: Scorched-earth removal from codebase
-- **Dolt integration**: `gt dolt` command for server management
-- **KRC (Key Record Chronicle)**: TTL-based ephemeral data lifecycle
-- **Web dashboard**: Comprehensive control panel with 13 data panels
-- **Dark mode CLI**: Theme support added
-- **Build guard**: `go build` directly now blocked, requires `make build`
-
-## Known Issues (Upstream)
-
-1. **agent-beads-exist**: `hq-deacon` and `hq-mayor` beads can't be created - prefix mismatch (`hq-` vs configured `gt-`). GT functions without them.
-
-2. **patrol-not-stuck false positive**: Doctor reports closed wisps as "stuck" - doesn't filter by status.
+- **Hooks system overhaul**: New `gt hooks` commands (sync, diff, list, init, scan)
+- **hooks-sync doctor check**: Validates hook configuration
+- **mol-migration formula**: For v0.5.0 → v0.6.0 upgrades
+- **Polecat fixes**: Better zombie detection, idle termination
+- **Dolt metadata check**: New doctor check
+- **Newsletter generator**: Release automation script
 
 ## Services Running
 
 | Service | Session | Status |
 |---------|---------|--------|
+| Daemon | PID 3816635 | Running |
+| Deacon | hq-deacon | Running |
 | Mayor | hq-mayor | Running |
-| Witness (DReader) | gt-DReader-witness | Running |
-| Witness (DataArchive) | gt-DataArchive-witness | Running |
-| Witness (claude_monitor) | gt-claude_monitor-witness | Running |
-| Witness (parseClipmate) | gt-parseClipmate-witness | Running |
-| Refinery (DReader) | gt-DReader-refinery | Running |
-| Refinery (DataArchive) | gt-DataArchive-refinery | Running |
-| Refinery (claude_monitor) | gt-claude_monitor-refinery | Running |
-| Refinery (parseClipmate) | gt-parseClipmate-refinery | Running |
+
+## Rig Creation Commands (Saved)
+
+```bash
+gt rig add DReader https://github.com/justSteve/DReader --prefix dr
+gt rig add DataArchive git@github.com:justSteve/DataArchive.git --prefix da
+gt rig add claude_monitor https://github.com/justSteve/claude-monitor.git --prefix claude-monitor
+gt rig add gtOps git@github.com:justSteve/GasTownOperations.git --prefix gt
+gt rig add parseClipmate git@github.com:justSteve/parseClipmate.git --prefix ParseClipmate
+```

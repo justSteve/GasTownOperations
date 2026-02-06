@@ -12,6 +12,17 @@
       "keywords": ["sample", "demo", "claude-code"],
       "createdAt": "2026-01-28T00:00:00Z",
       "updatedAt": "2026-01-28T00:00:00Z"
+    },
+    {
+      "id": "dreader-plugin",
+      "name": "dreader-rig",
+      "description": "Claude Code configuration for DReader - Dolt data reader project",
+      "version": "1.0.0",
+      "author": "gtOps",
+      "repositoryPath": "https://github.com/justSteve/DReader",
+      "keywords": ["dolt", "data-reader", "gt-rig"],
+      "createdAt": "2026-01-28T00:00:00Z",
+      "updatedAt": "2026-01-28T00:00:00Z"
     }
   ]
 }
