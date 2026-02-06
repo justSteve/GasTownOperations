@@ -24,3 +24,9 @@ dist/
 
 # MCP config (contains credentials)
 .mcp.json
+
+# Gas Town (added by gt)
+.runtime/
+.claude/
+.logs/
+.beads/
