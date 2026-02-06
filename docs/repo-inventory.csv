@@ -1,0 +1,50 @@
+location,name,remote,branch,last_commit_date,has_claude_dir,has_claude_md,has_settings,project_type,pkg_manager,has_venv,notes
+myStuff,myStuff,justSteve/myStuff,master,2026-01-24,Y,Y,N,node,no-lock,N,root of myStuff
+myStuff,Bitwarden,justSteve/bitwarden,main,2025-11-28,Y,Y,Y,python,requirements,N,
+myStuff,Daemon,justSteve/Daemon,main,2025-12-15,N,Y,N,node,no-lock,N,missing .claude dir
+myStuff,DataArchive,justSteve/DataArchive,main,2026-01-10,Y,Y,N,node,npm,N,diverged from root copies
+myStuff,DReader,justSteve/DReader,master,2026-01-18,N,N,N,other,none,N,missing .claude + CLAUDE.md
+myStuff,Fabric,justSteve/Fabric,main,2025-12-20,N,N,N,go,go-mod,N,missing .claude + CLAUDE.md
+myStuff,IDEasPlatform,justSteve/IDEasPlatform,master,2026-01-17,Y,N,Y,other,none,N,branch mismatch with root
+myStuff,myDSPy,justSteve/dspy,main,2025-11-01,Y,Y,Y,python,pyproject,N,
+myStuff,myFireplace,justSteve/myFireplace,master,2026-01-07,Y,Y,N,other,none,N,behind root/projects copy
+myStuff,ParseClipmate,justSteve/ParseClipmate,master,2025-12-15,Y,Y,N,python,requirements,Y,good structure
+myStuff,Steve-s_Sites,justSteve/Steve-s_Sites,master,2026-01-24,Y,Y,N,python+node,requirements+npm,N,
+myStuff,Substrate,justSteve/Substrate,main,2025-12-10,N,Y,N,other,none,N,missing .claude dir
+myStuff,Telos,justSteve/Telos,main,2025-11-09,N,N,N,other,none,N,missing .claude + CLAUDE.md
+myStuff/_infra,ActionableLogLines,justSteve/ActionableLogLines,main,2026-01-05,Y,Y,N,node,npm,N,
+myStuff/_infra,agents,justSteve/agents,main,2026-01-05,Y,Y,N,other,none,N,ahead of root copy
+myStuff/_infra,beads,justSteve/beads,main,2026-01-29,Y,Y,N,go,go-mod,N,
+myStuff/_infra,claude-monitor,justSteve/claude-monitor,master,2026-01-27,Y,Y,Y,node,npm,N,
+myStuff/_tooling,Judge0,justSteve/judge0,master,2026-01-07,Y,Y,N,other,none,N,
+root/projects,voicemode,justSteve/voicemode,master,2025-10-21,Y,Y,Y,python,pyproject,N,
+root/projects,gastown,justSteve/gastown,main,2026-02-06,Y,N,N,go,go-mod,N,GT source - missing CLAUDE.md
+root/projects,ScrapeDiscord,justSteve/DReader,master,2026-01-14,Y,Y,N,node,npm,N,WRONG REMOTE - points to DReader
+root/projects,data-archive,justSteve/DataArchive,main,2025-11-29,Y,Y,N,node,npm,N,diverged DataArchive copy
+root/projects,buildDockers,justSteve/YOLODocker,master,2025-10-24,Y,Y,N,other,none,N,
+root/projects,BankWebinars,justSteve/BankWebinars,master,2018-12-06,Y,Y,N,other,none,N,very old
+root/projects,BitWarden,justSteve/BitWarden,main,2025-10-29,N,Y,N,python,requirements,N,missing .claude dir
+root/projects,Skill_Seekers,justSteve/Skill_Seekers,development,2025-10-23,Y,Y,N,python,requirements,N,on development branch
+root/projects,myFireplace,justSteve/myFireplace,master,2026-02-02,Y,Y,N,other,none,N,ahead of myStuff copy
+root/projects,agents,justSteve/agents,main,2025-10-29,Y,Y,Y,other,none,N,behind myStuff copy
+root/projects,dspy,justSteve/dspy,main,2025-10-26,Y,Y,N,python,pyproject,Y,
+root/projects,gtOps,justSteve/GasTownOperations,master,2026-02-06,Y,N,N,other,none,N,this repo - missing CLAUDE.md
+root/projects,ideasplatform,justSteve/ideasplatform,main,2025-11-25,N,N,N,node,npm,N,missing .claude + CLAUDE.md
+root/projects,RAGinDSPY,justSteve/RAGinDSPY,master,2025-10-29,Y,Y,Y,other,none,N,
+root/projects,DataArchive,justSteve/DataArchive,master,2025-10-29,Y,Y,N,python,requirements,Y,oldest DataArchive copy
+root/projects,justSteve,justSteve/Steve-s_Sites,master,2026-01-25,Y,Y,N,node,no-lock,Y,same as Steve-s_Sites
+root/projects,xstate-skill,justSteve/XState-Skill,main,2025-10-29,Y,Y,Y,other,none,N,
+root/projects,buildClaudeUI,justSteve/MyClaudeUI,main,2025-10-29,Y,Y,Y,node,npm,N,
+root/projects,myOrchestration,justSteve/myOrchestration,main,2025-10-29,Y,Y,Y,other,none,N,
+github,wsl-4-claude,justSteve/wsl-4-claude,main,2025-10-12,-,-,-,-,-,-,GitHub only
+github,justSteveSite,justSteve/justSteveSite,main,2024-04-03,-,-,-,-,-,-,GitHub only
+github,schwab-py-my,justSteve/schwab-py-my,main,2024-10-13,-,-,-,-,-,-,GitHub only (private)
+github,ts-trades,justSteve/ts-trades,main,2025-06-12,-,-,-,-,-,-,GitHub only
+github,ts-py,justSteve/ts-py,main,2025-03-02,-,-,-,-,-,-,GitHub only (private)
+github,vuestic,justSteve/vuestic,main,2024-04-03,-,-,-,-,-,-,GitHub only
+github,gt,justSteve/gt,main,2026-01-14,-,-,-,-,-,-,GitHub only
+github,tradier_api,justSteve/tradier_api,main,2024-05-04,-,-,-,-,-,-,GitHub only (private)
+github,paulaslifeisabook,justSteve/paulaslifeisabook,main,2025-11-18,-,-,-,-,-,-,GitHub only
+github,tradestation-py,justSteve/tradestation-py,main,2024-12-14,-,-,-,-,-,-,GitHub only
+github,RudderPositionViaComputerVision,justSteve/RudderPositionViaComputerVision,master,2020-04-02,-,-,-,-,-,-,GitHub only (old)
+github,SteerageForMyBoat,justSteve/SteerageForMyBoat,master,2020-01-23,-,-,-,-,-,-,GitHub only (old)

@@ -1,44 +1,47 @@
 # GT Current Status
 
-**Generated:** 2026-02-06 14:05
+**Generated:** 2026-02-06 14:45
 
 | Category | Status |
 |----------|--------|
 | GT Version | `v0.5.0-317-g2811f49c` |
-| Previous Version | `v0.5.0-270-gacc4eb66` |
 | Upstream | Synced with steveyegge/gastown@2811f49c |
-| Doctor Passed | 62 |
-| Doctor Warnings | 3 (global-state disabled, migration-readiness, unmigrated-rigs) |
-| Doctor Failed | 0 |
-| Rigs | None (fresh install) |
+| Town State | **DOWN** |
+| Doctor (last) | 62 passed, 3 warnings, 0 failed |
+| Rigs | gtOps (1 rig) |
 
-## This Session
+## Open Work
 
-| Action | Result |
-|--------|--------|
-| Re-pave | Complete - fresh GT install |
-| Upstream sync | 46 commits pulled (acc4eb66 → 2811f49c) |
-| Build method | `make build` |
-| Services | Running (daemon, deacon, mayor) |
+### Repo Inventory Task (Next Session)
+Comprehensive catalog of git repos across 3 locations:
 
-## Notable Changes in Update
+| Location | Access |
+|----------|--------|
+| `/mnt/c/myStuff` | WSL mount |
+| `/root/projects` | Direct |
+| `github.com/justSteve` | API |
 
-- **Hooks system overhaul**: New `gt hooks` commands (sync, diff, list, init, scan)
-- **hooks-sync doctor check**: Validates hook configuration
-- **mol-migration formula**: For v0.5.0 → v0.6.0 upgrades
-- **Polecat fixes**: Better zombie detection, idle termination
-- **Dolt metadata check**: New doctor check
-- **Newsletter generator**: Release automation script
+**Per-repo data to collect:**
+- Name, remote URL, current branch, last commit
+- Sync status across locations (ahead/behind/diverged)
+- Config audit: `.git` config, `.claude` files present?
+- Structural evaluation:
+  - Python: best practices (venv, pyproject.toml, structure)
+  - Node: bun migration status
+  - File structure quality (clean/messy)
+- One-line objective description
 
-## Services Running
+**Output:** `docs/repo-inventory.md` + `docs/repo-inventory.csv`
 
-| Service | Session | Status |
-|---------|---------|--------|
-| Daemon | PID 3816635 | Running |
-| Deacon | hq-deacon | Running |
-| Mayor | hq-mayor | Running |
+**Constraint:** SOT determination required before any sync ops
 
-## Rig Creation Commands (Saved)
+## Known Issues
+
+1. **Bead routing**: Fresh GT install has rig-level beads not visible from town root
+2. **Formula paths**: mol-polecat-work not found during sling (path resolution issue)
+3. **Migration pending**: Town + gtOps still on SQLite (Dolt migration available)
+
+## Rig Creation Commands (Reference)
 
 ```bash
 gt rig add DReader https://github.com/justSteve/DReader --prefix dr
