@@ -9,6 +9,7 @@ import { join, resolve } from 'node:path';
 import type {
   EccPluginsFile,
   EccAgentsFile,
+  EccSubAgentsFile,
   EccSkillsFile,
   EccRulesFile,
   EccHooksFile,
@@ -19,6 +20,7 @@ import type {
   EccContextProfilesFile,
   EccPlugin,
   EccAgent,
+  EccSubAgent,
   EccSkill,
   EccRule,
   EccHook,
@@ -35,6 +37,7 @@ import type {
 export interface EccData {
   plugins: EccPlugin[];
   agents: EccAgent[];
+  subAgents?: EccSubAgent[];  // Claude Code 2.1 sub-agents (optional for backward compatibility)
   skills: EccSkill[];
   rules: EccRule[];
   hooks: EccHook[];
@@ -77,10 +80,11 @@ async function loadJsonFileOptional<T>(filePath: string, fallback: T): Promise<T
 export async function loadEccData(dataDir: string): Promise<EccData> {
   const absoluteDataDir = resolve(dataDir);
 
-  // Load all data files in parallel (profiles optional for backward compatibility)
+  // Load all data files in parallel (profiles/subAgents optional for backward compatibility)
   const [
     pluginsFile,
     agentsFile,
+    subAgentsFile,
     skillsFile,
     rulesFile,
     hooksFile,
@@ -92,6 +96,10 @@ export async function loadEccData(dataDir: string): Promise<EccData> {
   ] = await Promise.all([
     loadJsonFile<EccPluginsFile>(join(absoluteDataDir, 'ecc-plugins.json')),
     loadJsonFile<EccAgentsFile>(join(absoluteDataDir, 'ecc-agents.json')),
+    loadJsonFileOptional<EccSubAgentsFile>(
+      join(absoluteDataDir, 'ecc-subagents.json'),
+      { subAgents: [] }
+    ),
     loadJsonFile<EccSkillsFile>(join(absoluteDataDir, 'ecc-skills.json')),
     loadJsonFile<EccRulesFile>(join(absoluteDataDir, 'ecc-rules.json')),
     loadJsonFile<EccHooksFile>(join(absoluteDataDir, 'ecc-hooks.json')),
@@ -108,6 +116,7 @@ export async function loadEccData(dataDir: string): Promise<EccData> {
   return {
     plugins: pluginsFile.plugins,
     agents: agentsFile.agents,
+    subAgents: subAgentsFile.subAgents,
     skills: skillsFile.skills,
     rules: rulesFile.rules,
     hooks: hooksFile.hooks,

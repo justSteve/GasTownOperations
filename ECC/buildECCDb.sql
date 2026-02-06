@@ -1,5 +1,5 @@
 -- ============================================================================
--- dbECC: Entity-Centric Communication Schema
+-- dbECC: Everything Claude Code Schema
 -- Database: ClaudeConfig
 -- Generated: 2026-01-27
 -- ============================================================================
@@ -27,7 +27,7 @@
 --
 -- ENTITIES:
 -- ---------
--- Plugins, Agents, Commands, Skills, Rules, Hooks, Contexts, McpServers, Tools, Zgents
+-- Plugins, Agents, SubAgents, Commands, Skills, Rules, Hooks, Contexts, McpServers, Tools, Zgents
 --
 -- ZGENT CONCEPT:
 -- --------------
@@ -76,6 +76,24 @@ CREATE TABLE dbo.Agents (
     RoleDescription NVARCHAR(MAX) NULL,       -- Role/persona description
     Tools NVARCHAR(MAX) NULL,                 -- JSON array of allowed tools
     CONSTRAINT FK_Agents_Plugin FOREIGN KEY (PluginId) REFERENCES dbo.Plugins(Id)
+);
+GO
+
+-- SubAgents: Claude Code 2.1 sub-agents (policy islands for delegation)
+-- Sub-agents are specialized agents that can be spawned during a session with
+-- restricted contexts and tool access. They support 'fork' (new context) or
+-- 'inline' (shared context) modes.
+CREATE TABLE dbo.SubAgents (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    PluginId UNIQUEIDENTIFIER NOT NULL,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX) NULL,
+    ContextMode NVARCHAR(20) NOT NULL DEFAULT 'fork',  -- 'fork' or 'inline'
+    Instructions NVARCHAR(MAX) NULL,          -- System prompt / instructions for sub-agent
+    AllowedTools NVARCHAR(MAX) NULL,          -- JSON array of tools this sub-agent can use
+    FrontmatterConfig NVARCHAR(MAX) NULL,     -- JSON: additional YAML frontmatter config
+    CONSTRAINT FK_SubAgents_Plugin FOREIGN KEY (PluginId) REFERENCES dbo.Plugins(Id),
+    CONSTRAINT CK_SubAgents_ContextMode CHECK (ContextMode IN ('fork', 'inline'))
 );
 GO
 
@@ -191,6 +209,27 @@ CREATE TABLE dbo.HookActions (
     Arguments NVARCHAR(MAX) NULL,             -- JSON: additional parameters
     ActionOrder INT DEFAULT 0,
     CONSTRAINT FK_HookActions_Hook FOREIGN KEY (HookId) REFERENCES dbo.Hooks(Id)
+);
+GO
+
+-- HookMatchers: Structured matchers for hooks (Claude Code 2.1)
+CREATE TABLE dbo.HookMatchers (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    HookId UNIQUEIDENTIFIER NOT NULL,
+    MatcherType NVARCHAR(40) NOT NULL,        -- 'tool', 'skill', 'pattern'
+    Pattern NVARCHAR(1000) NOT NULL,          -- Pattern to match (tool name, skill name, regex)
+    Description NVARCHAR(MAX) NULL,
+    CONSTRAINT FK_HookMatchers_Hook FOREIGN KEY (HookId) REFERENCES dbo.Hooks(Id)
+);
+GO
+
+-- HookScopes: Scope hierarchy for hooks (Claude Code 2.1)
+CREATE TABLE dbo.HookScopes (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name NVARCHAR(200) NOT NULL,
+    Level NVARCHAR(40) NOT NULL,              -- 'Global', 'Project', 'Skill', 'SubAgent'
+    Priority INT DEFAULT 0,
+    Description NVARCHAR(MAX) NULL
 );
 GO
 
@@ -342,11 +381,32 @@ CREATE TABLE dbo.HookRules (
 );
 GO
 
+-- SubAgentSkills: Which skills sub-agents have access to
+CREATE TABLE dbo.SubAgentSkills (
+    SubAgentId UNIQUEIDENTIFIER NOT NULL,
+    SkillId UNIQUEIDENTIFIER NOT NULL,
+    PRIMARY KEY (SubAgentId, SkillId),
+    CONSTRAINT FK_SubAgentSkills_SubAgent FOREIGN KEY (SubAgentId) REFERENCES dbo.SubAgents(Id),
+    CONSTRAINT FK_SubAgentSkills_Skill FOREIGN KEY (SkillId) REFERENCES dbo.Skills(Id)
+);
+GO
+
+-- SubAgentHooks: Which hooks apply to sub-agents (policy islands)
+CREATE TABLE dbo.SubAgentHooks (
+    SubAgentId UNIQUEIDENTIFIER NOT NULL,
+    HookId UNIQUEIDENTIFIER NOT NULL,
+    PRIMARY KEY (SubAgentId, HookId),
+    CONSTRAINT FK_SubAgentHooks_SubAgent FOREIGN KEY (SubAgentId) REFERENCES dbo.SubAgents(Id),
+    CONSTRAINT FK_SubAgentHooks_Hook FOREIGN KEY (HookId) REFERENCES dbo.Hooks(Id)
+);
+GO
+
 -- ============================================================================
 -- INDEXES for common queries
 -- ============================================================================
 
 CREATE INDEX IX_Agents_PluginId ON dbo.Agents(PluginId);
+CREATE INDEX IX_SubAgents_PluginId ON dbo.SubAgents(PluginId);
 CREATE INDEX IX_Skills_PluginId ON dbo.Skills(PluginId);
 CREATE INDEX IX_Rules_PluginId ON dbo.Rules(PluginId);
 CREATE INDEX IX_Hooks_PluginId ON dbo.Hooks(PluginId);
@@ -355,10 +415,131 @@ CREATE INDEX IX_Contexts_PluginId ON dbo.Contexts(PluginId);
 CREATE INDEX IX_Commands_PluginId ON dbo.Commands(PluginId);
 CREATE INDEX IX_Tools_McpServerId ON dbo.Tools(McpServerId);
 CREATE INDEX IX_HookActions_HookId ON dbo.HookActions(HookId);
+CREATE INDEX IX_HookMatchers_HookId ON dbo.HookMatchers(HookId);
+CREATE INDEX IX_HookScopes_Level ON dbo.HookScopes(Level);
 CREATE INDEX IX_Phases_CommandId ON dbo.Phases(CommandId);
 CREATE INDEX IX_Patterns_SkillId ON dbo.Patterns(SkillId);
 CREATE INDEX IX_Workflows_SkillId ON dbo.Workflows(SkillId);
 CREATE INDEX IX_ChecklistItems_AgentId ON dbo.ChecklistItems(AgentId);
 CREATE INDEX IX_Zgents_PluginId ON dbo.Zgents(PluginId);
 CREATE INDEX IX_Zgents_Status ON dbo.Zgents(Status);
+GO
+
+-- ============================================================================
+-- ECC 2.1 DATA MODEL EXTENSIONS (Track C)
+-- Added: 2026-02-06
+-- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- ALTER TABLE: Hooks - Add Claude Code 2.1 protocol fields
+-- ----------------------------------------------------------------------------
+ALTER TABLE dbo.Hooks ADD ExitCodeProtocol INT NULL;           -- Exit code behavior (0=success, etc.)
+GO
+ALTER TABLE dbo.Hooks ADD StdinSchema NVARCHAR(MAX) NULL;      -- JSON schema for stdin input
+GO
+ALTER TABLE dbo.Hooks ADD StdoutSchema NVARCHAR(MAX) NULL;     -- JSON schema for stdout output
+GO
+ALTER TABLE dbo.Hooks ADD Timeout INT NULL;                     -- Timeout in milliseconds
+GO
+ALTER TABLE dbo.Hooks ADD ScopeLevel NVARCHAR(40) NULL;        -- 'global', 'project', 'command'
+GO
+
+-- ----------------------------------------------------------------------------
+-- ALTER TABLE: Skills - Add Claude Code 2.1 capability fields
+-- ----------------------------------------------------------------------------
+ALTER TABLE dbo.Skills ADD HotReload BIT DEFAULT 0;            -- Whether skill supports hot reload
+GO
+ALTER TABLE dbo.Skills ADD AllowedTools NVARCHAR(MAX) NULL;    -- JSON array of allowed tools
+GO
+ALTER TABLE dbo.Skills ADD ContextMode NVARCHAR(40) NULL;      -- 'inject', 'reference', 'lazy'
+GO
+
+-- ----------------------------------------------------------------------------
+-- ALTER TABLE: Agents - Add deprecation and migration tracking
+-- ----------------------------------------------------------------------------
+ALTER TABLE dbo.Agents ADD IsDeprecated BIT DEFAULT 0;         -- Whether agent is deprecated
+GO
+ALTER TABLE dbo.Agents ADD MigratedToSubAgentId UNIQUEIDENTIFIER NULL;  -- FK to SubAgents for migration
+GO
+ALTER TABLE dbo.Agents ADD CONSTRAINT FK_Agents_MigratedToSubAgent
+    FOREIGN KEY (MigratedToSubAgentId) REFERENCES dbo.SubAgents(Id);
+GO
+
+CREATE INDEX IX_Agents_MigratedToSubAgentId ON dbo.Agents(MigratedToSubAgentId);
+GO
+
+-- ============================================================================
+-- ECCX SCHEMA: Extension Layer for Orchestration Tooling (Track D)
+-- Added: 2026-02-06
+-- ============================================================================
+-- The eccx namespace is our extension layer for orchestration tooling,
+-- separate from Anthropic's native ecc entities. It captures emergent patterns
+-- and structures for the Claude Code Explorer feature.
+
+-- EmergentPatterns: Patterns that emerge from agent interactions
+CREATE TABLE dbo.EmergentPatterns (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX) NULL,
+    PatternType NVARCHAR(100) NULL,           -- e.g., 'workflow', 'decision', 'delegation'
+    Implementation NVARCHAR(MAX) NULL          -- How to implement the pattern
+);
+GO
+
+-- Acts: Explorer feature categories (high-level groupings)
+CREATE TABLE dbo.Acts (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX) NULL,
+    Category NVARCHAR(100) NULL               -- Explorer feature category
+);
+GO
+
+-- Scenes: Steps within an Act
+CREATE TABLE dbo.Scenes (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    ActId UNIQUEIDENTIFIER NOT NULL,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX) NULL,
+    Prerequisites NVARCHAR(MAX) NULL,          -- JSON array of prerequisite scene names
+    CONSTRAINT FK_Scenes_Act FOREIGN KEY (ActId) REFERENCES dbo.Acts(Id)
+);
+GO
+
+-- ----------------------------------------------------------------------------
+-- ECCX JUNCTION TABLES
+-- ----------------------------------------------------------------------------
+
+-- PatternSubAgents: Which sub-agents implement which patterns
+CREATE TABLE dbo.PatternSubAgents (
+    PatternId UNIQUEIDENTIFIER NOT NULL,
+    AgentId UNIQUEIDENTIFIER NOT NULL,
+    PRIMARY KEY (PatternId, AgentId),
+    CONSTRAINT FK_PatternSubAgents_Pattern FOREIGN KEY (PatternId) REFERENCES dbo.EmergentPatterns(Id),
+    CONSTRAINT FK_PatternSubAgents_Agent FOREIGN KEY (AgentId) REFERENCES dbo.Agents(Id)
+);
+GO
+
+-- PatternHooks: Which hooks are triggered by which patterns
+CREATE TABLE dbo.PatternHooks (
+    PatternId UNIQUEIDENTIFIER NOT NULL,
+    HookId UNIQUEIDENTIFIER NOT NULL,
+    PRIMARY KEY (PatternId, HookId),
+    CONSTRAINT FK_PatternHooks_Pattern FOREIGN KEY (PatternId) REFERENCES dbo.EmergentPatterns(Id),
+    CONSTRAINT FK_PatternHooks_Hook FOREIGN KEY (HookId) REFERENCES dbo.Hooks(Id)
+);
+GO
+
+-- SceneRelatedScenes: Relationships between scenes (for navigation/flow)
+CREATE TABLE dbo.SceneRelatedScenes (
+    SceneId UNIQUEIDENTIFIER NOT NULL,
+    RelatedSceneId UNIQUEIDENTIFIER NOT NULL,
+    PRIMARY KEY (SceneId, RelatedSceneId),
+    CONSTRAINT FK_SceneRelatedScenes_Scene FOREIGN KEY (SceneId) REFERENCES dbo.Scenes(Id),
+    CONSTRAINT FK_SceneRelatedScenes_RelatedScene FOREIGN KEY (RelatedSceneId) REFERENCES dbo.Scenes(Id)
+);
+GO
+
+-- ECCX indexes
+CREATE INDEX IX_Scenes_ActId ON dbo.Scenes(ActId);
 GO

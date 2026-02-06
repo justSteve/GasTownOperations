@@ -2,15 +2,67 @@
  * Skill Template Generator
  *
  * Generates .claude/skills/{category}/{name}/SKILL.md files from EccSkill entities.
+ * Skills can optionally include YAML frontmatter for Claude Code 2.1 capability fields.
  */
 
 import type { EccSkill } from '../ecc-types.js';
+
+/**
+ * Check if skill has any frontmatter properties
+ */
+function hasFrontmatter(skill: EccSkill): boolean {
+  return !!(
+    skill.hotReload !== undefined ||
+    (skill.allowedTools && skill.allowedTools.length > 0) ||
+    skill.contextMode
+  );
+}
+
+/**
+ * Generate YAML frontmatter for a skill file
+ * Only generates frontmatter if Claude Code 2.1 capability fields are present.
+ */
+function generateFrontmatter(skill: EccSkill): string | null {
+  if (!hasFrontmatter(skill)) {
+    return null;
+  }
+
+  const lines: string[] = ['---'];
+
+  // Hot reload (optional)
+  if (skill.hotReload !== undefined) {
+    lines.push(`hotReload: ${skill.hotReload}`);
+  }
+
+  // Context mode (optional)
+  if (skill.contextMode) {
+    lines.push(`contextMode: ${skill.contextMode}`);
+  }
+
+  // Allowed tools (optional)
+  if (skill.allowedTools && skill.allowedTools.length > 0) {
+    lines.push('allowedTools:');
+    for (const tool of skill.allowedTools) {
+      lines.push(`  - ${tool}`);
+    }
+  }
+
+  lines.push('---');
+  return lines.join('\n');
+}
 
 /**
  * Generate markdown content for a skill file
  */
 export function generateSkillFile(skill: EccSkill): string {
   const lines: string[] = [];
+
+  // YAML frontmatter (optional, only if Claude Code 2.1 fields present)
+  const frontmatter = generateFrontmatter(skill);
+  if (frontmatter) {
+    lines.push(frontmatter);
+    lines.push('');
+  }
 
   // Header
   lines.push(`# ${skill.title ?? skill.name}`);

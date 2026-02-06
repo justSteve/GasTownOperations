@@ -45,6 +45,27 @@ export interface EccAgent {
   ruleRefs?: string[];
 }
 
+/**
+ * SubAgent: Claude Code 2.1 sub-agents (policy islands for delegation)
+ *
+ * Sub-agents are specialized agents that can be spawned during a session with
+ * restricted contexts and tool access. They support 'fork' (new context) or
+ * 'inline' (shared context) modes.
+ */
+export interface EccSubAgent {
+  id: string;
+  pluginId: string;
+  name: string;
+  description?: string;
+  contextMode: 'fork' | 'inline';
+  instructions?: string;
+  allowedTools?: string[];
+  frontmatterConfig?: Record<string, unknown>;
+  // Relationship references (by name)
+  skillRefs?: string[];
+  hookRefs?: string[];
+}
+
 export interface EccSkill {
   id: string;
   pluginId: string;
@@ -53,6 +74,10 @@ export interface EccSkill {
   description?: string;
   content?: string;
   category?: string;
+  // Claude Code 2.1 capability fields
+  hotReload?: boolean;                          // Whether skill supports hot reload
+  allowedTools?: string[];                      // JSON array of allowed tools
+  contextMode?: 'inject' | 'reference' | 'lazy' | string;  // Context loading mode
   // Embedded child data
   patterns?: EccPattern[];
   workflows?: EccWorkflow[];
@@ -74,12 +99,20 @@ export interface EccHook {
   pluginId: string;
   name: string;
   description?: string;
-  eventType: 'PreToolUse' | 'PostToolUse' | 'Notification' | 'SessionStart' | 'SessionEnd' | 'PreCompact' | string;
+  eventType: 'PreToolUse' | 'PostToolUse' | 'UserPromptSubmit' | 'Stop' | 'Notification' | 'SessionStart' | 'SessionEnd' | 'PreCompact' | string;
   matcher?: string;
   enabled?: boolean;
   priority?: number;
+  scopeId?: string;  // Reference to HookScope for scope hierarchy
+  // Claude Code 2.1 protocol fields
+  exitCodeProtocol?: number;                    // Exit code behavior (0=success, etc.)
+  stdinSchema?: Record<string, unknown>;        // JSON schema for stdin input
+  stdoutSchema?: Record<string, unknown>;       // JSON schema for stdout output
+  timeout?: number;                             // Timeout in milliseconds
+  scopeLevel?: 'global' | 'project' | 'command' | string;  // Scope level for hook execution
   // Embedded child data
   actions?: EccHookAction[];
+  matchers?: EccHookMatcher[];  // Structured matchers (Claude Code 2.1)
 }
 
 export interface EccMcpServer {
@@ -145,6 +178,22 @@ export interface EccHookAction {
   command?: string;
   arguments?: Record<string, unknown>;
   actionOrder?: number;
+}
+
+export interface EccHookMatcher {
+  id: string;
+  hookId: string;
+  matcherType: 'tool' | 'skill' | 'pattern';
+  pattern: string;
+  description?: string;
+}
+
+export interface EccHookScope {
+  id: string;
+  name: string;
+  level: 'Global' | 'Project' | 'Skill' | 'SubAgent';
+  priority?: number;
+  description?: string;
 }
 
 export interface EccPhase {
@@ -257,6 +306,12 @@ export interface EccAgentsFile {
   agents: EccAgent[];
 }
 
+export interface EccSubAgentsFile {
+  $schema?: string;
+  description?: string;
+  subAgents: EccSubAgent[];
+}
+
 export interface EccSkillsFile {
   $schema?: string;
   description?: string;
@@ -273,6 +328,13 @@ export interface EccHooksFile {
   $schema?: string;
   description?: string;
   hooks: EccHook[];
+  scopes?: EccHookScope[];  // Optional hook scopes for scope hierarchy
+}
+
+export interface EccHookScopesFile {
+  $schema?: string;
+  description?: string;
+  scopes: EccHookScope[];
 }
 
 export interface EccMcpServersFile {
@@ -312,9 +374,11 @@ export interface EccContextProfilesFile {
 export interface ResolvedPlugin {
   plugin: EccPlugin;
   agents: EccAgent[];
+  subAgents: EccSubAgent[];  // Claude Code 2.1 sub-agents (policy islands)
   skills: EccSkill[];
   rules: EccRule[];
   hooks: EccHook[];
+  hookScopes?: EccHookScope[];  // Hook scope hierarchy (Claude Code 2.1)
   mcpServers: EccMcpServer[];
   contexts: EccContext[];
   commands: EccCommand[];

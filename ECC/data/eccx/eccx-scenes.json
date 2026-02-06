@@ -1,0 +1,5 @@
+{
+  "$schema": "../../schema/eccx-scenes.schema.json",
+  "description": "Scenes - steps within Acts with prerequisites and relationships",
+  "scenes": []
+}

@@ -1,0 +1,5 @@
+{
+  "$schema": "../../schema/eccx-emergent-patterns.schema.json",
+  "description": "Emergent patterns - workflow, decision, and delegation patterns that emerge from agent interactions",
+  "emergentPatterns": []
+}

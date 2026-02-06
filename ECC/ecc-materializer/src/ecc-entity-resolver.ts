@@ -8,6 +8,7 @@ import type { EccData } from './ecc-data-loader.js';
 import type {
   EccPlugin,
   EccAgent,
+  EccSubAgent,
   EccSkill,
   EccRule,
   EccHook,
@@ -35,6 +36,7 @@ export function resolvePlugin(pluginId: string, eccData: EccData): ResolvedPlugi
 
   // Filter entities belonging to this plugin
   const agents = eccData.agents.filter((a) => a.pluginId === pluginId);
+  const subAgents = eccData.subAgents?.filter((sa) => sa.pluginId === pluginId) ?? [];
   const skills = eccData.skills.filter((s) => s.pluginId === pluginId);
   const rules = eccData.rules.filter((r) => r.pluginId === pluginId);
   const hooks = eccData.hooks.filter((h) => h.pluginId === pluginId);
@@ -47,6 +49,7 @@ export function resolvePlugin(pluginId: string, eccData: EccData): ResolvedPlugi
   return {
     plugin,
     agents,
+    subAgents,
     skills,
     rules,
     hooks,

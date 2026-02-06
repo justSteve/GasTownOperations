@@ -1,0 +1,5 @@
+{
+  "$schema": "../../schema/eccx-acts.schema.json",
+  "description": "Acts - Explorer feature categories and high-level capability groupings",
+  "acts": []
+}

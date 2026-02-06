@@ -5,6 +5,7 @@
  */
 
 export { generateAgentFile, getAgentFilePath } from './template-agent.js';
+export { generateSubAgentFile, getSubAgentFilePath } from './template-subagent.js';
 export { generateCommandFile, getCommandFilePath } from './template-command.js';
 export { generateSkillFile, getSkillFilePath } from './template-skill.js';
 export { generateRuleFile, getRuleFilePath } from './template-rule.js';

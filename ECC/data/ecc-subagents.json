@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/ecc-subagents.schema.json",
+  "description": "SubAgent definitions - Claude Code 2.1 policy islands for delegation",
+  "subAgents": []
+}
