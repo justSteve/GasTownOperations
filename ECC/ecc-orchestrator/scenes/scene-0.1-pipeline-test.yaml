@@ -1,0 +1,45 @@
+# Scene 0.1: Pipeline Test
+# Minimal scene to verify full execution pipeline and event capture
+
+scene:
+  id: "0.1-pipeline-test"
+  act: 0
+  title: "Pipeline Verification"
+  duration_estimate: "30 seconds"
+
+purpose:
+  one_liner: "Verify the Explorer engine captures real Claude tool calls"
+  learning_outcomes:
+    - "Confirm observer hooks fire correctly"
+    - "Verify events.jsonl captures tool calls"
+    - "Validate end-to-end pipeline"
+
+prerequisites:
+  scenes: []
+  concepts: []
+
+assets:
+  files: []
+  mock_data: []
+
+parameters:
+  - name: test_message
+    type: string
+    default: "Explorer pipeline test"
+    description: "Message to echo for verification"
+
+execution_steps:
+  - step: 1
+    action: trigger_claude_command
+    input: "Say exactly: 'Pipeline test successful' and nothing else"
+    commentary:
+      commentary_l1: "Triggering Claude command"
+      commentary_l2: |
+        This sends a simple prompt to Claude Code.
+        The observer hook should capture any tool calls made.
+
+variations: []
+related_scenes:
+  - "1.1-basic-skill"
+
+export_artifacts: []

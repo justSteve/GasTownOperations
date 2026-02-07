@@ -229,17 +229,44 @@ class ChildLogger implements Logger {
 }
 
 /**
+ * Options for creating a logger with custom transports
+ */
+export interface CreateLoggerOptions {
+  /** Log level (default: 'INFO') */
+  level?: LogLevel;
+  /** Transport instances to use */
+  transports: LogTransport[];
+  /** Default context to include in all log entries */
+  defaultContext?: LogContext;
+}
+
+/**
  * Create a logger instance from configuration
  */
-export function createLogger(config: LoggingConfig): Logger {
+export function createLogger(config: LoggingConfig | CreateLoggerOptions): Logger {
+  // Check if we're using the new options format (transport instances)
+  if ('transports' in config && config.transports.length > 0 && 'write' in config.transports[0]) {
+    // New format: transport instances passed directly
+    const options = config as CreateLoggerOptions;
+    const logConfig: LoggingConfig = {
+      level: options.level || 'INFO',
+      format: 'json',
+      transports: [], // Not used when passing instances
+    };
+    return new LoggerImpl(logConfig, options.transports, options.defaultContext);
+  }
+
+  // Original format: transport configs
+  const legacyConfig = config as LoggingConfig;
+
   // Create formatter based on config
   const formatter =
-    config.format === 'json' ? createJsonFormatter() : createPrettyFormatter();
+    legacyConfig.format === 'json' ? createJsonFormatter() : createPrettyFormatter();
 
   // Create transports based on config
   const transports: LogTransport[] = [];
 
-  for (const transportConfig of config.transports) {
+  for (const transportConfig of legacyConfig.transports) {
     switch (transportConfig.type) {
       case 'console':
         transports.push(new ConsoleTransport(formatter));
@@ -266,7 +293,7 @@ export function createLogger(config: LoggingConfig): Logger {
     transports.push(new ConsoleTransport(formatter));
   }
 
-  return new LoggerImpl(config, transports);
+  return new LoggerImpl(legacyConfig, transports);
 }
 
 /**

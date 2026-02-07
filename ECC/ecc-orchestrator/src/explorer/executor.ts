@@ -35,6 +35,15 @@ export interface ExecutorOptions {
   eventEmitter?: EngineEventEmitter;
   /** Working directory for Claude Code */
   workingDir?: string;
+  /**
+   * Skip Claude Code permission prompts (DEVELOPMENT/TESTING ONLY).
+   *
+   * When true, passes --dangerously-skip-permissions to the CLI.
+   * This should NEVER be enabled in production environments.
+   *
+   * Default: false
+   */
+  dangerouslySkipPermissions?: boolean;
 }
 
 /**
@@ -52,6 +61,7 @@ export class SceneExecutor extends EventEmitter {
       timeoutMs: options.timeoutMs || 300000,
       eventEmitter: options.eventEmitter || null!,
       workingDir: options.workingDir || process.cwd(),
+      dangerouslySkipPermissions: options.dangerouslySkipPermissions || false,
     };
   }
 
@@ -252,21 +262,33 @@ export class SceneExecutor extends EventEmitter {
         reject(new TimeoutError(`Command timed out after ${this.options.timeoutMs}ms`, this.options.timeoutMs));
       }, this.options.timeoutMs);
 
-      // Set up Claude Code with custom config directory
-      const env = {
-        ...process.env,
-        CLAUDE_CONFIG_DIR: config.configDir,
-      };
+      // Use inherited env (don't override CLAUDE_CONFIG_DIR - that would lose auth)
+      // We use --settings flag to load our hooks instead
+      const env = { ...process.env };
+
+      // Build CLI arguments
+      // --dangerously-skip-permissions is opt-in and should only be used for testing
+      const args = [
+        '--print',
+        ...(this.options.dangerouslySkipPermissions ? ['--dangerously-skip-permissions'] : []),
+        '--settings', config.settingsPath,
+      ];
 
       this.currentProcess = spawn(
         this.options.claudeCliPath,
-        ['--print', '--dangerously-skip-permissions', command],
+        args,
         {
           cwd: this.options.workingDir,
           env,
           stdio: ['pipe', 'pipe', 'pipe'],
         }
       );
+
+      // Send prompt via stdin (required for --print mode)
+      if (this.currentProcess.stdin) {
+        this.currentProcess.stdin.write(command);
+        this.currentProcess.stdin.end();
+      }
 
       let stdout = '';
       let stderr = '';

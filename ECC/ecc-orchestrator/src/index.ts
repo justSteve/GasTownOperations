@@ -9,6 +9,7 @@
 export * from './logging/types.js';
 export * from './logging/logger.js';
 export * from './logging/formatters/index.js';
+export * from './logging/transports/index.js';
 
 // Error handling
 export * from './errors/error-types.js';

@@ -1,0 +1,41 @@
+# Scene 0.2: Tool Capture Test
+# Forces tool use to verify hook event capture
+
+scene:
+  id: "0.2-tool-capture"
+  act: 0
+  title: "Tool Capture Verification"
+  duration_estimate: "30 seconds"
+
+purpose:
+  one_liner: "Verify observer hooks capture tool calls to events.jsonl"
+  learning_outcomes:
+    - "Confirm preToolUse hooks fire"
+    - "Verify events.jsonl contains tool call data"
+    - "Validate observer.sh integration"
+
+prerequisites:
+  scenes: []
+  concepts: []
+
+assets:
+  files: []
+  mock_data: []
+
+parameters: []
+
+execution_steps:
+  - step: 1
+    action: trigger_claude_command
+    input: "Use the Read tool to read the file /etc/hostname and tell me what it contains"
+    commentary:
+      commentary_l1: "Triggering a tool call"
+      commentary_l2: |
+        This prompt forces Claude to use the Read tool.
+        The observer hook should capture this tool call.
+
+variations: []
+related_scenes:
+  - "0.1-pipeline-test"
+
+export_artifacts: []

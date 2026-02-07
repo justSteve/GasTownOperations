@@ -770,3 +770,176 @@ describe('Logger event method', () => {
     expect(parsed.message).toBe('Event: user:login');
   });
 });
+
+// ============================================================================
+// FileTransport Tests
+// ============================================================================
+
+import { FileTransport, createFileTransport } from '../src/index.js';
+import { existsSync, readFileSync, rmSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+
+describe('FileTransport', () => {
+  const testDir = join(tmpdir(), 'ecc-orchestrator-test-logs');
+
+  beforeEach(() => {
+    // Clean up test directory before each test
+    if (existsSync(testDir)) {
+      rmSync(testDir, { recursive: true });
+    }
+  });
+
+  afterEach(() => {
+    // Clean up after tests
+    if (existsSync(testDir)) {
+      rmSync(testDir, { recursive: true });
+    }
+  });
+
+  test('creates log file in specified directory', () => {
+    const filePath = join(testDir, 'test.jsonl');
+    const transport = new FileTransport({ filePath });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'test message',
+    });
+
+    expect(existsSync(filePath)).toBe(true);
+  });
+
+  test('creates nested directories automatically', () => {
+    const filePath = join(testDir, 'nested', 'deep', 'test.jsonl');
+    const transport = new FileTransport({ filePath });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'test message',
+    });
+
+    expect(existsSync(filePath)).toBe(true);
+  });
+
+  test('writes entries as JSON Lines', () => {
+    const filePath = join(testDir, 'test.jsonl');
+    const transport = new FileTransport({ filePath });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'first message',
+    });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:01.000Z',
+      level: 'WARN',
+      message: 'second message',
+    });
+
+    const content = readFileSync(filePath, 'utf-8');
+    const lines = content.trim().split('\n');
+
+    expect(lines.length).toBe(2);
+
+    const first = JSON.parse(lines[0]);
+    expect(first.message).toBe('first message');
+    expect(first.level).toBe('INFO');
+
+    const second = JSON.parse(lines[1]);
+    expect(second.message).toBe('second message');
+    expect(second.level).toBe('WARN');
+  });
+
+  test('includes context in log entries', () => {
+    const filePath = join(testDir, 'test.jsonl');
+    const transport = new FileTransport({ filePath });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'test message',
+      context: { userId: '123', action: 'login' },
+    });
+
+    const content = readFileSync(filePath, 'utf-8');
+    const entry = JSON.parse(content.trim());
+
+    expect(entry.context.userId).toBe('123');
+    expect(entry.context.action).toBe('login');
+  });
+
+  test('includes error information', () => {
+    const filePath = join(testDir, 'test.jsonl');
+    const transport = new FileTransport({ filePath });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'ERROR',
+      message: 'error occurred',
+      error: {
+        name: 'TypeError',
+        message: 'Cannot read property',
+        code: 'ERR_INVALID',
+      },
+    });
+
+    const content = readFileSync(filePath, 'utf-8');
+    const entry = JSON.parse(content.trim());
+
+    expect(entry.error.name).toBe('TypeError');
+    expect(entry.error.message).toBe('Cannot read property');
+    expect(entry.error.code).toBe('ERR_INVALID');
+  });
+
+  test('getFilePath returns configured path', () => {
+    const filePath = join(testDir, 'test.jsonl');
+    const transport = new FileTransport({ filePath });
+
+    expect(transport.getFilePath()).toBe(filePath);
+  });
+
+  test('append=false clears existing file', () => {
+    const filePath = join(testDir, 'test.jsonl');
+
+    // Create file with initial content
+    mkdirSync(testDir, { recursive: true });
+    require('node:fs').writeFileSync(filePath, '{"old":"data"}\n');
+
+    // Create transport with append=false
+    const transport = new FileTransport({ filePath, append: false });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'new message',
+    });
+
+    const content = readFileSync(filePath, 'utf-8');
+    const lines = content.trim().split('\n');
+
+    expect(lines.length).toBe(1);
+    expect(lines[0]).toContain('new message');
+    expect(lines[0]).not.toContain('old');
+  });
+
+  test('createFileTransport generates timestamped filename', () => {
+    const transport = createFileTransport(testDir, 'engine');
+    const filePath = transport.getFilePath();
+
+    expect(filePath).toContain(testDir);
+    expect(filePath).toContain('engine-');
+    expect(filePath).toContain('.jsonl');
+
+    // Write something to create the file
+    transport.write({
+      timestamp: new Date().toISOString(),
+      level: 'INFO',
+      message: 'test',
+    });
+
+    expect(existsSync(filePath)).toBe(true);
+  });
+});
