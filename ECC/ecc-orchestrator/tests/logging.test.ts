@@ -943,3 +943,225 @@ describe('FileTransport', () => {
     expect(existsSync(filePath)).toBe(true);
   });
 });
+
+// ============================================================================
+// ZgentTransport Tests
+// ============================================================================
+
+import {
+  ZgentTransport,
+  createZgentTransport,
+  getZgentRegistry,
+  listZgentLogs,
+  listAllZgentLogs,
+} from '../src/index.js';
+import { createZgentLogger } from '../src/logging/logger.js';
+
+describe('ZgentTransport', () => {
+  const testBaseDir = join(tmpdir(), 'zgent-test-' + Date.now());
+
+  afterEach(() => {
+    // Clean up test directory
+    if (existsSync(testBaseDir)) {
+      rmSync(testBaseDir, { recursive: true });
+    }
+  });
+
+  test('creates log file in zgent-specific directory', () => {
+    const transport = new ZgentTransport({
+      zgentId: 'test-zgent',
+      baseDir: testBaseDir,
+      registerZgent: false,
+    });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'test message',
+    });
+
+    const logDir = transport.getLogDir();
+    expect(logDir).toContain('test-zgent');
+    expect(existsSync(transport.getFilePath())).toBe(true);
+  });
+
+  test('adds zgentId and sessionId to log entries', () => {
+    const transport = new ZgentTransport({
+      zgentId: 'dreader',
+      sessionId: 'session-123',
+      baseDir: testBaseDir,
+      registerZgent: false,
+    });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'test message',
+    });
+
+    const content = readFileSync(transport.getFilePath(), 'utf-8');
+    const entry = JSON.parse(content.trim());
+
+    expect(entry.zgentId).toBe('dreader');
+    expect(entry.sessionId).toBe('session-123');
+  });
+
+  test('includes zgentVersion when provided', () => {
+    const transport = new ZgentTransport({
+      zgentId: 'explorer',
+      zgentVersion: '1.2.3',
+      baseDir: testBaseDir,
+      registerZgent: false,
+    });
+
+    transport.write({
+      timestamp: '2024-01-01T00:00:00.000Z',
+      level: 'INFO',
+      message: 'test',
+    });
+
+    const content = readFileSync(transport.getFilePath(), 'utf-8');
+    const entry = JSON.parse(content.trim());
+
+    expect(entry.zgentVersion).toBe('1.2.3');
+  });
+
+  test('generates sessionId if not provided', () => {
+    const transport = new ZgentTransport({
+      zgentId: 'test-zgent',
+      baseDir: testBaseDir,
+      registerZgent: false,
+    });
+
+    expect(transport.getSessionId()).toBeTruthy();
+    expect(transport.getSessionId().length).toBeGreaterThan(5);
+  });
+
+  test('registers zgent in registry by default', () => {
+    const transport = new ZgentTransport({
+      zgentId: 'registry-test',
+      zgentName: 'Registry Test Zgent',
+      zgentVersion: '1.0.0',
+      zgentDescription: 'A test zgent',
+      baseDir: testBaseDir,
+    });
+
+    const registry = getZgentRegistry(testBaseDir);
+    expect(registry.zgents['registry-test']).toBeDefined();
+    expect(registry.zgents['registry-test'].name).toBe('Registry Test Zgent');
+    expect(registry.zgents['registry-test'].version).toBe('1.0.0');
+  });
+
+  test('createZgentTransport creates transport with defaults', () => {
+    const transport = createZgentTransport('simple-zgent', {
+      baseDir: testBaseDir,
+      registerZgent: false,
+    });
+
+    expect(transport.getLogDir()).toContain('simple-zgent');
+    expect(transport.getSessionId()).toBeTruthy();
+  });
+});
+
+describe('Zgent Log Discovery', () => {
+  const testBaseDir = join(tmpdir(), 'zgent-discovery-' + Date.now());
+
+  afterEach(() => {
+    if (existsSync(testBaseDir)) {
+      rmSync(testBaseDir, { recursive: true });
+    }
+  });
+
+  test('listZgentLogs returns log files for a zgent', () => {
+    // Create some logs
+    const transport1 = new ZgentTransport({
+      zgentId: 'dreader',
+      baseDir: testBaseDir,
+      registerZgent: false,
+    });
+    transport1.write({ timestamp: new Date().toISOString(), level: 'INFO', message: 'log1' });
+
+    const logs = listZgentLogs('dreader', testBaseDir);
+    expect(logs.length).toBe(1);
+    expect(logs[0]).toContain('dreader');
+  });
+
+  test('listAllZgentLogs returns logs across all zgents', () => {
+    // Create logs for multiple zgents
+    const t1 = new ZgentTransport({ zgentId: 'zgent-a', baseDir: testBaseDir, registerZgent: false });
+    const t2 = new ZgentTransport({ zgentId: 'zgent-b', baseDir: testBaseDir, registerZgent: false });
+
+    t1.write({ timestamp: new Date().toISOString(), level: 'INFO', message: 'a' });
+    t2.write({ timestamp: new Date().toISOString(), level: 'INFO', message: 'b' });
+
+    const allLogs = listAllZgentLogs(testBaseDir);
+    expect(allLogs.length).toBe(2);
+
+    const zgentIds = allLogs.map((l) => l.zgentId);
+    expect(zgentIds).toContain('zgent-a');
+    expect(zgentIds).toContain('zgent-b');
+  });
+});
+
+describe('createZgentLogger', () => {
+  const testBaseDir = join(tmpdir(), 'zgent-logger-' + Date.now());
+
+  afterEach(() => {
+    if (existsSync(testBaseDir)) {
+      rmSync(testBaseDir, { recursive: true });
+    }
+  });
+
+  test('creates a logger that writes to zgent directory', () => {
+    const logger = createZgentLogger({
+      zgentId: 'logger-test',
+      baseDir: testBaseDir,
+    });
+
+    logger.info('Hello from zgent logger');
+
+    const logs = listZgentLogs('logger-test', testBaseDir);
+    expect(logs.length).toBe(1);
+
+    const content = readFileSync(logs[0], 'utf-8');
+    const entry = JSON.parse(content.trim());
+    expect(entry.zgentId).toBe('logger-test');
+    expect(entry.message).toBe('Hello from zgent logger');
+  });
+
+  test('respects log level configuration', () => {
+    const logger = createZgentLogger({
+      zgentId: 'level-test',
+      level: 'WARN',
+      baseDir: testBaseDir,
+    });
+
+    logger.debug('should not appear');
+    logger.info('should not appear');
+    logger.warn('should appear');
+
+    const logs = listZgentLogs('level-test', testBaseDir);
+    const content = readFileSync(logs[0], 'utf-8');
+    const lines = content.trim().split('\n');
+
+    expect(lines.length).toBe(1);
+    expect(lines[0]).toContain('should appear');
+  });
+
+  test('includes default context in all entries', () => {
+    const logger = createZgentLogger({
+      zgentId: 'context-test',
+      baseDir: testBaseDir,
+      defaultContext: { environment: 'test', version: '1.0' },
+    });
+
+    logger.info('test message');
+
+    const logs = listZgentLogs('context-test', testBaseDir);
+    const content = readFileSync(logs[0], 'utf-8');
+    const entry = JSON.parse(content.trim());
+
+    expect(entry.context.environment).toBe('test');
+    expect(entry.context.version).toBe('1.0');
+  });
+});

@@ -37,6 +37,21 @@ export interface LogEntry {
 }
 
 /**
+ * Zgent-aware log entry with first-class identity fields.
+ *
+ * Used by Zgents to ensure centralized log aggregation works correctly.
+ * The zgentId enables filtering/grouping across the ecosystem.
+ */
+export interface ZgentLogEntry extends LogEntry {
+  /** Zgent identifier (e.g., "dreader", "explorer", "parseclipmate") */
+  zgentId: string;
+  /** Optional session ID for correlating logs within a single run */
+  sessionId?: string;
+  /** Optional Zgent version for debugging version-specific issues */
+  zgentVersion?: string;
+}
+
+/**
  * Logger configuration
  */
 export interface LoggingConfig {

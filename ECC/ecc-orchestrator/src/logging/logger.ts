@@ -331,3 +331,85 @@ export const DEFAULT_PROD_CONFIG: LoggingConfig = {
   format: 'json',
   transports: [{ type: 'console' }],
 };
+
+// ============================================================================
+// Zgent Logger Factory
+// ============================================================================
+
+import { ZgentTransport, type ZgentTransportOptions } from './transports/zgent.js';
+
+/**
+ * Options for creating a Zgent logger
+ */
+export interface CreateZgentLoggerOptions {
+  /** Zgent identifier (e.g., "dreader", "explorer") */
+  zgentId: string;
+  /** Optional Zgent version */
+  zgentVersion?: string;
+  /** Session ID for correlating logs within a run (auto-generated if not provided) */
+  sessionId?: string;
+  /** Log level (default: 'INFO') */
+  level?: LogLevel;
+  /** Base directory for Zgent data (default: ~/.zgents) */
+  baseDir?: string;
+  /** Human-readable name for registry (default: zgentId) */
+  zgentName?: string;
+  /** Description for registry */
+  zgentDescription?: string;
+  /** Additional default context to include in all log entries */
+  defaultContext?: LogContext;
+  /** Also log to console (default: false in production) */
+  alsoLogToConsole?: boolean;
+}
+
+/**
+ * Create a logger configured for a Zgent with centralized logging.
+ *
+ * This is the recommended way for Zgents to initialize logging. It:
+ * - Writes to the standard Zgent log directory (~/.zgents/logs/{zgentId}/)
+ * - Registers the Zgent in the ecosystem registry
+ * - Adds zgentId and sessionId to all log entries automatically
+ *
+ * @example
+ * ```typescript
+ * // Simple usage - just provide zgentId
+ * const logger = createZgentLogger({ zgentId: 'dreader' });
+ *
+ * // Logs are written to ~/.zgents/logs/dreader/<timestamp>.jsonl
+ * logger.info('Starting Discord collection', { channelCount: 5 });
+ *
+ * // Full configuration
+ * const logger = createZgentLogger({
+ *   zgentId: 'dreader',
+ *   zgentVersion: '1.0.0',
+ *   zgentName: 'Discord Reader',
+ *   zgentDescription: 'Collects messages from Discord channels',
+ *   level: 'DEBUG',
+ *   alsoLogToConsole: true,
+ * });
+ * ```
+ */
+export function createZgentLogger(options: CreateZgentLoggerOptions): Logger {
+  const transportOptions: ZgentTransportOptions = {
+    zgentId: options.zgentId,
+    zgentVersion: options.zgentVersion,
+    sessionId: options.sessionId,
+    baseDir: options.baseDir,
+    zgentName: options.zgentName,
+    zgentDescription: options.zgentDescription,
+  };
+
+  const zgentTransport = new ZgentTransport(transportOptions);
+  const transports: LogTransport[] = [zgentTransport];
+
+  // Optionally add console transport
+  if (options.alsoLogToConsole) {
+    transports.push(new ConsoleTransport(createPrettyFormatter()));
+  }
+
+  return createLogger({
+    level: options.level,
+    transports,
+    defaultContext: options.defaultContext,
+  });
+}
