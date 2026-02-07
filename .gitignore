@@ -24,3 +24,4 @@ dist/
 
 # MCP config (contains credentials)
 .mcp.json
+ECC/ecc-orchestrator/logs/
