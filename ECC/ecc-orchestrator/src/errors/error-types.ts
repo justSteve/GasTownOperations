@@ -332,3 +332,49 @@ export class TakeError extends SceneError {
     this.takeId = takeId;
   }
 }
+
+// =============================================================================
+// Validation Errors
+// =============================================================================
+
+/**
+ * Thrown when data validation fails
+ */
+export class ValidationError extends ConfigurationError {
+  override readonly code: string = 'VALIDATION_ERROR';
+  readonly field: string;
+  readonly value: unknown;
+
+  constructor(
+    message: string,
+    field: string,
+    value?: unknown,
+    context?: ErrorContext,
+    cause?: Error
+  ) {
+    super(message, context, cause);
+    this.field = field;
+    this.value = value;
+  }
+}
+
+// =============================================================================
+// Execution Errors
+// =============================================================================
+
+/**
+ * Thrown when command or process execution fails
+ */
+export class ExecutionError extends RuntimeError {
+  override readonly code: string;
+
+  constructor(
+    message: string,
+    code: string = 'EXECUTION_ERROR',
+    context?: ErrorContext,
+    cause?: Error
+  ) {
+    super(message, context, cause);
+    this.code = code;
+  }
+}

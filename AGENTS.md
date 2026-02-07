@@ -166,7 +166,7 @@ sudo -u gtuser tmux list-panes -t gt-user:main
 ```
 
 ## Initialization (via /gt-update)
-
+    
 The `/gt-update` slash command includes steps to:
 1. Run `gt-dashboard.sh` to create the terminals
 2. Start GT services via send-keys to gt-user

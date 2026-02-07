@@ -17,3 +17,6 @@ export * from './errors/error-handler.js';
 // Event system
 export * from './events/event-types.js';
 export * from './events/event-emitter.js';
+
+// Explorer engine
+export * from './explorer/index.js';

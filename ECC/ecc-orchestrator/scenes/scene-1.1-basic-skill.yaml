@@ -1,0 +1,102 @@
+# Scene 1.1: Basic Skill Creation
+# Demonstrates that skills are just Markdown files with YAML frontmatter
+
+scene:
+  id: "1.1-basic-skill"
+  act: 1
+  title: "Basic Skill Creation"
+  duration_estimate: "2-3 minutes"
+
+purpose:
+  one_liner: "Demonstrate that skills are just Markdown files with YAML frontmatter"
+  learning_outcomes:
+    - "Understand skill file structure"
+    - "See how to invoke skills via /skill-name"
+    - "Learn where skills live (global vs project)"
+
+prerequisites:
+  scenes: []
+  concepts:
+    - "YAML frontmatter"
+    - "Markdown files"
+
+assets:
+  files:
+    - path: ".claude/skills/hello-world.SKILL.md"
+      role: "The sample skill file"
+      content: |
+        ---
+        name: hello-world
+        description: A simple greeting skill for demonstration
+        ---
+
+        # Hello World Skill
+
+        When invoked, greet the user warmly and explain that you are
+        a demonstration skill created for the Claude Code Explorer.
+
+        Say: "Hello from the Explorer! I'm a skill defined in a simple
+        Markdown file with YAML frontmatter."
+  mock_data: []
+
+parameters:
+  - name: skill_name
+    type: string
+    default: "hello-world"
+    description: "Name of the skill to create"
+  - name: greeting_message
+    type: string
+    default: "Hello from the Explorer!"
+    description: "The greeting message the skill will use"
+
+execution_steps:
+  - step: 1
+    action: display_configuration
+    commentary:
+      commentary_l1: "This is our skill file"
+      commentary_l2: |
+        We're looking at a minimal skill definition. Notice:
+        - The YAML frontmatter between --- markers
+        - The 'name' field that determines the /command
+        - The 'description' for discoverability
+        - The Markdown body containing instructions
+
+  - step: 2
+    action: invoke_skill
+    input: "hello-world"
+    commentary:
+      commentary_l1: "Invoking the skill"
+      commentary_l2: |
+        When we type /hello-world, Claude Code:
+        1. Looks for a matching skill file
+        2. Reads the frontmatter and body
+        3. Injects the instructions into context
+        4. Responds according to those instructions
+
+  - step: 3
+    action: display_configuration
+    commentary:
+      commentary_l1: "Skill loaded successfully"
+      commentary_l2: |
+        The skill's instructions are now active. Claude followed
+        the directive in the Markdown body to greet us.
+
+variations:
+  - id: custom_greeting
+    description: "Use a custom greeting message"
+    parameter_overrides:
+      greeting_message: "Greetings, Explorer!"
+
+  - id: different_name
+    description: "Use a different skill name"
+    parameter_overrides:
+      skill_name: "greet-me"
+
+related_scenes:
+  - "1.2-skill-hot-reload"
+  - "1.3-skills-with-tool-restrictions"
+
+export_artifacts:
+  - type: skill_file
+    description: "The hello-world.SKILL.md file ready to use"
+    path: ".claude/skills/hello-world.SKILL.md"
