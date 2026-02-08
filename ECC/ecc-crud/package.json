@@ -1,0 +1,42 @@
+{
+  "name": "@ecc/crud",
+  "version": "0.1.0",
+  "description": "CRUD operations for ECC entities with traffic logging",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "build:types": "tsc --emitDeclarationOnly",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "claude-code",
+    "crud",
+    "ecc",
+    "entities"
+  ],
+  "author": "gtOps",
+  "license": "MIT",
+  "dependencies": {
+    "ecc-materializer": "file:../ecc-materializer"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@ecc/orchestrator": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@ecc/orchestrator": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
