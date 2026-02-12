@@ -25,7 +25,7 @@
         .reveal h2 { font-size: 1.6em; color: #00d4ff; }
         .reveal h3 { font-size: 1.2em; color: #888; }
         .reveal ul { text-align: left; }
-        .reveal li { margin-bottom: 0.5em; }
+        .reveal li { margin-bottom: 0.35em; }
         .reveal table {
             font-size: 0.75em;
             border-collapse: collapse;
@@ -50,35 +50,44 @@
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid #00d4ff;
             border-radius: 8px;
-            padding: 1em 1.5em;
-            margin: 0.5em;
+            padding: 0.7em 1.2em;
+            margin: 0.3em;
             text-align: center;
         }
         .metric-box .number {
-            font-size: 2em;
+            font-size: 1.6em;
             font-weight: bold;
             color: #00d4ff;
         }
         .metric-box .label {
-            font-size: 0.8em;
+            font-size: 0.75em;
             color: #888;
         }
         .pain-point {
             background: rgba(255, 100, 100, 0.1);
             border-left: 4px solid #ff6464;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.4em 0.8em;
+            margin: 0.35em 0;
             text-align: left;
+            font-size: 0.88em;
         }
         .solution-point {
             background: rgba(100, 255, 150, 0.1);
             border-left: 4px solid #64ff96;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.4em 0.8em;
+            margin: 0.35em 0;
             text-align: left;
+            font-size: 0.88em;
         }
         .mermaid {
             font-size: 0.7em;
+        }
+        .mermaid svg {
+            max-height: 380px;
+        }
+        /* Global overflow safety net */
+        .reveal .slides section {
+            overflow-y: auto;
         }
         .two-column {
             display: flex;
@@ -101,11 +110,11 @@
         .quote-block {
             background: rgba(0, 212, 255, 0.05);
             border-left: 4px solid #00d4ff;
-            padding: 1em 1.5em;
-            margin: 1em 0;
+            padding: 0.7em 1.2em;
+            margin: 0.7em 0;
             font-style: italic;
             text-align: left;
-            font-size: 0.9em;
+            font-size: 0.82em;
         }
         .quote-block .attribution {
             font-style: normal;
@@ -117,11 +126,11 @@
             background: #0d0d15;
             border: 1px solid #333;
             border-radius: 8px;
-            padding: 1em 1.5em;
+            padding: 0.7em 1.2em;
             font-family: 'Cascadia Code', 'Fira Code', monospace;
-            font-size: 0.6em;
+            font-size: 0.55em;
             text-align: left;
-            line-height: 1.6;
+            line-height: 1.45;
         }
         .terminal-box .prompt { color: #64ff96; }
         .terminal-box .cmd { color: #eaeaea; }
@@ -144,10 +153,10 @@
         }
         .pane-grid .pane {
             background: #0d0d15;
-            padding: 0.8em;
+            padding: 0.6em;
             font-family: 'Cascadia Code', 'Fira Code', monospace;
             text-align: left;
-            min-height: 100px;
+            min-height: 80px;
         }
         .pane-grid .pane .pane-title {
             color: #00d4ff;
@@ -212,19 +221,19 @@
         .open-question {
             background: rgba(255, 170, 0, 0.08);
             border-left: 4px solid #ffaa00;
-            padding: 0.5em 1em;
-            margin: 0.4em 0;
+            padding: 0.35em 0.8em;
+            margin: 0.25em 0;
             text-align: left;
-            font-size: 0.85em;
+            font-size: 0.78em;
         }
         .open-question strong { color: #ffaa00; }
         .vision-stat {
             display: inline-block;
-            margin: 0.5em 1em;
+            margin: 0.3em 1em;
             text-align: center;
         }
         .vision-stat .num {
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: bold;
             color: #00d4ff;
             line-height: 1;
@@ -803,5 +812,9 @@
             backgroundTransition: 'fade'
         });
     </script>
+
+    <!-- Help Widget -->
+    <link rel="stylesheet" href="../shared/widget.css">
+    <script src="../shared/widget.js"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@
         .reveal h2 { font-size: 1.6em; color: #00d4ff; }
         .reveal h3 { font-size: 1.2em; color: #888; }
         .reveal ul { text-align: left; }
-        .reveal li { margin-bottom: 0.5em; }
+        .reveal li { margin-bottom: 0.35em; }
         .highlight { color: #00d4ff; font-weight: bold; }
         .dim { color: #666; }
         .metric-box {
@@ -33,35 +33,44 @@
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid #00d4ff;
             border-radius: 8px;
-            padding: 1em 1.5em;
-            margin: 0.5em;
+            padding: 0.7em 1.2em;
+            margin: 0.3em;
             text-align: center;
         }
         .metric-box .number {
-            font-size: 2em;
+            font-size: 1.7em;
             font-weight: bold;
             color: #00d4ff;
         }
         .metric-box .label {
-            font-size: 0.8em;
+            font-size: 0.75em;
             color: #888;
         }
         .pain-point {
             background: rgba(255, 100, 100, 0.1);
             border-left: 4px solid #ff6464;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.4em 0.8em;
+            margin: 0.35em 0;
             text-align: left;
+            font-size: 0.9em;
         }
         .solution-point {
             background: rgba(100, 255, 150, 0.1);
             border-left: 4px solid #64ff96;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.4em 0.8em;
+            margin: 0.35em 0;
             text-align: left;
+            font-size: 0.9em;
         }
         .mermaid {
             font-size: 0.7em;
+        }
+        .mermaid svg {
+            max-height: 380px;
+        }
+        /* Global overflow safety net */
+        .reveal .slides section {
+            overflow-y: auto;
         }
         .two-column {
             display: flex;
@@ -537,5 +546,9 @@
             backgroundTransition: 'fade'
         });
     </script>
+
+    <!-- Help Widget -->
+    <link rel="stylesheet" href="../shared/widget.css">
+    <script src="../shared/widget.js"></script>
 </body>
 </html>

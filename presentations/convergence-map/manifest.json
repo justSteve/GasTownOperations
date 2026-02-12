@@ -1,0 +1,96 @@
+{
+  "id": "convergence-map",
+  "title": "The Convergence Map",
+  "subtitle": "Where Everything Connects",
+  "date": "2026-02",
+  "author": "COO",
+  "bead": "gt-ref.4",
+  "status": "complete",
+  "slideCount": 16,
+  "description": "Meta-synthesis across the Gas Town ecosystem. Identifies seven structural connections between Infrastructure (ECC, CrudEngine, AOE), Interaction (tmuxMOO), and Ecosystem (Academy, conventions, presentations) -- revealing them as three projections of one coherent system.",
+  "narrativeArc": "The presentation starts with three seemingly separate work streams, builds suspicion that they are connected, then proves it with seven specific connections. Each connection should feel like a small revelation; together they are overwhelming. The master insight: we are not building three things -- we are building one thing from three angles. The convergence was not planned; it emerged from following observability-first consistently.",
+  "tags": ["convergence", "meta-synthesis", "observability", "architecture", "moo", "ecosystem", "infrastructure", "interaction"],
+  "connections": ["zgent-anatomy", "rooms-and-presence", "infrastructure-stack", "crudengine-exec-walkthrough"],
+  "slides": [
+    {
+      "index": 0,
+      "title": "The Convergence Map",
+      "role": "Positions this as the most important presentation in the series -- meta-synthesis across all domains"
+    },
+    {
+      "index": 1,
+      "title": "The Landscape",
+      "role": "Presents three work streams as isolated islands to set up the reveal"
+    },
+    {
+      "index": 2,
+      "title": "The Suspicion",
+      "role": "The pivot moment -- these are not separate, they are three projections of one system"
+    },
+    {
+      "index": 3,
+      "title": "Connection 1: Observability IS the Product",
+      "role": "Reveals that tmuxMOO, traffic logs, and events are three surfaces of one product"
+    },
+    {
+      "index": 4,
+      "title": "Connection 2: Rooms All the Way Down",
+      "role": "Shows that pane, log directory, scene, and context profile are isomorphic"
+    },
+    {
+      "index": 5,
+      "title": "Connection 3: Traffic Logs = Narrative Replay",
+      "role": "Connects CrudEngine's audit trail to tmuxMOO's replay mode"
+    },
+    {
+      "index": 6,
+      "title": "Connection 4: Presentations as API",
+      "role": "Reveals that presentation standard and API publication are the same requirement"
+    },
+    {
+      "index": 7,
+      "title": "Connection 5: The COO as World Builder",
+      "role": "Shows the define-instantiate-execute-display pipeline as world building"
+    },
+    {
+      "index": 8,
+      "title": "Connection 6: Academy = Test Suite",
+      "role": "Maps graduation criteria directly to automated test categories"
+    },
+    {
+      "index": 9,
+      "title": "Connection 7: Scene = Room = Context",
+      "role": "Identifies the most structurally significant convergence -- three names for one primitive"
+    },
+    {
+      "index": 10,
+      "title": "The Unified Architecture",
+      "role": "The money diagram -- all three layers composed into one coherent system"
+    },
+    {
+      "index": 11,
+      "title": "What This Means",
+      "role": "Distills the master insight: programmable, inhabitable, interoperable"
+    },
+    {
+      "index": 12,
+      "title": "The Gaps",
+      "role": "Maintains credibility by identifying where convergence is incomplete"
+    },
+    {
+      "index": 13,
+      "title": "The 30-Year Arc",
+      "role": "Places Gas Town in the 1995-2025-2026 historical trajectory"
+    },
+    {
+      "index": 14,
+      "title": "What Comes Next",
+      "role": "Converts analysis into actionable work items -- the convergence map generates its own backlog"
+    },
+    {
+      "index": 15,
+      "title": "Questions / Close",
+      "role": "Restates the master insight: one system expressing itself at three levels of abstraction"
+    }
+  ]
+}

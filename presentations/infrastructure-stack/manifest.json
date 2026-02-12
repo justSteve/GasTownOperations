@@ -1,0 +1,96 @@
+{
+  "id": "infrastructure-stack",
+  "title": "The Infrastructure Stack",
+  "subtitle": "How Gas Town Agents Get Their Plumbing",
+  "date": "2026-02",
+  "author": "COO",
+  "bead": "gt-ref.3",
+  "status": "complete",
+  "slideCount": 16,
+  "description": "Explains how ECC, AOE, CrudEngine, and Explorer compose into a coherent infrastructure stack for managing Gas Town agent configurations at scale. Includes 6 Mermaid diagrams covering the stack overview, event system, CrudEngine flow, Explorer pipeline, package dependencies, and integration points.",
+  "narrativeArc": "The presentation builds the stack bottom-up: ECC provides the data model, AOE provides the runtime, CrudEngine provides persistence, Explorer proves the pipeline. The key insight: this is not four tools bolted together -- it is a coherent system designed around one principle: observability at every layer. Each layer adds a different kind of visibility.",
+  "tags": ["infrastructure", "ecc", "aoe", "crudengine", "explorer", "observability", "architecture", "typescript"],
+  "connections": ["crudengine-exec-walkthrough", "zgent-anatomy", "convergence-map"],
+  "slides": [
+    {
+      "index": 0,
+      "title": "The Infrastructure Stack",
+      "role": "Frames the question: why build four layers of infrastructure before deploying a single agent?"
+    },
+    {
+      "index": 1,
+      "title": "The Problem",
+      "role": "Articulates the four pain points that justify infrastructure-first investment"
+    },
+    {
+      "index": 2,
+      "title": "The Stack",
+      "role": "The money slide -- 4-layer Mermaid diagram showing bottom-up composition"
+    },
+    {
+      "index": 3,
+      "title": "Layer 1: ECC",
+      "role": "Details the data model layer -- 7 artifact types, ecc/eccx namespace, TypeScript types"
+    },
+    {
+      "index": 4,
+      "title": "Layer 2: AOE",
+      "role": "Details the runtime layer -- multi-transport logging and hierarchical error system"
+    },
+    {
+      "index": 5,
+      "title": "AOE Events",
+      "role": "Zooms into the 13 typed event types and type-safe pub/sub pattern"
+    },
+    {
+      "index": 6,
+      "title": "Layer 3: CrudEngine",
+      "role": "Details the persistence layer -- traffic logging, versioning, subscriptions"
+    },
+    {
+      "index": 7,
+      "title": "CrudEngine Internals",
+      "role": "Shows the 7 handlers, 5 operations, and typed convenience methods"
+    },
+    {
+      "index": 8,
+      "title": "Layer 4: Explorer",
+      "role": "Presents the reference implementation -- scene loading through event capture"
+    },
+    {
+      "index": 9,
+      "title": "Observability First",
+      "role": "Delivers the key insight -- each layer adds a different kind of visibility"
+    },
+    {
+      "index": 10,
+      "title": "The Composition",
+      "role": "Shows package dependency graph -- clean, bottom-up, no cycles"
+    },
+    {
+      "index": 11,
+      "title": "In Practice",
+      "role": "Traces a single 'Create a Skill' operation through all 4 layers via sequence diagram"
+    },
+    {
+      "index": 12,
+      "title": "The Numbers",
+      "role": "Provides maturity metrics -- 293+ tests, 10,305 lines, 13 event types"
+    },
+    {
+      "index": 13,
+      "title": "Integration Points",
+      "role": "Shows where DReader, Strades agents, and future Zgents plug into the stack"
+    },
+    {
+      "index": 14,
+      "title": "What's Next",
+      "role": "Presents the roadmap from immediate fixes through production deployment to dashboard"
+    },
+    {
+      "index": 15,
+      "title": "Close",
+      "role": "Restates the four layers and the one principle -- every operation observable"
+    }
+  ]
+}

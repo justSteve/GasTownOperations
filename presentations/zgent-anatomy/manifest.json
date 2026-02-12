@@ -1,0 +1,91 @@
+{
+  "id": "zgent-anatomy",
+  "title": "Anatomy of a Zgent",
+  "subtitle": "What Makes an Autonomous Agent Well-Formed",
+  "date": "2026-02",
+  "author": "COO",
+  "bead": "gt-ref.1",
+  "status": "complete",
+  "slideCount": 15,
+  "description": "Walks through the complete anatomy of a Zgent using an organism metaphor -- skeleton (ECC), nervous system (CrudEngine), senses (AOE), voice (API), habitat (tmuxMOO). Traces the lineage from 1995 MOO objects to 2026 Claude Code agents.",
+  "narrativeArc": "The presentation builds an anatomical metaphor: a Zgent is a complete organism, not just an agent with config files. Each layer (skeleton, nerves, senses, voice, habitat) maps to a specific subsystem. The deeper insight: this is architectural continuity from 1995 MOO VEEs -- the concept was right, the technology finally caught up.",
+  "tags": ["zgent", "anatomy", "ecc", "crudengine", "aoe", "tmuxmoo", "moo", "academy"],
+  "connections": ["convergence-map", "infrastructure-stack", "rooms-and-presence"],
+  "slides": [
+    {
+      "index": 0,
+      "title": "Anatomy of a Zgent",
+      "role": "Sets up the organism metaphor and places this in the Gas Town ecosystem"
+    },
+    {
+      "index": 1,
+      "title": "The Question",
+      "role": "Frames the core challenge -- what does reliable multi-agent collaboration require?"
+    },
+    {
+      "index": 2,
+      "title": "What Is a Zgent?",
+      "role": "Defines the four graduation properties and introduces the organism vs. brain-in-a-jar distinction"
+    },
+    {
+      "index": 3,
+      "title": "The Artifact Layer",
+      "role": "Introduces the skeleton -- the 7 Claude Code artifacts that give a Zgent its structure"
+    },
+    {
+      "index": 4,
+      "title": "CrudEngine",
+      "role": "Introduces the nervous system -- lifecycle management that keeps the skeleton alive"
+    },
+    {
+      "index": 5,
+      "title": "AOE: Perception and Reporting",
+      "role": "Introduces the senses -- logging, errors, events, and scene awareness"
+    },
+    {
+      "index": 6,
+      "title": "Publishing the API",
+      "role": "Introduces the voice -- the inter-agent protocol that enables discovery and querying"
+    },
+    {
+      "index": 7,
+      "title": "tmuxMOO: Where Zgents Live",
+      "role": "Introduces the habitat -- persistent text environments with shared presence"
+    },
+    {
+      "index": 8,
+      "title": "30 Years in the Making",
+      "role": "Connects the 1995 MOO vision to the 2026 Zgent architecture -- continuity, not nostalgia"
+    },
+    {
+      "index": 9,
+      "title": "A Day in the Life",
+      "role": "Makes the organism concrete with a temporal walkthrough from startup to collaboration"
+    },
+    {
+      "index": 10,
+      "title": "The Gas Town Academy",
+      "role": "Contrasts raw agents with graduated Zgents to crystallize the value of conventions"
+    },
+    {
+      "index": 11,
+      "title": "What Exists Today",
+      "role": "Provides honest status accounting -- what is built, what is prototyped, what is planned"
+    },
+    {
+      "index": 12,
+      "title": "The Horizon: DReader",
+      "role": "Points to the first graduation candidate to make the pattern concrete and testable"
+    },
+    {
+      "index": 13,
+      "title": "The Complete Organism",
+      "role": "Synthesizes all five layers into the central insight -- a Zgent is a complete organism"
+    },
+    {
+      "index": 14,
+      "title": "Questions",
+      "role": "Reinforces the key takeaways and opens discussion"
+    }
+  ]
+}

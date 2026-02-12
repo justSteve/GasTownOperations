@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas Town Presentations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #eaeaea;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3em 2em 2em;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 0.3em;
+        }
+
+        .header .subtitle {
+            font-size: 1.05em;
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .header .stats {
+            margin-top: 1.2em;
+            display: flex;
+            justify-content: center;
+            gap: 2em;
+            flex-wrap: wrap;
+        }
+
+        .header .stat {
+            text-align: center;
+        }
+
+        .header .stat .num {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #00d4ff;
+            line-height: 1;
+        }
+
+        .header .stat .label {
+            font-size: 0.7em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.2em;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 4em 2em;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.6em;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error state */
+        .error {
+            text-align: center;
+            padding: 4em 2em;
+            color: #ff6464;
+        }
+
+        /* Card grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5em;
+            padding: 2em;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Presentation card */
+        .card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.06), rgba(0, 212, 255, 0.02));
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 12px;
+            padding: 1.5em;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.6em;
+        }
+
+        .card-header .bead {
+            font-size: 0.65em;
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.12);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 0.2em 0.7em;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-left: 0.8em;
+        }
+
+        .card h2 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #eaeaea;
+            line-height: 1.2;
+        }
+
+        .card .card-subtitle {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 0.2em;
+        }
+
+        .card .description {
+            font-size: 0.82em;
+            color: #aaa;
+            line-height: 1.5;
+            margin-top: 0.8em;
+            flex: 1;
+        }
+
+        .card .meta {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            margin-top: 1em;
+            padding-top: 0.8em;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.72em;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .card .meta .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+        }
+
+        .card .meta .meta-icon {
+            color: #00d4ff;
+            font-size: 1.1em;
+        }
+
+        .card .status-badge {
+            display: inline-block;
+            font-size: 0.65em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.2em 0.6em;
+            border-radius: 4px;
+        }
+
+        .card .status-badge.complete {
+            background: rgba(100, 255, 150, 0.15);
+            color: #64ff96;
+            border: 1px solid rgba(100, 255, 150, 0.3);
+        }
+
+        .card .status-badge.draft {
+            background: rgba(255, 170, 68, 0.15);
+            color: #ffaa44;
+            border: 1px solid rgba(255, 170, 68, 0.3);
+        }
+
+        .card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4em;
+            margin-top: 0.8em;
+        }
+
+        .card .tag {
+            font-size: 0.65em;
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 10px;
+            padding: 0.15em 0.55em;
+        }
+
+        /* Connections section */
+        .connections-section {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2em 3em;
+        }
+
+        .connections-section h2 {
+            font-size: 1.3em;
+            color: #00d4ff;
+            margin-bottom: 1em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .connections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1em;
+        }
+
+        .connection-card {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 1em 1.2em;
+        }
+
+        .connection-card h3 {
+            font-size: 0.85em;
+            color: #eaeaea;
+            font-weight: 600;
+            margin-bottom: 0.4em;
+        }
+
+        .connection-card .conn-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .connection-card .conn-list li {
+            font-size: 0.75em;
+            color: #888;
+            padding: 0.2em 0;
+        }
+
+        .connection-card .conn-list li .arrow {
+            color: #00d4ff;
+            margin-right: 0.4em;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2em;
+            color: #444;
+            font-size: 0.75em;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+                padding: 1em;
+            }
+
+            .connections-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header .stats {
+                gap: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Gas Town Presentations</h1>
+        <p class="subtitle">
+            The presentation series for the Gas Town ecosystem -- architecture, interaction models, and the convergence of autonomous agent infrastructure.
+        </p>
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <div id="content">
+        <div class="loading">
+            <span class="spinner"></span>
+            Loading presentations...
+        </div>
+    </div>
+
+    <div class="connections-section" id="connections-section" style="display: none;">
+        <h2>Connections Between Presentations</h2>
+        <div class="connections-grid" id="connections-grid"></div>
+    </div>
+
+    <div class="footer">
+        GasTown Operations &middot; February 2026
+    </div>
+
+    <script>
+        (async function() {
+            const contentEl = document.getElementById('content');
+            const statsEl = document.getElementById('stats');
+            const connectionsSection = document.getElementById('connections-section');
+            const connectionsGrid = document.getElementById('connections-grid');
+
+            try {
+                // Step 1: Load registry
+                const registryResponse = await fetch('registry.json');
+                if (!registryResponse.ok) throw new Error('Could not load registry.json');
+                const registry = await registryResponse.json();
+
+                // Step 2: Fetch all manifests
+                const manifests = [];
+                const errors = [];
+
+                await Promise.all(registry.presentations.map(async (dir) => {
+                    try {
+                        const resp = await fetch(`${dir}/manifest.json`);
+                        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                        const manifest = await resp.json();
+                        manifests.push(manifest);
+                    } catch (e) {
+                        errors.push({ dir, error: e.message });
+                    }
+                }));
+
+                if (manifests.length === 0) {
+                    contentEl.innerHTML = '<div class="error">No presentations could be loaded.</div>';
+                    return;
+                }
+
+                // Sort by date descending, then by title
+                manifests.sort((a, b) => {
+                    if (a.date !== b.date) return b.date.localeCompare(a.date);
+                    return a.title.localeCompare(b.title);
+                });
+
+                // Build title-by-id lookup
+                const titleById = {};
+                manifests.forEach(m => { titleById[m.id] = m.title; });
+
+                // Step 3: Render stats
+                const totalSlides = manifests.reduce((sum, m) => sum + (m.slideCount || 0), 0);
+                statsEl.innerHTML = `
+                    <div class="stat">
+                        <div class="num">${manifests.length}</div>
+                        <div class="label">Presentations</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num">${totalSlides}</div>
+                        <div class="label">Total Slides</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num">${new Set(manifests.flatMap(m => m.tags || [])).size}</div>
+                        <div class="label">Unique Tags</div>
+                    </div>
+                `;
+
+                // Step 4: Render card grid
+                const gridHTML = manifests.map(m => {
+                    const tags = (m.tags || []).slice(0, 6).map(t =>
+                        `<span class="tag">${escapeHtml(t)}</span>`
+                    ).join('');
+
+                    const statusClass = (m.status || 'draft').toLowerCase();
+
+                    return `
+                        <a class="card" href="${escapeHtml(m.id)}/index.html">
+                            <div class="card-header">
+                                <div>
+                                    <h2>${escapeHtml(m.title)}</h2>
+                                    <div class="card-subtitle">${escapeHtml(m.subtitle || '')}</div>
+                                </div>
+                                <span class="bead">${escapeHtml(m.bead || '')}</span>
+                            </div>
+                            <div class="description">${escapeHtml(m.description || '')}</div>
+                            <div class="tags">${tags}</div>
+                            <div class="meta">
+                                <span class="status-badge ${statusClass}">${escapeHtml(m.status || 'draft')}</span>
+                                <span class="meta-item">
+                                    <span class="meta-icon">&#9654;</span>
+                                    ${m.slideCount || '?'} slides
+                                </span>
+                                <span class="meta-item">
+                                    <span class="meta-icon">&#128197;</span>
+                                    ${escapeHtml(m.date || '')}
+                                </span>
+                                <span class="meta-item">
+                                    <span class="meta-icon">&#9998;</span>
+                                    ${escapeHtml(m.author || '')}
+                                </span>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+
+                contentEl.innerHTML = `<div class="card-grid">${gridHTML}</div>`;
+
+                // Step 5: Render connections
+                const connectionPairs = [];
+                const seenPairs = new Set();
+
+                manifests.forEach(m => {
+                    (m.connections || []).forEach(connId => {
+                        const pairKey = [m.id, connId].sort().join('::');
+                        if (!seenPairs.has(pairKey) && titleById[connId]) {
+                            seenPairs.add(pairKey);
+                            connectionPairs.push({
+                                from: m.id,
+                                fromTitle: m.title,
+                                to: connId,
+                                toTitle: titleById[connId]
+                            });
+                        }
+                    });
+                });
+
+                if (connectionPairs.length > 0) {
+                    // Group connections by presentation
+                    const connectionsByPres = {};
+                    manifests.forEach(m => {
+                        const conns = (m.connections || []).filter(c => titleById[c]);
+                        if (conns.length > 0) {
+                            connectionsByPres[m.id] = {
+                                title: m.title,
+                                connections: conns.map(c => titleById[c])
+                            };
+                        }
+                    });
+
+                    connectionsGrid.innerHTML = Object.values(connectionsByPres).map(p => `
+                        <div class="connection-card">
+                            <h3>${escapeHtml(p.title)}</h3>
+                            <ul class="conn-list">
+                                ${p.connections.map(c => `
+                                    <li><span class="arrow">&#8594;</span>${escapeHtml(c)}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `).join('');
+
+                    connectionsSection.style.display = 'block';
+                }
+
+            } catch (e) {
+                contentEl.innerHTML = `<div class="error">Failed to load presentations: ${escapeHtml(e.message)}</div>`;
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+        })();
+    </script>
+
+</body>
+</html>

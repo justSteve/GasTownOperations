@@ -134,21 +134,21 @@
     .pain-point {
       background: rgba(255, 82, 82, 0.1);
       border-left: 4px solid #ff5252;
-      padding: 12px 18px;
-      margin: 10px 0;
+      padding: 10px 16px;
+      margin: 7px 0;
       border-radius: 0 8px 8px 0;
       text-align: left;
-      font-size: 0.75em;
+      font-size: 0.72em;
     }
 
     .solution-point {
       background: rgba(0, 230, 118, 0.1);
       border-left: 4px solid var(--accent-green);
-      padding: 12px 18px;
-      margin: 10px 0;
+      padding: 10px 16px;
+      margin: 7px 0;
       border-radius: 0 8px 8px 0;
       text-align: left;
-      font-size: 0.75em;
+      font-size: 0.72em;
     }
 
     /* Artifact cards */
@@ -207,11 +207,11 @@
 
     /* Stack layers */
     .stack-layer {
-      padding: 14px 24px;
-      margin: 6px 0;
+      padding: 10px 18px;
+      margin: 4px 0;
       border-radius: 8px;
       text-align: left;
-      font-size: 0.75em;
+      font-size: 0.72em;
     }
 
     .stack-layer.l1 { background: rgba(79, 195, 247, 0.12); border-left: 4px solid var(--layer-ecc); }
@@ -219,27 +219,32 @@
     .stack-layer.l3 { background: rgba(255, 112, 67, 0.12); border-left: 4px solid var(--layer-crud); }
     .stack-layer.l4 { background: rgba(102, 187, 106, 0.12); border-left: 4px solid var(--layer-explorer); }
 
+    /* Global overflow safety net */
+    .reveal .slides section {
+      overflow-y: auto;
+    }
+
     /* Mermaid diagrams */
     .mermaid {
       font-size: 0.8em;
     }
 
     .mermaid svg {
-      max-height: 500px;
+      max-height: 420px;
     }
 
     /* Transport list */
     .transport-list {
       list-style: none;
       padding: 0;
-      margin: 10px 0;
+      margin: 6px 0;
     }
 
     .transport-list li {
-      padding: 8px 14px;
-      margin: 6px 0;
+      padding: 6px 12px;
+      margin: 4px 0;
       border-radius: 6px;
-      font-size: 0.72em;
+      font-size: 0.68em;
       text-align: left;
     }
 
@@ -251,7 +256,7 @@
     /* Error hierarchy list */
     .error-tree {
       text-align: left;
-      font-size: 0.68em;
+      font-size: 0.62em;
       font-family: 'Courier New', monospace;
     }
 
@@ -283,26 +288,26 @@
     .obs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 16px 0;
+      gap: 10px;
+      margin: 10px 0;
     }
 
     .obs-card {
-      padding: 16px;
+      padding: 12px;
       border-radius: 10px;
       text-align: left;
-      font-size: 0.7em;
+      font-size: 0.65em;
     }
 
     .obs-card h4 {
-      margin: 0 0 6px 0;
-      font-size: 1.1em;
+      margin: 0 0 4px 0;
+      font-size: 1.05em;
     }
 
     .obs-card p {
       margin: 0;
       color: #aaa;
-      font-size: 0.9em;
+      font-size: 0.85em;
     }
 
     .obs-card.c1 { background: rgba(79, 195, 247, 0.1); border: 1px solid rgba(79, 195, 247, 0.3); }
@@ -336,23 +341,23 @@
     .integration-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-      margin: 16px 0;
+      gap: 10px;
+      margin: 10px 0;
     }
 
     .integration-card {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      padding: 16px;
+      padding: 12px;
       text-align: left;
-      font-size: 0.68em;
+      font-size: 0.62em;
     }
 
     .integration-card h4 {
       color: var(--r-heading-color);
-      margin: 0 0 8px 0;
-      font-size: 1.1em;
+      margin: 0 0 5px 0;
+      font-size: 1.05em;
     }
 
     .integration-card p {
@@ -364,11 +369,11 @@
     .roadmap-item {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 12px 18px;
-      margin: 8px 0;
+      gap: 12px;
+      padding: 8px 14px;
+      margin: 5px 0;
       border-radius: 8px;
-      font-size: 0.72em;
+      font-size: 0.68em;
       text-align: left;
     }
 
@@ -751,8 +756,7 @@
               <div class="solution-point"><strong>Delete</strong> &mdash; with soft-delete support</div>
               <div class="solution-point"><strong>Query / List</strong> &mdash; list all artifacts of a type</div>
             </div>
-            <br>
-            <p style="font-size: 0.6em; color: #888;">
+            <p style="font-size: 0.6em; color: #888; margin-top: 8px;">
               7 types &times; 5 operations = <span class="highlight">35+ managed operations</span>, each with typed convenience methods like <code>createSkill()</code>, <code>readHook()</code>, <code>deleteRule()</code>.
             </p>
           </div>
@@ -1237,12 +1241,13 @@
       },
       sequence: {
         useMaxWidth: true,
-        actorMargin: 40,
-        messageMargin: 30,
+        actorMargin: 30,
+        messageMargin: 20,
         mirrorActors: false,
-        bottomMarginAdj: 10,
-        actorFontSize: 13,
-        messageFontSize: 12,
+        bottomMarginAdj: 5,
+        actorFontSize: 12,
+        messageFontSize: 11,
+        height: 400,
       },
     });
 
@@ -1288,5 +1293,9 @@
       });
     });
   </script>
+
+  <!-- Help Widget -->
+  <link rel="stylesheet" href="../shared/widget.css">
+  <script src="../shared/widget.js"></script>
 </body>
 </html>

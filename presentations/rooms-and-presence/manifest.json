@@ -1,0 +1,91 @@
+{
+  "id": "rooms-and-presence",
+  "title": "Rooms & Presence",
+  "subtitle": "How Humans and Agents Share Space",
+  "date": "2026-02",
+  "author": "COO",
+  "bead": "gt-ref.2",
+  "status": "complete",
+  "slideCount": 15,
+  "description": "Tells the interaction model story -- how humans and agents inhabit shared spaces together in the Strades platform. Synthesizes the MOO origin (1995-97), the tmux-as-transport insight, the tmuxMOO prototype, and session topology into a narrative about the future of human-agent collaboration.",
+  "narrativeArc": "The presentation traces a 30-year arc from MOO VEEs to tmuxMOO. The core thesis: MOO was not wrong -- it was early. The text-first, persistent-room, programmable-object paradigm IS the right interaction model. tmux is the transport MOO needed; LLMs are the intelligence MOO's objects lacked. The convergence is not accidental.",
+  "tags": ["tmuxmoo", "rooms", "presence", "moo", "tmux", "interaction", "voice", "topology", "strades"],
+  "connections": ["zgent-anatomy", "convergence-map", "infrastructure-stack"],
+  "slides": [
+    {
+      "index": 0,
+      "title": "Rooms & Presence",
+      "role": "Frames this as the interaction model story for the Strades platform"
+    },
+    {
+      "index": 1,
+      "title": "The Memory (1995)",
+      "role": "Establishes the personal origin story -- Steve's MOO VEE work and what it had vs. lacked"
+    },
+    {
+      "index": 2,
+      "title": "The Realization",
+      "role": "The emotional pivot -- recognizing that every 1995 concept maps to 2026 architecture"
+    },
+    {
+      "index": 3,
+      "title": "Why tmux, Not Just Better Telnet",
+      "role": "Articulates the categorical (not incremental) upgrade from pipe to programmable stage"
+    },
+    {
+      "index": 4,
+      "title": "Shared Presence",
+      "role": "Demonstrates actual co-habitation via send-keys -- not simulated, real"
+    },
+    {
+      "index": 5,
+      "title": "Panes as Rooms",
+      "role": "Shows the spatial metaphor preserved in the 4-pane trading layout"
+    },
+    {
+      "index": 6,
+      "title": "Agents Reading the Room",
+      "role": "Reveals the capture-pane pattern as the MOO verb system realized"
+    },
+    {
+      "index": 7,
+      "title": "Persistence Without Presence",
+      "role": "Demonstrates the killer feature -- detach, walk away, reattach, nothing lost"
+    },
+    {
+      "index": 8,
+      "title": "Architecture: Two Layers",
+      "role": "Positions Workshop (tmux) and Trading Floor (web UI) as complementary, not competing"
+    },
+    {
+      "index": 9,
+      "title": "Session Topology",
+      "role": "Presents the hybrid design -- shared headless agents, personal user views"
+    },
+    {
+      "index": 10,
+      "title": "The Demo Today",
+      "role": "Grounds the vision in what actually works right now -- the SPX selloff narrative"
+    },
+    {
+      "index": 11,
+      "title": "Voice as a Layer",
+      "role": "Shows how voice rides on text-first architecture -- delivering what MOO promised"
+    },
+    {
+      "index": 12,
+      "title": "Honest Gaps",
+      "role": "Maintains credibility by enumerating unsolved problems"
+    },
+    {
+      "index": 13,
+      "title": "The Vision Forward",
+      "role": "Scales to the full vision -- 36 humans, 10 instruments, 30+ agents in shared spaces"
+    },
+    {
+      "index": 14,
+      "title": "Questions",
+      "role": "Provides reference materials and closes with the core thesis"
+    }
+  ]
+}

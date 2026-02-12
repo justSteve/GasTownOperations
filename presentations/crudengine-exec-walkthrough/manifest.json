@@ -1,0 +1,86 @@
+{
+  "id": "crudengine-exec-walkthrough",
+  "title": "CrudEngine",
+  "subtitle": "The Trust Layer for Zgent Factory",
+  "date": "2026-02",
+  "author": "COO",
+  "bead": "gt-pres1",
+  "status": "complete",
+  "slideCount": 14,
+  "description": "Executive technical walkthrough of CrudEngine -- the lifecycle management layer that gives Gas Town agents reliable, observable, auditable configuration management across all 7 Claude Code artifact types.",
+  "narrativeArc": "The presentation frames the scaling problem (manual config fails at 20+ agents), introduces CrudEngine as the solution (unified CRUD with full observability), and demonstrates the business value (audit trail, versioning, real-time events). The deeper point: CrudEngine is not just a tool -- it is the trust layer that must be bulletproof before Zgents go production.",
+  "tags": ["crudengine", "infrastructure", "observability", "audit-trail", "versioning", "artifacts", "executive"],
+  "connections": ["infrastructure-stack", "zgent-anatomy"],
+  "slides": [
+    {
+      "index": 0,
+      "title": "CrudEngine",
+      "role": "Establishes CrudEngine as the trust layer and frames the presentation as an executive walkthrough"
+    },
+    {
+      "index": 1,
+      "title": "The Zgent Factory Vision",
+      "role": "Sets the scale context -- 20-30 simultaneous agents, 7 artifact types, one unified engine"
+    },
+    {
+      "index": 2,
+      "title": "The Scale Challenge",
+      "role": "Creates tension by contrasting manual config at small scale vs. the need for automation at fleet scale"
+    },
+    {
+      "index": 3,
+      "title": "Before CrudEngine",
+      "role": "Articulates the pain points that justify the infrastructure investment"
+    },
+    {
+      "index": 4,
+      "title": "Introducing CrudEngine",
+      "role": "Presents the solution with its four key properties: unified interface, observability, versioning, subscriptions"
+    },
+    {
+      "index": 5,
+      "title": "Architecture Overview",
+      "role": "Shows the data flow pipeline from ECC input through CrudEngine to deployed Zgent configs"
+    },
+    {
+      "index": 6,
+      "title": "The 7 Artifact Types",
+      "role": "Enumerates the artifact types that CrudEngine manages with dedicated handlers"
+    },
+    {
+      "index": 7,
+      "title": "Built-in Observability",
+      "role": "Details the traffic logging and subscription systems that make every operation transparent"
+    },
+    {
+      "index": 8,
+      "title": "Explorer Integration",
+      "role": "Shows how scene execution becomes automatically tracked when routed through CrudEngine"
+    },
+    {
+      "index": 9,
+      "title": "Demo: Traffic Logging",
+      "role": "Provides concrete evidence with actual output showing operations being tracked"
+    },
+    {
+      "index": 10,
+      "title": "Business Value",
+      "role": "Translates technical capabilities into operational benefits -- the 20x leverage argument"
+    },
+    {
+      "index": 11,
+      "title": "Strategic Position",
+      "role": "Positions CrudEngine as foundational infrastructure that all future capabilities depend on"
+    },
+    {
+      "index": 12,
+      "title": "Status & Next Steps",
+      "role": "Provides honest accounting of what is delivered and what remains"
+    },
+    {
+      "index": 13,
+      "title": "Questions",
+      "role": "Closing slide with commit reference and key metrics for credibility"
+    }
+  ]
+}

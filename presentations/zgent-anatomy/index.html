@@ -25,7 +25,7 @@
         .reveal h2 { font-size: 1.6em; color: #00d4ff; }
         .reveal h3 { font-size: 1.2em; color: #888; }
         .reveal ul { text-align: left; }
-        .reveal li { margin-bottom: 0.5em; }
+        .reveal li { margin-bottom: 0.35em; }
         .highlight { color: #00d4ff; font-weight: bold; }
         .dim { color: #666; }
         .warm { color: #ffaa44; }
@@ -34,17 +34,17 @@
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid #00d4ff;
             border-radius: 8px;
-            padding: 1em 1.5em;
-            margin: 0.5em;
+            padding: 0.6em 1em;
+            margin: 0.3em;
             text-align: center;
         }
         .metric-box .number {
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #00d4ff;
         }
         .metric-box .label {
-            font-size: 0.8em;
+            font-size: 0.7em;
             color: #888;
         }
         .metric-box.warm-box {
@@ -57,26 +57,36 @@
         .pain-point {
             background: rgba(255, 100, 100, 0.1);
             border-left: 4px solid #ff6464;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.35em 0.8em;
+            margin: 0.3em 0;
             text-align: left;
+            font-size: 0.88em;
         }
         .solution-point {
             background: rgba(100, 255, 150, 0.1);
             border-left: 4px solid #64ff96;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.35em 0.8em;
+            margin: 0.3em 0;
             text-align: left;
+            font-size: 0.88em;
         }
         .insight-point {
             background: rgba(255, 170, 68, 0.1);
             border-left: 4px solid #ffaa44;
-            padding: 0.5em 1em;
-            margin: 0.5em 0;
+            padding: 0.35em 0.8em;
+            margin: 0.3em 0;
             text-align: left;
+            font-size: 0.88em;
         }
         .mermaid {
             font-size: 0.7em;
+        }
+        .mermaid svg {
+            max-height: 380px;
+        }
+        /* Global overflow safety net */
+        .reveal .slides section {
+            overflow-y: auto;
         }
         .two-column {
             display: flex;
@@ -181,10 +191,10 @@
             background: rgba(0, 212, 255, 0.05);
             border: 1px solid rgba(0, 212, 255, 0.2);
             border-radius: 8px;
-            padding: 0.6em 1em;
-            margin: 0.4em 0;
+            padding: 0.4em 0.8em;
+            margin: 0.25em 0;
             text-align: left;
-            font-size: 0.85em;
+            font-size: 0.75em;
         }
         .day-step .step-time {
             color: #00d4ff;
@@ -592,27 +602,27 @@
             <section>
                 <h2>What Exists Today</h2>
                 <div style="margin-top: 1em;">
-                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                    <div style="display: flex; align-items: center; margin: 0.35em 0;">
                         <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
                         <span style="margin-left: 1em;"><strong>CrudEngine</strong> &mdash; 7 artifact handlers, traffic logging, versioning, subscriptions, 64+ tests</span>
                     </div>
-                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                    <div style="display: flex; align-items: center; margin: 0.35em 0;">
                         <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
                         <span style="margin-left: 1em;"><strong>AOE</strong> &mdash; Structured logging, error hierarchy, typed events, scene framework</span>
                     </div>
-                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                    <div style="display: flex; align-items: center; margin: 0.35em 0;">
                         <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
                         <span style="margin-left: 1em;"><strong>ECC Schema</strong> &mdash; All 7 artifact types modeled with 2.1 extensions</span>
                     </div>
-                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                    <div style="display: flex; align-items: center; margin: 0.35em 0;">
                         <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
                         <span style="margin-left: 1em;"><strong>Explorer Engine</strong> &mdash; Reference implementation, scene execution, CrudEngine integration</span>
                     </div>
-                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                    <div style="display: flex; align-items: center; margin: 0.35em 0;">
                         <span class="status-badge in-progress" style="width: 110px; text-align: center;">PROTOTYPE</span>
                         <span style="margin-left: 1em;"><strong>tmuxMOO</strong> &mdash; Demo with 3 simulated agents, themed layout, persistence proof</span>
                     </div>
-                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                    <div style="display: flex; align-items: center; margin: 0.35em 0;">
                         <span class="status-badge planned" style="width: 110px; text-align: center;">PLANNED</span>
                         <span style="margin-left: 1em;"><strong>Inter-Agent Protocol</strong> &mdash; API publication standard, query routing</span>
                     </div>
@@ -770,5 +780,9 @@
             backgroundTransition: 'fade'
         });
     </script>
+
+    <!-- Help Widget -->
+    <link rel="stylesheet" href="../shared/widget.css">
+    <script src="../shared/widget.js"></script>
 </body>
 </html>
