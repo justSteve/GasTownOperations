@@ -243,7 +243,7 @@
                     callback('Failed to parse response: ' + e.message);
                 }
             } else if (xhr.status === 0) {
-                callback('Help service unavailable. Start the proxy with:\n\nANTHROPIC_API_KEY=sk-ant-... node presentations/shared/proxy.mjs');
+                callback({ proxyDown: true });
             } else {
                 var errMsg = 'Error (' + xhr.status + ')';
                 try {
@@ -266,7 +266,7 @@
         try {
             xhr.send(body);
         } catch (e) {
-            callback('Help service unavailable. Start the proxy with:\n\nANTHROPIC_API_KEY=sk-ant-... node presentations/shared/proxy.mjs');
+            callback({ proxyDown: true });
         }
     }
 
@@ -304,6 +304,55 @@
         var hasManifest = manifest ? 'full context' : 'slide content only';
 
         els.context.innerHTML = '<span>' + presTitle + '</span> &middot; Slide ' + slideNum + '/' + total + ' &middot; ' + hasManifest;
+    }
+
+    // ---------------------------------------------------------------
+    // Proxy-Down UI
+    // ---------------------------------------------------------------
+
+    var PROXY_CMD = 'ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY node presentations/shared/proxy.mjs';
+
+    function showProxyDown(els) {
+        els.error.innerHTML = '';
+        els.error.classList.add('visible');
+
+        var msg = document.createElement('span');
+        msg.textContent = 'Help service unavailable. ';
+        els.error.appendChild(msg);
+
+        var btn = document.createElement('button');
+        btn.className = 'gtops-proxy-start-btn';
+        btn.textContent = 'Copy start command';
+        btn.addEventListener('click', function () {
+            navigator.clipboard.writeText(PROXY_CMD).then(function () {
+                btn.textContent = 'Copied! Paste in terminal';
+                btn.classList.add('copied');
+                setTimeout(function () {
+                    btn.textContent = 'Copy start command';
+                    btn.classList.remove('copied');
+                }, 3000);
+            }, function () {
+                // Fallback: select from a temp input
+                var tmp = document.createElement('input');
+                tmp.value = PROXY_CMD;
+                document.body.appendChild(tmp);
+                tmp.select();
+                document.execCommand('copy');
+                document.body.removeChild(tmp);
+                btn.textContent = 'Copied! Paste in terminal';
+                btn.classList.add('copied');
+                setTimeout(function () {
+                    btn.textContent = 'Copy start command';
+                    btn.classList.remove('copied');
+                }, 3000);
+            });
+        });
+        els.error.appendChild(btn);
+
+        var code = document.createElement('code');
+        code.className = 'gtops-proxy-cmd';
+        code.textContent = PROXY_CMD;
+        els.error.appendChild(code);
     }
 
     // ---------------------------------------------------------------
@@ -382,8 +431,12 @@
                 els.submitBtn.disabled = false;
 
                 if (err) {
-                    els.error.textContent = err;
-                    els.error.classList.add('visible');
+                    if (err.proxyDown) {
+                        showProxyDown(els);
+                    } else {
+                        els.error.textContent = typeof err === 'string' ? err : 'Unknown error';
+                        els.error.classList.add('visible');
+                    }
                     return;
                 }
 
