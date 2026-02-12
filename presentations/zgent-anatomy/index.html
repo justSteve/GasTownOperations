@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomy of a Zgent</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.css">
+    <style>
+        :root {
+            --r-background-color: #1a1a2e;
+            --r-main-color: #eaeaea;
+            --r-heading-color: #00d4ff;
+            --r-link-color: #00d4ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 600;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.6em; color: #00d4ff; }
+        .reveal h3 { font-size: 1.2em; color: #888; }
+        .reveal ul { text-align: left; }
+        .reveal li { margin-bottom: 0.5em; }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .dim { color: #666; }
+        .warm { color: #ffaa44; }
+        .metric-box {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            margin: 0.5em;
+            text-align: center;
+        }
+        .metric-box .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .metric-box .label {
+            font-size: 0.8em;
+            color: #888;
+        }
+        .metric-box.warm-box {
+            background: rgba(255, 170, 68, 0.1);
+            border-color: #ffaa44;
+        }
+        .metric-box.warm-box .number {
+            color: #ffaa44;
+        }
+        .pain-point {
+            background: rgba(255, 100, 100, 0.1);
+            border-left: 4px solid #ff6464;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .solution-point {
+            background: rgba(100, 255, 150, 0.1);
+            border-left: 4px solid #64ff96;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .insight-point {
+            background: rgba(255, 170, 68, 0.1);
+            border-left: 4px solid #ffaa44;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .mermaid {
+            font-size: 0.7em;
+        }
+        .two-column {
+            display: flex;
+            gap: 2em;
+        }
+        .two-column > div {
+            flex: 1;
+        }
+        .artifact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5em;
+            font-size: 0.8em;
+        }
+        .artifact-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            padding: 0.8em;
+            text-align: center;
+        }
+        .artifact-card .icon { font-size: 1.5em; margin-bottom: 0.3em; }
+        .anatomy-label {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            padding: 0.2em 0.8em;
+            font-size: 0.7em;
+            color: #00d4ff;
+            margin-bottom: 0.5em;
+        }
+        .status-badge {
+            display: inline-block;
+            background: #64ff96;
+            color: #1a1a2e;
+            padding: 0.2em 0.8em;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .status-badge.in-progress {
+            background: #ffaa44;
+        }
+        .status-badge.planned {
+            background: #888;
+        }
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            margin: 0.4em 0;
+            font-size: 0.85em;
+        }
+        .timeline-year {
+            width: 80px;
+            font-weight: bold;
+            color: #00d4ff;
+            text-align: right;
+            padding-right: 1em;
+        }
+        .timeline-connector {
+            width: 3px;
+            height: 2em;
+            background: rgba(0, 212, 255, 0.3);
+            margin: 0 0 0 76px;
+        }
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00d4ff;
+            margin-right: 1em;
+            flex-shrink: 0;
+        }
+        .timeline-dot.warm-dot {
+            background: #ffaa44;
+        }
+        .timeline-text {
+            flex: 1;
+            text-align: left;
+        }
+        .moo-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0.3em;
+            font-size: 0.75em;
+            align-items: center;
+        }
+        .moo-comparison .arrow {
+            color: #00d4ff;
+            font-size: 1.2em;
+        }
+        .moo-comparison .left {
+            text-align: right;
+            color: #ffaa44;
+        }
+        .moo-comparison .right {
+            text-align: left;
+            color: #64ff96;
+        }
+        .day-step {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.6em 1em;
+            margin: 0.4em 0;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .day-step .step-time {
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Title -->
+            <section>
+                <h1>Anatomy of a Zgent</h1>
+                <h3>What Makes an Autonomous Agent Well-Formed</h3>
+                <p class="dim" style="margin-top: 2em;">Gas Town Operations | February 2026</p>
+                <p class="dim" style="font-size: 0.6em;">From 1995 MOO Objects to 2026 Claude Code Agents</p>
+                <aside class="notes">
+                    This presentation walks through the complete anatomy of a Zgent -- what it is, what its parts are, and why it matters. A Zgent is not just "a Claude Code agent with some config files." It is a complete organism with structure, metabolism, senses, voice, and habitat. We will trace each layer and connect it to the broader vision that started three decades ago with programmable objects in text-based virtual environments.
+                </aside>
+            </section>
+
+            <!-- Slide 2: The Question -->
+            <section>
+                <h2>The Question</h2>
+                <p style="font-size: 1.3em; margin-top: 1.5em;">
+                    What does it take for <span class="highlight">20-30 agents</span><br>
+                    to work together <span class="highlight">reliably</span>?
+                </p>
+                <div style="margin-top: 2em;">
+                    <div class="metric-box">
+                        <div class="number">20-30</div>
+                        <div class="label">Simultaneous Agents</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">1</div>
+                        <div class="label">Human Operator</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">24/7</div>
+                        <div class="label">Persistent Operation</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5em; font-size: 0.9em;" class="dim">
+                    Not just running. <span class="highlight">Collaborating.</span>
+                </p>
+                <aside class="notes">
+                    Gas Town's operating model is one human coordinating 20-30 autonomous agents on software projects. These agents do not simply run in isolation. They need to discover each other, query each other, report their status, and respond to shared conventions. The question is not "can we run many Claude Code instances?" -- it is "can we make them work together as a coordinated system?" That requires a standard for what it means to be a well-formed agent. That standard is the Zgent.
+                </aside>
+            </section>
+
+            <!-- Slide 3: Zgent Definition -->
+            <section>
+                <h2>What Is a Zgent?</h2>
+                <p style="font-size: 0.9em; margin-bottom: 1em;">
+                    A standalone Claude Code agent that has <span class="highlight">graduated from the Gas Town Academy</span>
+                </p>
+                <div class="solution-point">
+                    <strong>Publishes its API</strong> &mdash; Other Zgents can discover what queries and interactions it supports
+                </div>
+                <div class="solution-point">
+                    <strong>Follows shared conventions</strong> &mdash; Logging, error handling, event streaming, configuration patterns
+                </div>
+                <div class="solution-point">
+                    <strong>Independently deployable</strong> &mdash; Works standalone but integrates seamlessly with the ecosystem
+                </div>
+                <div class="solution-point">
+                    <strong>Observable behavior</strong> &mdash; Hook instrumentation, event emissions, structured logs
+                </div>
+                <p style="margin-top: 1.2em; font-size: 0.85em;" class="dim">
+                    A raw Claude Code agent is a brain in a jar.<br>
+                    A Zgent is a <span class="highlight">complete organism</span>.
+                </p>
+                <aside class="notes">
+                    These four properties are the graduation criteria from the Gas Town Academy. Any Claude Code agent can become a Zgent by satisfying all four. The key distinction: a raw Claude Code agent can do work, but it cannot participate in a larger system. It has no way to tell other agents what it does. It has no standard way to report its activity. It cannot be discovered, queried, or monitored. A Zgent can do all of these things because it adheres to shared conventions. The metaphor we will develop in this presentation is anatomical: a Zgent is a complete organism with bones, a nervous system, senses, a voice, and a habitat.
+                </aside>
+            </section>
+
+            <!-- Slide 4: The Artifact Layer (Bones) -->
+            <section>
+                <span class="anatomy-label">THE SKELETON</span>
+                <h2>The Artifact Layer</h2>
+                <p style="font-size: 0.9em;">7 Claude Code 2.1 artifacts that give a Zgent its <span class="highlight">structure</span></p>
+                <div class="artifact-grid" style="margin-top: 1em;">
+                    <div class="artifact-card">
+                        <div class="icon">&#9881;</div>
+                        <div><strong>Skills</strong></div>
+                        <div class="dim">Reusable capabilities</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#9889;</div>
+                        <div><strong>Hooks</strong></div>
+                        <div class="dim">Event automation</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#129302;</div>
+                        <div><strong>Agents</strong></div>
+                        <div class="dim">Top-level identity</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128101;</div>
+                        <div><strong>SubAgents</strong></div>
+                        <div class="dim">Policy islands</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128220;</div>
+                        <div><strong>Rules</strong></div>
+                        <div class="dim">Behavioral constraints</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128187;</div>
+                        <div><strong>Commands</strong></div>
+                        <div class="dim">Slash interfaces</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128268;</div>
+                        <div><strong>MCP Servers</strong></div>
+                        <div class="dim">External tools</div>
+                    </div>
+                    <div class="artifact-card" style="background: rgba(255, 170, 68, 0.1); border-color: rgba(255, 170, 68, 0.3);">
+                        <div class="icon" style="font-size: 1.2em;">ECC</div>
+                        <div><strong class="warm">Schema</strong></div>
+                        <div class="dim">Models them all</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1em; font-size: 0.8em;">
+                    These artifacts live in <span class="highlight">.claude/</span> directories &mdash; the skeleton that gives a Zgent its shape
+                </p>
+                <aside class="notes">
+                    The ECC (Everything Claude Code) schema models all 7 artifact types as structured JSON data. Skills give the Zgent capabilities. Hooks wire it to events. Agents and SubAgents define its identity and delegation patterns. Rules constrain its behavior. Commands expose slash-command interfaces. MCP Servers connect it to external tools. Together, these artifacts are the skeleton of a Zgent -- they define its shape, its capabilities, and its boundaries. Without this structure, an agent is formless. The ECC schema is the blueprint language that describes these bones, and the materializer is what produces the actual .claude/ files from that schema.
+                </aside>
+            </section>
+
+            <!-- Slide 5: The Nervous System (CrudEngine) -->
+            <section>
+                <span class="anatomy-label">THE NERVOUS SYSTEM</span>
+                <h2>CrudEngine</h2>
+                <p style="font-size: 0.9em;">The lifecycle manager &mdash; a Zgent's <span class="highlight">metabolic system</span></p>
+                <div class="mermaid">
+                    flowchart LR
+                        subgraph Operations
+                            C[Create]
+                            R[Read]
+                            U[Update]
+                            D[Delete]
+                        end
+                        subgraph Engine["CrudEngine"]
+                            V[Versioning]
+                            L[Traffic Log]
+                            S[Subscriptions]
+                        end
+                        subgraph Artifacts["7 Artifact Types"]
+                            A1[".claude/skills/"]
+                            A2[".claude/agents/"]
+                            A3["settings.json"]
+                        end
+                        C --> Engine
+                        R --> Engine
+                        U --> Engine
+                        D --> Engine
+                        Engine --> A1
+                        Engine --> A2
+                        Engine --> A3
+
+                        style Engine fill:#00d4ff,color:#1a1a2e
+                        style V fill:#1a1a2e,stroke:#00d4ff
+                        style L fill:#1a1a2e,stroke:#00d4ff
+                        style S fill:#1a1a2e,stroke:#00d4ff
+                </div>
+                <div class="two-column" style="margin-top: 0.5em; font-size: 0.8em;">
+                    <div>
+                        <div class="solution-point">
+                            <strong>Every operation logged</strong> with operation ID, timing, before/after state
+                        </div>
+                    </div>
+                    <div>
+                        <div class="solution-point">
+                            <strong>Real-time subscriptions</strong> let other systems react to artifact changes
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    If artifacts are the skeleton, CrudEngine is the nervous system -- the metabolic process that keeps the skeleton alive. Every time an artifact is created, read, updated, or deleted, CrudEngine manages that operation with full observability. Traffic logging captures every operation with an ID, timestamp, duration, success/failure, and before/after snapshots. Subscriptions allow other systems to react in real time when artifacts change. Versioning means you can always roll back. This is the "neural activity" of a Zgent -- the constant stream of lifecycle operations that keep it configured and current. Without CrudEngine, artifact management is manual and opaque. With it, every change is observed, auditable, and reversible.
+                </aside>
+            </section>
+
+            <!-- Slide 6: The Senses (AOE) -->
+            <section>
+                <span class="anatomy-label">THE SENSES</span>
+                <h2>AOE: Perception and Reporting</h2>
+                <p style="font-size: 0.9em;">How a Zgent <span class="highlight">perceives and reports</span> its own behavior</p>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph AOE["Agent Orchestration Engine"]
+                            LOG[Structured Logging<br/>Multiple transports]
+                            ERR[Error Hierarchy<br/>Categorized failures]
+                            EVT[Typed Event System<br/>Pub/sub patterns]
+                            SCN[Scene Framework<br/>Execution context]
+                        end
+                        LOG --> OUT1[Console]
+                        LOG --> OUT2[File]
+                        LOG --> OUT3[Remote]
+                        EVT --> SUB[Subscribers]
+
+                        style AOE fill:#1a1a2e,stroke:#00d4ff
+                        style LOG fill:#00d4ff,color:#1a1a2e
+                        style ERR fill:#ff6464,color:#1a1a2e
+                        style EVT fill:#64ff96,color:#1a1a2e
+                        style SCN fill:#ffaa44,color:#1a1a2e
+                </div>
+                <div class="two-column" style="font-size: 0.8em; margin-top: 0.5em;">
+                    <div>
+                        <p><strong class="highlight">Logging</strong> = sight<br>
+                        <span class="dim">The Zgent sees what it is doing</span></p>
+                        <p><strong style="color: #ff6464;">Errors</strong> = pain<br>
+                        <span class="dim">Categorized signals that something is wrong</span></p>
+                    </div>
+                    <div>
+                        <p><strong style="color: #64ff96;">Events</strong> = hearing<br>
+                        <span class="dim">The Zgent listens and broadcasts to others</span></p>
+                        <p><strong class="warm">Scenes</strong> = proprioception<br>
+                        <span class="dim">Awareness of where it is in a workflow</span></p>
+                    </div>
+                </div>
+                <aside class="notes">
+                    The Agent Orchestration Engine provides the sensory apparatus of a Zgent. Structured logging with multiple transports (console, file, remote) gives the Zgent "sight" -- it can see and record what it is doing. The hierarchical error system gives it "pain" -- categorized signals that something is wrong, with appropriate severity levels. The typed event system gives it "hearing" -- the ability to broadcast events and listen for events from other systems. The scene execution framework gives it proprioception -- awareness of where it is in a larger workflow. These four subsystems are the reusable foundation that every Zgent builds on. The AOE is not application-specific; it is the shared sensory infrastructure of the entire ecosystem.
+                </aside>
+            </section>
+
+            <!-- Slide 7: The Voice (API Publication) -->
+            <section>
+                <span class="anatomy-label">THE VOICE</span>
+                <h2>Publishing the API</h2>
+                <p style="font-size: 0.9em;">How a Zgent <span class="highlight">tells others what it can do</span></p>
+                <div class="mermaid">
+                    flowchart LR
+                        subgraph DReader["DReader (Zgent)"]
+                            API["Published API<br/>Queries + Interactions"]
+                            DATA["Discord Data<br/>Collected info"]
+                        end
+                        subgraph Others["Other Zgents"]
+                            Z1["Zgent A"]
+                            Z2["Zgent B"]
+                            Z3["Zgent C"]
+                        end
+                        Z1 -->|"discover"| API
+                        Z2 -->|"query"| API
+                        Z3 -->|"interact"| API
+                        API --> DATA
+
+                        style API fill:#00d4ff,color:#1a1a2e
+                        style DReader fill:#1a1a2e,stroke:#00d4ff
+                        style Others fill:#1a1a2e,stroke:#64ff96
+                </div>
+                <div style="margin-top: 1em;">
+                    <div class="insight-point">
+                        <strong>Discovery</strong> &mdash; "What can you do?" A Zgent answers this question programmatically.
+                    </div>
+                    <div class="insight-point">
+                        <strong>Query</strong> &mdash; "What do you know?" Other Zgents can ask, and get structured responses.
+                    </div>
+                    <div class="insight-point">
+                        <strong>Convention</strong> &mdash; They know <em>how</em> to ask because the protocol is shared.
+                    </div>
+                </div>
+                <aside class="notes">
+                    The voice is what distinguishes a Zgent from a standalone agent. A raw Claude Code agent can do work, but it cannot tell anyone what it does. A Zgent publishes its API -- a description of the queries and interactions it supports. Other Zgents can discover this API, query it, and interact through it. DReader is the canonical example: it collects information from Discord channels. Other Zgents may want that information. They know how to ask because DReader, as a well-formed Zgent, publishes its query API according to shared conventions. This is the inter-agent protocol -- the shared language that makes collaboration possible. Without it, agents are isolated. With it, they form an ecosystem.
+                </aside>
+            </section>
+
+            <!-- Slide 8: The Habitat (tmuxMOO) -->
+            <section>
+                <span class="anatomy-label">THE HABITAT</span>
+                <h2>tmuxMOO: Where Zgents Live</h2>
+                <p style="font-size: 0.9em;">Persistent text environments with <span class="highlight">shared presence</span></p>
+                <div style="background: #0d0d15; padding: 1em; border-radius: 8px; margin-top: 0.5em; font-family: monospace; font-size: 0.6em; text-align: left; line-height: 1.4;">
+                    <span style="color: #00d4ff;">+------------------+------------------+</span><br>
+                    <span style="color: #00d4ff;">|</span> <span style="color: #64ff96;">Zgent: Deacon</span>    <span style="color: #00d4ff;">|</span> <span style="color: #64ff96;">Zgent: Scanner</span>   <span style="color: #00d4ff;">|</span><br>
+                    <span style="color: #00d4ff;">|</span> <span style="color: #888;">(price/flow)</span>     <span style="color: #00d4ff;">|</span> <span style="color: #888;">(butterflies)</span>    <span style="color: #00d4ff;">|</span><br>
+                    <span style="color: #00d4ff;">|</span>  SPX 5842.50     <span style="color: #00d4ff;">|</span>  5835/40/45 @0.45<span style="color: #00d4ff;">|</span><br>
+                    <span style="color: #00d4ff;">+------------------+------------------+</span><br>
+                    <span style="color: #00d4ff;">|</span> <span style="color: #ffaa44;">Shared Narrative</span> <span style="color: #00d4ff;">|</span> <span style="color: #ffaa44;">Human Command</span>    <span style="color: #00d4ff;">|</span><br>
+                    <span style="color: #00d4ff;">|</span> <span style="color: #888;">(all agent log)</span>  <span style="color: #00d4ff;">|</span> <span style="color: #888;">(input pane)</span>     <span style="color: #00d4ff;">|</span><br>
+                    <span style="color: #00d4ff;">|</span>  &gt; /ask deacon   <span style="color: #00d4ff;">|</span>  /scan butterfly <span style="color: #00d4ff;">|</span><br>
+                    <span style="color: #00d4ff;">+------------------+------------------+</span>
+                </div>
+                <div class="two-column" style="margin-top: 0.8em; font-size: 0.8em;">
+                    <div>
+                        <p><strong class="highlight">Rooms = Panes</strong><br>
+                        <span class="dim">Each Zgent inhabits its own space</span></p>
+                        <p><strong class="highlight">Persistence</strong><br>
+                        <span class="dim">Detach and walk away. Agents keep working.</span></p>
+                    </div>
+                    <div>
+                        <p><strong class="highlight">Shared Presence</strong><br>
+                        <span class="dim">Human + agents cohabit the same session</span></p>
+                        <p><strong class="highlight">Cross-Room Observation</strong><br>
+                        <span class="dim">Agents can read each other's output</span></p>
+                    </div>
+                </div>
+                <aside class="notes">
+                    tmuxMOO is the environment where Zgents live. It is built on tmux -- the terminal multiplexer -- but the concept is deeper than terminal management. Each pane is a "room" in the MOO sense: a persistent space where an agent exists, produces output, and can be observed. Multiple Zgents share a session, creating shared presence -- the human and agents cohabit the same text environment. Critically, this is persistent without human presence. You detach from the tmux session and walk away. The Zgents keep working. You reattach later, and the narrative has continued. Agents can observe each other's panes via capture-pane, enabling cross-room communication. The spatial metaphor from MOOs is preserved: you navigate between rooms, each room has inhabitants with behaviors, and the world persists whether you are watching or not.
+                </aside>
+            </section>
+
+            <!-- Slide 9: The Lineage (MOO to Zgent) -->
+            <section>
+                <span class="anatomy-label">THE LINEAGE</span>
+                <h2>30 Years in the Making</h2>
+                <p style="font-size: 0.85em;">From MOO programmable objects to Claude Code Zgents</p>
+                <div class="moo-comparison" style="margin-top: 1em;">
+                    <div class="left"><strong>1995 MOO</strong></div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right"><strong>2026 Zgent</strong></div>
+
+                    <div class="left">Programmable objects with verbs</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right">Agents with defined behaviors</div>
+
+                    <div class="left">Persistent rooms</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right">tmux panes per context</div>
+
+                    <div class="left">Natural language parsing</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right">LLM-powered NL interface</div>
+
+                    <div class="left">Multi-user presence</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right">Human + agents sharing workspace</div>
+
+                    <div class="left">Telnet as transport</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right">tmux as programmable stage</div>
+
+                    <div class="left">"Voice support is coming"</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="right">Voice layers on text-first</div>
+                </div>
+                <div class="insight-point" style="margin-top: 1em; font-size: 0.85em;">
+                    <strong>"A slow dawning event"</strong> &mdash; The 1995 vision of environments where objects have behavior and respond to input is exactly what modern agent frameworks are rediscovering. The concept was right. The technology finally caught up.
+                </div>
+                <aside class="notes">
+                    Steve built Virtual Educational Environments on MOO infrastructure in 1995-97. MOO stood for MUD Object-Oriented -- text-based, multi-user environments where everything was a programmable object with "verbs" (behaviors). Rooms persisted. Multiple users shared presence. Natural language was the interface. The vision was right, but the technology -- telnet, limited computing power, no AI -- could not deliver the full promise. Three decades later, every concept maps 1:1 to what we are building. Programmable objects with verbs are agents with defined behaviors. Persistent rooms are tmux panes. Natural language parsing is now powered by LLMs. Multi-user presence is humans and agents sharing workspaces. Telnet was a pipe; tmux is a programmable stage. Steve describes recognizing this as "a slow dawning event" -- the realization that the vision from 1995 has become feasible with 2026 technology. This is not nostalgia. It is architectural continuity across three decades.
+                </aside>
+            </section>
+
+            <!-- Slide 10: A Day in the Life -->
+            <section>
+                <h2>A Day in the Life of a Zgent</h2>
+                <p style="font-size: 0.85em;" class="dim">What happens from startup to collaboration</p>
+                <div class="day-step">
+                    <span class="step-time">06:00</span> &mdash; <strong>Startup</strong>: The Zgent spawns in its tmux pane. CrudEngine initializes its artifacts. AOE logging begins. It announces its presence.
+                </div>
+                <div class="day-step">
+                    <span class="step-time">06:01</span> &mdash; <strong>API Publication</strong>: The Zgent publishes its capabilities. Other Zgents can now discover and query it.
+                </div>
+                <div class="day-step">
+                    <span class="step-time">08:30</span> &mdash; <strong>Work</strong>: An incoming event triggers a hook. The Zgent processes data, emits structured logs, fires events that other Zgents can subscribe to.
+                </div>
+                <div class="day-step">
+                    <span class="step-time">10:15</span> &mdash; <strong>Collaboration</strong>: Another Zgent queries this one via the published API. A structured response is returned. The querying Zgent adapts its behavior based on the answer.
+                </div>
+                <div class="day-step">
+                    <span class="step-time">14:00</span> &mdash; <strong>Human Interaction</strong>: The operator attaches to the tmux session. Reviews the narrative. Issues a command. The Zgent responds in its pane. The operator detaches. The Zgent continues.
+                </div>
+                <aside class="notes">
+                    This conceptual walkthrough shows a typical day for a well-formed Zgent. At startup, it spawns in its tmux pane and initializes -- CrudEngine loads its artifact configuration, AOE logging starts streaming, and it announces its presence to the ecosystem. It publishes its API so other Zgents know what it can do. During the workday, hooks fire in response to events, the Zgent processes data and emits structured logs. Other Zgents query it through the published API, getting structured responses that inform their own behavior. The human operator can attach and detach from the tmux session at will -- the Zgent does not depend on human presence to continue working. Every operation is logged, every event is emitted, and every interaction is observable. This is the daily rhythm of a well-formed autonomous agent.
+                </aside>
+            </section>
+
+            <!-- Slide 11: The Academy -->
+            <section>
+                <h2>The Gas Town Academy</h2>
+                <p style="font-size: 0.9em;">What separates a <span class="dim">raw Claude Code agent</span> from a <span class="highlight">well-formed Zgent</span></p>
+                <div class="two-column" style="margin-top: 1em;">
+                    <div>
+                        <h3 style="color: #ff6464;">Raw Agent</h3>
+                        <div class="pain-point">No published API</div>
+                        <div class="pain-point">Ad-hoc logging (or none)</div>
+                        <div class="pain-point">Custom error handling</div>
+                        <div class="pain-point">Manual configuration</div>
+                        <div class="pain-point">Cannot be queried by others</div>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ff96;">Graduated Zgent</h3>
+                        <div class="solution-point">Published, discoverable API</div>
+                        <div class="solution-point">AOE structured logging</div>
+                        <div class="solution-point">Hierarchical error system</div>
+                        <div class="solution-point">CrudEngine-managed artifacts</div>
+                        <div class="solution-point">Inter-agent query protocol</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1em; font-size: 0.85em;">
+                    The Academy is the <span class="highlight">process</span>, not a place.<br>
+                    <span class="dim">Any Claude Code agent can graduate by meeting the criteria.</span>
+                </p>
+                <aside class="notes">
+                    The Gas Town Academy is the graduation process. It is not a separate system or a training step -- it is a set of criteria that an agent must satisfy to be considered a well-formed Zgent. A raw Claude Code agent might be capable and functional, but it exists in isolation. It has no standard way to be discovered, queried, or monitored. It handles errors its own way. Its configuration is manual and opaque. A graduated Zgent has adopted all the shared conventions: AOE logging and error handling, CrudEngine-managed artifacts, a published API, and participation in the inter-agent query protocol. The Academy is the quality gate that ensures every agent in the ecosystem can be trusted to behave predictably, report its status, and collaborate with others.
+                </aside>
+            </section>
+
+            <!-- Slide 12: Current State -->
+            <section>
+                <h2>What Exists Today</h2>
+                <div style="margin-top: 1em;">
+                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                        <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
+                        <span style="margin-left: 1em;"><strong>CrudEngine</strong> &mdash; 7 artifact handlers, traffic logging, versioning, subscriptions, 64+ tests</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                        <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
+                        <span style="margin-left: 1em;"><strong>AOE</strong> &mdash; Structured logging, error hierarchy, typed events, scene framework</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                        <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
+                        <span style="margin-left: 1em;"><strong>ECC Schema</strong> &mdash; All 7 artifact types modeled with 2.1 extensions</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                        <span class="status-badge" style="width: 110px; text-align: center;">COMPLETE</span>
+                        <span style="margin-left: 1em;"><strong>Explorer Engine</strong> &mdash; Reference implementation, scene execution, CrudEngine integration</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                        <span class="status-badge in-progress" style="width: 110px; text-align: center;">PROTOTYPE</span>
+                        <span style="margin-left: 1em;"><strong>tmuxMOO</strong> &mdash; Demo with 3 simulated agents, themed layout, persistence proof</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 0.6em 0;">
+                        <span class="status-badge planned" style="width: 110px; text-align: center;">PLANNED</span>
+                        <span style="margin-left: 1em;"><strong>Inter-Agent Protocol</strong> &mdash; API publication standard, query routing</span>
+                    </div>
+                </div>
+                <p style="margin-top: 1em; font-size: 0.85em;">
+                    The organism's <span class="highlight">skeleton, nervous system, and senses</span> are built.<br>
+                    <span class="dim">The voice and habitat are emerging.</span>
+                </p>
+                <aside class="notes">
+                    Here is the honest accounting of where we stand. The core infrastructure is complete: CrudEngine manages all 7 artifact types with full observability. The AOE provides structured logging, error handling, and typed events. The ECC schema models every artifact type including Claude Code 2.1 extensions. The Explorer Engine demonstrates the full pattern -- loading scenes, generating configs through CrudEngine, executing Claude Code, streaming events. tmuxMOO has been prototyped with a working demo: three simulated agents narrating a price action sequence in themed tmux panes with persistence. What remains is the inter-agent protocol -- the standardized way Zgents publish their APIs and query each other -- and the graduation of the first real Zgent candidate. The foundation is solid. The next step is to produce a living example.
+                </aside>
+            </section>
+
+            <!-- Slide 13: The Horizon -->
+            <section>
+                <h2>The Horizon: DReader</h2>
+                <p style="font-size: 0.9em;">The first candidate to <span class="highlight">graduate</span> from the Gas Town Academy</p>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph DReader["DReader Today"]
+                            D1["Collects Discord data"]
+                            D2["Stores channel info"]
+                            D3["Runs standalone"]
+                        end
+                        subgraph Graduate["DReader as Zgent"]
+                            G1["Published query API"]
+                            G2["AOE logging + events"]
+                            G3["CrudEngine artifacts"]
+                            G4["tmuxMOO presence"]
+                        end
+                        D1 --> G1
+                        D2 --> G2
+                        D3 --> G3
+                        D3 --> G4
+
+                        style Graduate fill:#1a1a2e,stroke:#64ff96
+                        style DReader fill:#1a1a2e,stroke:#ffaa44
+                        style G1 fill:rgba(100,255,150,0.2),stroke:#64ff96,color:#eaeaea
+                        style G2 fill:rgba(100,255,150,0.2),stroke:#64ff96,color:#eaeaea
+                        style G3 fill:rgba(100,255,150,0.2),stroke:#64ff96,color:#eaeaea
+                        style G4 fill:rgba(100,255,150,0.2),stroke:#64ff96,color:#eaeaea
+                </div>
+                <div style="margin-top: 0.8em; font-size: 0.85em;">
+                    <div class="insight-point">
+                        <strong>What's needed:</strong> Integrate AOE logging. Manage artifacts through CrudEngine. Publish a query API so other Zgents can ask "What happened in #general today?" Establish presence in tmuxMOO.
+                    </div>
+                </div>
+                <p style="margin-top: 0.5em; font-size: 0.8em;" class="dim">
+                    DReader graduates &rarr; the pattern is proven &rarr; every future Zgent follows the same path
+                </p>
+                <aside class="notes">
+                    DReader is the first real candidate for Zgent graduation. Today, it collects information from Discord channels and stores it. It works, but it is a raw agent -- it does not publish an API, it does not use AOE logging, and its configuration is not managed through CrudEngine. To graduate, DReader needs four things. First, integrate AOE structured logging so its activity is observable. Second, manage its artifacts through CrudEngine so its configuration is versioned and auditable. Third, publish a query API so other Zgents can ask it questions like "What happened in #general today?" and get structured responses. Fourth, establish presence in tmuxMOO so it inhabits the shared environment. When DReader graduates, it proves the entire pattern. Every future Zgent follows the same path: adopt AOE, integrate CrudEngine, publish API, establish presence. The first graduation is the proof point that unlocks the factory.
+                </aside>
+            </section>
+
+            <!-- Slide 14: The Complete Organism -->
+            <section>
+                <h2>The Complete Organism</h2>
+                <p style="font-size: 0.85em;" class="dim">A Zgent is not "a Claude Code agent with config files"</p>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph Organism["A Well-Formed Zgent"]
+                            SK["Skeleton<br/>7 Artifact Types"]
+                            NS["Nervous System<br/>CrudEngine"]
+                            SN["Senses<br/>AOE Logging + Events"]
+                            VC["Voice<br/>Published API"]
+                            HB["Habitat<br/>tmuxMOO Presence"]
+                        end
+
+                        SK --> NS
+                        NS --> SN
+                        SN --> VC
+                        VC --> HB
+
+                        style Organism fill:#1a1a2e,stroke:#00d4ff
+                        style SK fill:rgba(0,212,255,0.2),stroke:#00d4ff,color:#eaeaea
+                        style NS fill:rgba(0,212,255,0.2),stroke:#00d4ff,color:#eaeaea
+                        style SN fill:rgba(100,255,150,0.2),stroke:#64ff96,color:#eaeaea
+                        style VC fill:rgba(255,170,68,0.2),stroke:#ffaa44,color:#eaeaea
+                        style HB fill:rgba(255,100,100,0.2),stroke:#ff6464,color:#eaeaea
+                </div>
+                <div style="margin-top: 0.8em;">
+                    <div class="metric-box">
+                        <div class="number">Skeleton</div>
+                        <div class="label">ECC / 7 Artifacts</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">Nerves</div>
+                        <div class="label">CrudEngine</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">Senses</div>
+                        <div class="label">AOE</div>
+                    </div>
+                    <div class="metric-box warm-box">
+                        <div class="number">Voice</div>
+                        <div class="label">Published API</div>
+                    </div>
+                    <div class="metric-box" style="background: rgba(255, 100, 100, 0.1); border-color: #ff6464;">
+                        <div class="number" style="color: #ff6464;">Habitat</div>
+                        <div class="label">tmuxMOO</div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    This is the central insight of the presentation. A Zgent is a complete organism, not a collection of configuration files. The skeleton is the 7 artifact types modeled by ECC -- they give the Zgent its structure. The nervous system is CrudEngine -- it manages the lifecycle of those artifacts with full observability. The senses are AOE -- structured logging, hierarchical errors, and typed events that let the Zgent perceive and report on its own behavior. The voice is the published API -- the way a Zgent tells the world what it can do and responds to queries from other Zgents. The habitat is tmuxMOO -- the persistent text environment where Zgents live, work, and share presence with humans and other agents. Every layer is necessary. Remove any one, and you have something less than a Zgent. Together, they create an autonomous agent that can participate reliably in a multi-agent ecosystem at scale. The MOO parallel is real and direct: programmable objects with verbs, living in persistent rooms, observable by other inhabitants. The 1995 vision, realized with 2026 technology.
+                </aside>
+            </section>
+
+            <!-- Slide 15: Questions -->
+            <section>
+                <h1>Questions?</h1>
+                <p class="dim" style="margin-top: 2em;">
+                    Anatomy of a Zgent
+                </p>
+                <p style="font-size: 0.7em; margin-top: 2em;">
+                    <span class="highlight">Skeleton:</span> ECC + 7 Artifact Types<br>
+                    <span class="highlight">Nervous System:</span> CrudEngine<br>
+                    <span class="highlight">Senses:</span> AOE (Logging, Errors, Events)<br>
+                    <span class="highlight">Voice:</span> Published API<br>
+                    <span class="highlight">Habitat:</span> tmuxMOO
+                </p>
+                <p style="font-size: 0.6em; margin-top: 2em;" class="dim">
+                    Gas Town Operations | February 2026
+                </p>
+                <aside class="notes">
+                    Key takeaways to reinforce during Q&A: (1) A Zgent is a complete organism, not just an agent with config files. (2) The infrastructure layers -- CrudEngine, AOE, ECC -- are the foundation that makes the organism viable. (3) tmuxMOO provides the habitat where Zgents live persistently. (4) The MOO lineage is not a metaphor -- it is architectural continuity from a 1995 vision that is now technically feasible. (5) DReader is the first graduation candidate, and its success proves the pattern for all future Zgents. (6) The goal is one human coordinating 20-30 Zgents reliably, with full observability and inter-agent collaboration.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00d4ff',
+                primaryTextColor: '#eaeaea',
+                primaryBorderColor: '#00d4ff',
+                lineColor: '#00d4ff',
+                secondaryColor: '#1a1a2e',
+                tertiaryColor: '#1a1a2e'
+            }
+        });
+    </script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [ RevealNotes ],
+            transition: 'fade',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

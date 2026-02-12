@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms &amp; Presence: How Humans and Agents Share Space</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.css">
+    <style>
+        :root {
+            --r-background-color: #1a1a2e;
+            --r-main-color: #eaeaea;
+            --r-heading-color: #00d4ff;
+            --r-link-color: #00d4ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 600;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.6em; color: #00d4ff; }
+        .reveal h3 { font-size: 1.2em; color: #888; }
+        .reveal ul { text-align: left; }
+        .reveal li { margin-bottom: 0.5em; }
+        .reveal table {
+            font-size: 0.75em;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        .reveal table th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            padding: 0.5em 1em;
+            border-bottom: 2px solid #00d4ff;
+            text-align: left;
+        }
+        .reveal table td {
+            padding: 0.4em 1em;
+            border-bottom: 1px solid #333;
+            text-align: left;
+        }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .dim { color: #666; }
+        .metric-box {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            margin: 0.5em;
+            text-align: center;
+        }
+        .metric-box .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .metric-box .label {
+            font-size: 0.8em;
+            color: #888;
+        }
+        .pain-point {
+            background: rgba(255, 100, 100, 0.1);
+            border-left: 4px solid #ff6464;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .solution-point {
+            background: rgba(100, 255, 150, 0.1);
+            border-left: 4px solid #64ff96;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .mermaid {
+            font-size: 0.7em;
+        }
+        .two-column {
+            display: flex;
+            gap: 2em;
+        }
+        .two-column > div {
+            flex: 1;
+        }
+        .year-badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid #00d4ff;
+            border-radius: 20px;
+            padding: 0.2em 1em;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 0.5em;
+        }
+        .quote-block {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid #00d4ff;
+            padding: 1em 1.5em;
+            margin: 1em 0;
+            font-style: italic;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .quote-block .attribution {
+            font-style: normal;
+            color: #888;
+            margin-top: 0.5em;
+            font-size: 0.85em;
+        }
+        .terminal-box {
+            background: #0d0d15;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            font-size: 0.6em;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .terminal-box .prompt { color: #64ff96; }
+        .terminal-box .cmd { color: #eaeaea; }
+        .terminal-box .comment { color: #555; }
+        .terminal-box .output { color: #888; }
+        .terminal-box .accent { color: #00d4ff; }
+        .terminal-box .warn { color: #ffaa00; font-weight: bold; }
+        .pane-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 4px;
+            background: #333;
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            overflow: hidden;
+            max-width: 700px;
+            margin: 0.8em auto;
+            font-size: 0.6em;
+        }
+        .pane-grid .pane {
+            background: #0d0d15;
+            padding: 0.8em;
+            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            text-align: left;
+            min-height: 100px;
+        }
+        .pane-grid .pane .pane-title {
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.3em;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.9em;
+        }
+        .pane-grid .pane .line { margin: 0.2em 0; }
+        .pane-grid .pane .line.green { color: #64ff96; }
+        .pane-grid .pane .line.cyan { color: #00d4ff; }
+        .pane-grid .pane .line.yellow { color: #ffaa00; }
+        .pane-grid .pane .line.dim { color: #555; }
+        .capability-card {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 0.6em 1em;
+            margin: 0.3em;
+            font-size: 0.8em;
+            text-align: center;
+            vertical-align: top;
+            width: 180px;
+        }
+        .capability-card .cap-title {
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 0.3em;
+        }
+        .capability-card .cap-desc {
+            color: #888;
+            font-size: 0.85em;
+        }
+        .arrow-upgrade {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5em;
+            margin: 1.5em 0;
+        }
+        .arrow-upgrade .old {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid #ff6464;
+            border-radius: 8px;
+            padding: 0.8em 1.5em;
+            text-align: center;
+        }
+        .arrow-upgrade .arrow {
+            font-size: 2em;
+            color: #00d4ff;
+        }
+        .arrow-upgrade .new {
+            background: rgba(100, 255, 150, 0.1);
+            border: 1px solid #64ff96;
+            border-radius: 8px;
+            padding: 0.8em 1.5em;
+            text-align: center;
+        }
+        .open-question {
+            background: rgba(255, 170, 0, 0.08);
+            border-left: 4px solid #ffaa00;
+            padding: 0.5em 1em;
+            margin: 0.4em 0;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .open-question strong { color: #ffaa00; }
+        .vision-stat {
+            display: inline-block;
+            margin: 0.5em 1em;
+            text-align: center;
+        }
+        .vision-stat .num {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00d4ff;
+            line-height: 1;
+        }
+        .vision-stat .unit {
+            font-size: 0.8em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ============================================ -->
+            <!-- SLIDE 1: TITLE                               -->
+            <!-- ============================================ -->
+            <section>
+                <h1>Rooms &amp; Presence</h1>
+                <h3>How Humans and Agents Share Space</h3>
+                <p class="dim" style="margin-top: 1.5em;">The Interaction Model for Strades</p>
+                <p class="dim" style="font-size: 0.6em;">February 2026 | GasTown Operations</p>
+                <aside class="notes">
+                    This presentation tells the story of an interaction model -- how humans and agents will actually inhabit shared spaces together. It connects a vision from 1995 to what we are building today with tmux, agents, and the Gas Town infrastructure. The core claim: the text-first, multi-user, persistent-room paradigm IS the right model for human-agent collaboration. We just needed 30 years of technology to catch up. This is not a technical deep dive -- it is the narrative that ties our architecture decisions to a coherent vision.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 2: THE MEMORY - 1995                   -->
+            <!-- ============================================ -->
+            <section>
+                <div class="year-badge">1995</div>
+                <h2>The Memory</h2>
+                <p>Steve builds <span class="highlight">Virtual Educational Environments</span> on MOO infrastructure</p>
+                <div class="two-column" style="margin-top: 1em; font-size: 0.85em;">
+                    <div>
+                        <h3 style="color: #00d4ff;">What MOO Had</h3>
+                        <ul>
+                            <li>Programmable objects with verbs</li>
+                            <li>Persistent rooms</li>
+                            <li>Natural language parsing</li>
+                            <li>Multi-user presence</li>
+                            <li>"Voice support is coming"</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #ff6464;">What It Lacked</h3>
+                        <ul>
+                            <li>Intelligent objects (no AI)</li>
+                            <li>Rich client infrastructure</li>
+                            <li>Scalable compute</li>
+                            <li>Real-time data feeds</li>
+                            <li>The voice never came</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="margin-top: 1em; font-size: 0.8em;" class="dim">MUD Object-Oriented: text-based virtual environments where every object was programmable</p>
+                <aside class="notes">
+                    Start with the personal story. In 1995-97, Steve built educational environments on MOO -- MUD Object-Oriented systems. These were text-based virtual worlds where you could program objects with verbs, create persistent rooms, parse natural language commands, and have multiple users sharing the same space simultaneously. The technology was visionary but the infrastructure was a dead end. Telnet clients, no real compute, no data feeds. The vision was right -- the world was not ready. This is not nostalgia. This is the setup for a 30-year convergence story.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 3: THE REALIZATION                     -->
+            <!-- ============================================ -->
+            <section>
+                <h2>The Realization</h2>
+                <div class="quote-block">
+                    "A slow dawning event" -- the 1995 vision is exactly what modern agent frameworks are rediscovering.
+                    <div class="attribution">-- Steve, February 2026</div>
+                </div>
+                <table style="margin-top: 1em;">
+                    <thead>
+                        <tr>
+                            <th>1995 MOO Concept</th>
+                            <th>2026 Strades Equivalent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Programmable objects with verbs</td>
+                            <td><span class="highlight">Agents</span> with defined behaviors (Deacon, Butterfly-Scanner)</td>
+                        </tr>
+                        <tr>
+                            <td>Persistent rooms</td>
+                            <td><span class="highlight">Instrument environments</span> (SPX Room, Gamma Room)</td>
+                        </tr>
+                        <tr>
+                            <td>Natural language parsing</td>
+                            <td><span class="highlight">LLM-powered</span> natural language interface</td>
+                        </tr>
+                        <tr>
+                            <td>Multi-user presence</td>
+                            <td><span class="highlight">Human + agents</span> sharing a workspace</td>
+                        </tr>
+                        <tr>
+                            <td>"Voice support is coming"</td>
+                            <td><span class="highlight">Voice-is-very-close</span> -- 2nd priority</td>
+                        </tr>
+                        <tr>
+                            <td>Telnet as client</td>
+                            <td><span class="highlight">tmux as client</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <aside class="notes">
+                    This slide is the emotional core of the first act. Steve describes the realization as "a slow dawning event" -- looking at what we are building with agents, rooms, presence, and natural language and recognizing it is the same architecture he was building in 1995. Every single concept maps. The difference is not the vision -- it is the technology underneath. MOO had programmable objects but they were dumb scripts. We have LLMs. MOO had telnet. We have tmux. MOO promised voice. We actually have speech-to-text and TTS. Thirty years of technology catching up to a vision that was already correct.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 4: WHY TMUX                            -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Why tmux, Not Just Better Telnet</h2>
+                <p>The upgrade is <span class="highlight">categorical</span>, not incremental</p>
+                <div class="arrow-upgrade">
+                    <div class="old">
+                        <div style="font-size: 1.4em; font-weight: bold; color: #ff6464;">Telnet</div>
+                        <div style="font-size: 0.8em; color: #888; margin-top: 0.3em;">A pipe</div>
+                        <div style="font-size: 0.7em; color: #666; margin-top: 0.3em;">
+                            One stream<br>
+                            No persistence<br>
+                            No layout<br>
+                            No multiplexing
+                        </div>
+                    </div>
+                    <div class="arrow">&#10230;</div>
+                    <div class="new">
+                        <div style="font-size: 1.4em; font-weight: bold; color: #64ff96;">tmux</div>
+                        <div style="font-size: 0.8em; color: #888; margin-top: 0.3em;">A programmable stage</div>
+                        <div style="font-size: 0.7em; color: #666; margin-top: 0.3em;">
+                            Multiple panes<br>
+                            Detach / reattach<br>
+                            Scriptable layout<br>
+                            Multi-user sessions
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 0.8em; font-size: 0.85em;">
+                    tmux is the transport that MOO needed.<br>
+                    <span class="highlight">LLMs are the intelligence that MOO's objects lacked.</span>
+                </p>
+                <aside class="notes">
+                    This is the key architectural insight. Telnet gave you a pipe -- a single bidirectional stream of text. That is it. tmux gives you a programmable stage. Multiple panes, persistent sessions that survive disconnection, scriptable layouts, and -- critically -- multi-user attachment. Multiple humans AND agents can inhabit the same tmux session simultaneously. This is not an incremental improvement on telnet. It is a categorical upgrade. And when you combine it with LLM-powered agents -- objects that can actually understand and respond intelligently -- you get the MOO vision fully realized. The transport that MOO needed. The intelligence that MOO's objects lacked. Both arriving at the same moment.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 5: SHARED PRESENCE                     -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Shared Presence</h2>
+                <p>Not simulated -- <span class="highlight">actual co-habitation</span></p>
+                <div class="terminal-box" style="margin: 1em auto; max-width: 650px;">
+                    <div class="comment"># Agent speaks into the shared space</div>
+                    <div><span class="prompt">agent$</span> <span class="cmd">tmux send-keys -t moo-spx:1.1 "SPX breaking 5835 support" Enter</span></div>
+                    <br>
+                    <div class="comment"># Human sees it arrive -- live, in real time</div>
+                    <div><span class="accent">14:32:07</span> <span class="output">SPX breaking 5835 support</span></div>
+                    <br>
+                    <div class="comment"># Multiple humans attached to the same session</div>
+                    <div><span class="prompt">steve$</span> <span class="cmd">tmux attach -t moo-spx</span> <span class="dim">  # sees it</span></div>
+                    <div><span class="prompt">alice$</span> <span class="cmd">tmux attach -t moo-spx</span> <span class="dim">  # sees it too</span></div>
+                </div>
+                <p style="font-size: 0.85em;">
+                    Agent uses <span class="highlight">send-keys</span> to speak.<br>
+                    Human sees it arrive. No polling. No API. <span class="highlight">Shared terminal.</span>
+                </p>
+                <aside class="notes">
+                    Shared presence is the foundation. In MOO, multiple users were "in the same room" -- they could see each other's actions, talk to each other, observe the same objects. tmux gives us this natively. An agent uses send-keys to write text into a pane. Every human attached to that session sees it arrive in real time. This is not simulated presence through an API or a WebSocket. It is actual co-habitation of a text environment. The agent and the human are literally in the same terminal session. When the agent writes, the human sees it. When the human types, the agent can observe it via capture-pane. This is the MOO interaction model running on modern infrastructure.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 6: PANES AS ROOMS                      -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Panes as Rooms</h2>
+                <p>The spatial metaphor, <span class="highlight">preserved</span></p>
+                <div class="pane-grid">
+                    <div class="pane">
+                        <div class="pane-title">Deacon (Narrator)</div>
+                        <div class="line green">SPX at 5839.25, down 3.25</div>
+                        <div class="line green">Volume picking up on bid</div>
+                        <div class="line green">Put activity increasing</div>
+                        <div class="line dim">14:32:07</div>
+                    </div>
+                    <div class="pane">
+                        <div class="pane-title">Butterfly Scanner</div>
+                        <div class="line cyan">5835/5840/5845 call bfly</div>
+                        <div class="line cyan">Entry: $0.42</div>
+                        <div class="line yellow">Now: $1.85 (+$1.43)</div>
+                        <div class="line dim">Scanning...</div>
+                    </div>
+                    <div class="pane">
+                        <div class="pane-title">Shared Narrative</div>
+                        <div class="line dim">[14:31:45] deacon: Watching 5835</div>
+                        <div class="line dim">[14:32:02] gamma: Flip detected</div>
+                        <div class="line dim">[14:32:07] deacon: Breaking 5835</div>
+                        <div class="line dim">[14:32:11] bfly: Entry found</div>
+                    </div>
+                    <div class="pane">
+                        <div class="pane-title">Human Command</div>
+                        <div class="line dim">/ask deacon volume profile?</div>
+                        <div class="line dim">/scan butterfly 5835 +/-5</div>
+                        <div class="line dim">/status</div>
+                        <div class="line" style="color: #64ff96;">$ _</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.8em;">
+                    Navigate between rooms: <span class="highlight">Alt+Arrow</span> &nbsp;|&nbsp;
+                    Zoom into one: <span class="highlight">Ctrl+Space z</span>
+                </p>
+                <aside class="notes">
+                    MOO had rooms. You would "go north" to enter a different context. tmux panes are rooms. Each pane is a dedicated space for a specific agent or function. Deacon narrates price action in one pane. Butterfly Scanner tracks opportunities in another. A shared narrative log aggregates the important messages. The human command pane is where you type queries and commands. You navigate between rooms with Alt+Arrow. You can zoom into any room with Ctrl+Space z to focus. The spatial metaphor from 1995 is preserved -- but instead of typing "go north" you press Alt+Right. Same concept. Better transport. Notice the layout: this is the actual tmuxMOO demo layout. Four panes, specialized agents, shared log, human input. This is a trading workshop, not a chat window.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 7: AGENTS READING THE ROOM             -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Agents Reading the Room</h2>
+                <p><span class="highlight">capture-pane</span> -- the MOO verb system, realized</p>
+                <div class="terminal-box" style="margin: 1em auto; max-width: 650px;">
+                    <div class="comment"># Gamma-Watch reads what Deacon is saying</div>
+                    <div><span class="prompt">gamma$</span> <span class="cmd">tmux capture-pane -t moo-spx:1.1 -p -S -5</span></div>
+                    <div class="output">SPX at 5839.25, down 3.25</div>
+                    <div class="output">Volume picking up on bid side</div>
+                    <div class="output">Put activity increasing in 5830-5835 range</div>
+                    <div class="output">Dealer gamma turning negative below 5838</div>
+                    <div class="output">Volume surge detected - institutional flow</div>
+                    <br>
+                    <div class="comment"># Gamma-Watch reacts to what it observes</div>
+                    <div><span class="prompt">gamma$</span> <span class="cmd">tmux send-keys -t moo-spx:1.3 "GAMMA FLIP at 5838 -- dealers now short gamma" Enter</span></div>
+                    <br>
+                    <div class="comment"># Butterfly Scanner reads Gamma-Watch and adjusts</div>
+                    <div><span class="prompt">bfly$</span> <span class="cmd">tmux capture-pane -t moo-spx:1.3 -p -S -3</span></div>
+                    <div class="output">GAMMA FLIP at 5838 -- dealers now short gamma</div>
+                    <div class="accent">--> Butterfly Scanner narrows scan to 5835 +/- 5</div>
+                </div>
+                <p style="margin-top: 0.8em; font-size: 0.85em;">
+                    Agents <span class="highlight">observe</span> each other. <span class="highlight">React</span> to each other.<br>
+                    Programmable objects with behavior -- running natively on terminal infrastructure.
+                </p>
+                <aside class="notes">
+                    This is where it gets powerful. In MOO, objects could observe the room and react to events. A door object could listen for someone saying "open sesame" and respond. capture-pane is the tmux equivalent. An agent reads the current content of any pane. Gamma-Watch reads Deacon's pane, sees "dealer gamma turning negative below 5838", and posts its own analysis to its pane. Butterfly Scanner reads Gamma-Watch's output, sees the flip level, and narrows its scan range. This is agent-to-agent communication happening through the shared environment -- exactly like MOO objects reacting to each other. No special IPC protocol needed. The terminal IS the communication medium. The room IS the message bus. This pattern is emergent and powerful.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 8: PERSISTENCE WITHOUT PRESENCE        -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Persistence Without Presence</h2>
+                <p>The room stays active when you leave</p>
+                <div style="margin: 1.5em 0;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.8em; flex-wrap: wrap;">
+                        <div class="metric-box" style="min-width: 140px;">
+                            <div style="font-size: 1.4em; color: #64ff96;">14:30</div>
+                            <div class="label">Human attaches</div>
+                        </div>
+                        <div style="color: #00d4ff; font-size: 1.5em;">&#8594;</div>
+                        <div class="metric-box" style="min-width: 140px;">
+                            <div style="font-size: 1.4em; color: #ffaa00;">14:45</div>
+                            <div class="label">Human detaches</div>
+                        </div>
+                        <div style="color: #00d4ff; font-size: 1.5em;">&#8594;</div>
+                        <div class="metric-box" style="min-width: 140px;">
+                            <div style="font-size: 1.4em; color: #64ff96;">15:10</div>
+                            <div class="label">Human reattaches</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-point">
+                    <strong>While you were gone:</strong> Deacon narrated 25 minutes of price action. Butterfly Scanner found 3 new setups. Gamma-Watch tracked a regime change.
+                </div>
+                <p style="margin-top: 1em; font-size: 0.9em;">
+                    <span class="highlight">Ctrl+Space d</span> to detach. Walk away. Come back.<br>
+                    Scroll up. Everything is there. The room was never empty.
+                </p>
+                <aside class="notes">
+                    This directly answers a design question from the original MOO conversations: should rooms persist state when no one is in them? The answer with tmux is: absolutely, and for free. You detach from your tmux session. You close your laptop. You go get lunch. When you come back and reattach, everything that happened is in the scrollback buffer. Deacon kept narrating. The scanner kept scanning. The room was active without human occupants. This is not a feature we had to build -- it is inherent to tmux. Detach and reattach is the killer feature. For a trading workflow, this means you never miss what happened. You can review the last 25 minutes of agent activity by scrolling up. The persistence model is built into the transport.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 9: ARCHITECTURE - WORKSHOP VS FLOOR    -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Architecture: Two Layers</h2>
+                <p><span class="highlight">Workshop</span> and <span class="highlight">Trading Floor</span> -- not competing, complementary</p>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph TF["Trading Floor (Web UI)"]
+                            direction LR
+                            E1[Order Entry]
+                            E2[Position Mgmt]
+                            E3[P&L Dashboard]
+                            E4[Risk Display]
+                        end
+                        subgraph WS["Workshop (tmux)"]
+                            direction LR
+                            W1[Deacon<br>Narrator]
+                            W2[Butterfly<br>Scanner]
+                            W3[Gamma<br>Watch]
+                            W4[Human<br>Command]
+                        end
+                        subgraph Data["Shared Data Layer"]
+                            D1[Narrative Logs]
+                            D2[Agent State]
+                            D3[Market Data]
+                        end
+                        WS --> Data
+                        Data --> TF
+
+                        style TF fill:#1a1a2e,stroke:#64ff96,color:#eaeaea
+                        style WS fill:#1a1a2e,stroke:#00d4ff,color:#eaeaea
+                        style Data fill:#1a1a2e,stroke:#888,color:#eaeaea
+                </div>
+                <div class="two-column" style="margin-top: 0.8em; font-size: 0.8em;">
+                    <div>
+                        <div class="solution-point">
+                            <strong>tmux = Workshop</strong><br>
+                            Collaborative analysis, agent-dense, exploratory, text-native
+                        </div>
+                    </div>
+                    <div>
+                        <div class="solution-point">
+                            <strong>Web UI = Trading Floor</strong><br>
+                            Execution surface, polished UX, keyboard-first, visual
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    A key architectural insight: tmux and the web UI are not competing approaches. They serve different roles. The tmux layer is the workshop -- where agents and humans collaborate on understanding price action, running scans, evaluating setups, deciding what trades to take. It is text-native, agent-dense, and exploratory. The web UI is the trading floor -- the productized surface for trade execution, position management, P&L visualization. This is where the polished user experience lives. The web UI can read from tmux sessions for data. tmux is infrastructure. The web UI is product. Both are necessary. They are layers, not alternatives. Think of a car factory: the workshop is where the engineering happens. The showroom is where the customer sees the result. You need both.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 10: SESSION TOPOLOGY                   -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Session Topology</h2>
+                <p>The <span class="highlight">Hybrid Design</span> -- shared agents, personal views</p>
+                <div class="mermaid">
+                    flowchart LR
+                        subgraph BG["Background Sessions (Headless)"]
+                            direction TB
+                            A1["agents-spx<br>Deacon + Gamma + Bfly"]
+                            A2["agents-qqq<br>QQQ agents"]
+                            A3["agents-iwm<br>IWM agents"]
+                        end
+                        subgraph UV["User Sessions (Personal)"]
+                            direction TB
+                            U1["moo-steve<br>SPX focus + command"]
+                            U2["moo-alice<br>Multi-instrument"]
+                            U3["moo-bob<br>Gamma focus"]
+                        end
+                        A1 -->|feed| U1
+                        A1 -->|feed| U2
+                        A2 -->|feed| U2
+                        A1 -->|feed| U3
+
+                        style BG fill:#1a1a2e,stroke:#00d4ff,color:#eaeaea
+                        style UV fill:#1a1a2e,stroke:#64ff96,color:#eaeaea
+                        style A1 fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                        style A2 fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                        style A3 fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                        style U1 fill:#0d0d15,stroke:#64ff96,color:#eaeaea
+                        style U2 fill:#0d0d15,stroke:#64ff96,color:#eaeaea
+                        style U3 fill:#0d0d15,stroke:#64ff96,color:#eaeaea
+                </div>
+                <div style="margin-top: 0.8em;">
+                    <div class="metric-box">
+                        <div class="number">1x</div>
+                        <div class="label">Agent per instrument</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">Nx</div>
+                        <div class="label">Views per agent</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">0</div>
+                        <div class="label">Agent duplication</div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    Session topology: how do we organize tmux sessions for 36 users and 10 instruments? We evaluated three options. Option A: session per instrument -- clean but inflexible. Option B: session per user -- personalized but agents multiply per user. Option C, the hybrid, wins. Background sessions run agents headless. One Deacon narrates SPX for everyone. User sessions are personal views. Steve sees SPX focused. Alice sees multi-instrument. Bob focuses on gamma. Agents run once per instrument, not per user. Adding users does not multiply agents. This scales. Cross-room communication happens via pub/sub using Gas Town patterns. User views aggregate agent output. The key insight: agents are shared infrastructure. Views are personal preferences. Separating these concerns is what makes the architecture scale.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 11: THE DEMO TODAY                     -->
+            <!-- ============================================ -->
+            <section>
+                <h2>The Demo Today</h2>
+                <p>What <span class="highlight">tmuxMOO</span> demonstrates right now</p>
+                <div class="two-column" style="margin-top: 1em;">
+                    <div>
+                        <h3 style="color: #00d4ff;">The Setup</h3>
+                        <ul style="font-size: 0.85em;">
+                            <li>4-pane layout: Deacon, Butterfly, Shared Log, Command</li>
+                            <li>Dark themed tmux (not GameBoy)</li>
+                            <li>Alt+Arrow navigation</li>
+                            <li>Mouse support, Ctrl+Space prefix</li>
+                            <li>One command to launch</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ff96;">The Narrative Arc</h3>
+                        <ul style="font-size: 0.85em;">
+                            <li>SPX drops from 5842.50 toward 5835</li>
+                            <li>Deacon provides price updates, volume context</li>
+                            <li>Gamma-Watch identifies the flip level</li>
+                            <li>Butterfly Scanner finds 5835/5840/5845 at $0.45</li>
+                            <li style="color: #ffaa00; font-weight: bold;">Butterfly rises to $2.10 -- the moment captured</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="terminal-box" style="margin-top: 1em; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    <div><span class="prompt">$</span> <span class="cmd">cd tmuxMOO/demo && ./moo-demo.sh</span></div>
+                    <div class="output">Starting tmuxMOO demo...</div>
+                    <div class="output">Attaching to session: moo-demo</div>
+                </div>
+                <aside class="notes">
+                    The tmuxMOO demo is a working proof of concept. It launches a 4-pane tmux session with simulated agents narrating an SPX selloff. The narrative arc tells a complete trading story: SPX drops from 5842.50 toward 5835 over about 60 seconds. Deacon provides price updates and volume context. Gamma-Watch identifies the gamma flip level where dealer hedging shifts. Butterfly Scanner finds a 5835/5840/5845 butterfly at 45 cents, then watches it rise to $2.10 as the position goes from cheap speculation to profitable trade. This is the core Strades use case: capturing the moment when a cheap position becomes valuable, narrated in real time by specialized agents working in concert. The demo is themed -- dark, modern, not the "8-bit GameBoy" look of default tmux. Mouse support, Alt+Arrow navigation, minimal learning curve. One command to launch.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 12: VOICE AS A LAYER                   -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Voice as a Layer</h2>
+                <p>Text-first architecture gives voice <span class="highlight">for free</span></p>
+                <div class="mermaid">
+                    flowchart LR
+                        H["Human<br>(speaking)"] -->|STT| S["send-keys"]
+                        S --> P["Command Pane"]
+                        P --> A["Agent reads,<br>processes"]
+                        A --> R["Response Pane"]
+                        R -->|TTS| H2["Human<br>(hearing)"]
+
+                        style H fill:#1a1a2e,stroke:#64ff96,color:#eaeaea
+                        style H2 fill:#1a1a2e,stroke:#64ff96,color:#eaeaea
+                        style S fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                        style P fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                        style A fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                        style R fill:#0d0d15,stroke:#00d4ff,color:#eaeaea
+                </div>
+                <div style="margin-top: 1em;">
+                    <div class="solution-point">
+                        <strong>Speech-to-text</strong> converts voice to text, sent via send-keys into the command pane
+                    </div>
+                    <div class="solution-point">
+                        <strong>Agent responds</strong> with text in its pane -- the canonical response
+                    </div>
+                    <div class="solution-point">
+                        <strong>Text-to-speech</strong> reads the response pane aloud
+                    </div>
+                </div>
+                <p style="margin-top: 0.8em; font-size: 0.9em;">
+                    Voice becomes an <span class="highlight">I/O mode</span> on top of the text medium.<br>
+                    <span class="dim">MOO's text-first architecture preserved. Voice rides on top.</span>
+                </p>
+                <aside class="notes">
+                    MOO always promised voice support and never delivered. We can deliver it, and here is the elegant part: it comes for free on top of the text-first architecture. Speech-to-text captures what the human says. That text gets sent via send-keys into the command pane -- exactly like typing. The agent reads it, processes it, responds with text in its pane. TTS reads the response aloud. Voice is an I/O mode, not a separate system. The text is always the canonical format. Voice is a convenience layer. This means everything still works without voice. Logs are text. History is text. Search is text. But when you want to talk to your agents while watching a chart, you can. The 1995 promise of "voice is coming" -- we can actually deliver it now. And it is architecturally clean because the text-first principle was preserved all along.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 13: OPEN QUESTIONS                     -->
+            <!-- ============================================ -->
+            <section>
+                <h2>Honest Gaps</h2>
+                <p>What we still need to figure out</p>
+                <div class="open-question">
+                    <strong>Command Parsing</strong> -- How does <code>/ask deacon status</code> get routed? Lightweight shell script? LLM-backed parser? Node REPL?
+                </div>
+                <div class="open-question">
+                    <strong>Inter-Agent Communication</strong> -- capture-pane observation vs. dedicated IPC (Redis pub/sub, named pipes)? Or both?
+                </div>
+                <div class="open-question">
+                    <strong>Failure Isolation</strong> -- If agents-spx crashes, user sessions see stale data. Detection? Recovery? Graceful degradation?
+                </div>
+                <div class="open-question">
+                    <strong>State Sync</strong> -- When Steve and Alice both watch SPX, do they see identical narrative or can views diverge?
+                </div>
+                <div class="open-question">
+                    <strong>Replay &amp; History</strong> -- Scrollback is basic. Structured logging needed for serious review: "Show me the 2:30-3:00 window."
+                </div>
+                <aside class="notes">
+                    Honest gaps. We do not pretend these are solved. Command parsing: the demo shows placeholder commands like /ask and /scan. The actual routing mechanism is still open. Could be a simple pattern-matching shell script, could be an LLM that interprets natural language and dispatches. Inter-agent communication: in the demo, agents narrate independently. In production, they need to react to each other. Should this be via capture-pane observation of each other's output, or a separate IPC channel with tmux as display-only? Probably both -- capture-pane for loose coupling, pub/sub for tight coordination. Failure isolation: if an agent session crashes, user sessions have stale data. We need health checks and recovery. State sync: when multiple users watch the same instrument, the agent output is shared, but their command panes are personal. How much can views diverge? Replay: scrollback gives you history, but for structured review -- "show me the butterfly opportunity from 2:30" -- we need timestamped logs with replay capability.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 14: THE VISION FORWARD                 -->
+            <!-- ============================================ -->
+            <section>
+                <h2>The Vision Forward</h2>
+                <div style="margin: 1em 0;">
+                    <div class="vision-stat">
+                        <div class="num">36</div>
+                        <div class="unit">humans</div>
+                    </div>
+                    <div class="vision-stat">
+                        <div class="num">10</div>
+                        <div class="unit">instruments</div>
+                    </div>
+                    <div class="vision-stat">
+                        <div class="num">30+</div>
+                        <div class="unit">agents</div>
+                    </div>
+                </div>
+                <p>All in <span class="highlight">shared, persistent spaces</span></p>
+                <div class="quote-block" style="margin-top: 1em;">
+                    MOO was not wrong -- it was early.<br><br>
+                    The text-first, multi-user, persistent-room, programmable-object paradigm IS the right interaction model for human-agent collaboration.<br><br>
+                    <strong>tmux</strong> is the transport that MOO needed.<br>
+                    <strong>LLMs</strong> are the intelligence that MOO's objects lacked.<br><br>
+                    The convergence is not accidental -- it is the same vision, three decades later, with technology that can finally deliver.
+                </div>
+                <aside class="notes">
+                    This is where we land. The vision at scale: 36 humans, 10 instruments, dozens of specialized agents, all inhabiting shared persistent spaces. Agents that narrate, scan, monitor, and react. Humans that observe, query, and act. Rooms that persist when everyone leaves. Layouts that reconfigure with a command. Voice that rides on top of text. The deeper point: MOO was not wrong. It was early. The text-first, multi-user, persistent-room, programmable-object paradigm -- that IS the right interaction model for human-agent collaboration. We know because we are building it again, from scratch, with modern tools, and arriving at the same architecture. tmux is the transport that MOO needed. LLMs are the intelligence that MOO's objects lacked. This convergence is not accidental. It is the same vision, three decades later, with technology that can finally deliver. That is the story of Rooms and Presence.
+                </aside>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SLIDE 15: CLOSE                              -->
+            <!-- ============================================ -->
+            <section>
+                <h1 style="margin-bottom: 0.5em;">Questions</h1>
+                <p class="dim" style="margin-top: 1em;">Rooms &amp; Presence</p>
+                <p class="dim" style="font-size: 0.8em;">How Humans and Agents Share Space</p>
+                <div style="margin-top: 2em; font-size: 0.7em;">
+                    <p><span class="highlight">Demo:</span> tmuxMOO/demo/moo-demo.sh</p>
+                    <p><span class="highlight">Briefing:</span> BRIEFING.md</p>
+                    <p><span class="highlight">Topology:</span> tmuxMOO/topology/SESSION-TOPOLOGY.md</p>
+                </div>
+                <p style="margin-top: 2em; font-size: 0.6em; color: #555;">
+                    GasTown Operations | February 2026
+                </p>
+                <aside class="notes">
+                    Close with questions. Reference materials are listed on screen for anyone who wants to dig deeper. The demo is runnable -- one command to launch. The briefing document has full technical detail and the complete MOO-to-Strades mapping. The session topology document covers the hybrid design in depth with implementation sketches. Thank the audience and open the floor.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00d4ff',
+                primaryTextColor: '#eaeaea',
+                primaryBorderColor: '#00d4ff',
+                lineColor: '#00d4ff',
+                secondaryColor: '#1a1a2e',
+                tertiaryColor: '#1a1a2e'
+            }
+        });
+    </script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [ RevealNotes ],
+            transition: 'fade',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Infrastructure Stack</title>
+
+  <!-- Reveal.js 4.6.1 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --r-background-color: #1a1a2e;
+      --r-main-color: #eaeaea;
+      --r-heading-color: #00d4ff;
+      --r-link-color: #00d4ff;
+      --r-link-color-hover: #33dfff;
+      --r-selection-background-color: #00d4ff33;
+      --r-main-font: 'Segoe UI', system-ui, sans-serif;
+      --r-heading-font: 'Segoe UI', system-ui, sans-serif;
+      --accent-orange: #ff6b35;
+      --accent-green: #00e676;
+      --accent-purple: #b388ff;
+      --accent-yellow: #ffd740;
+      --layer-ecc: #4fc3f7;
+      --layer-aoe: #ab47bc;
+      --layer-crud: #ff7043;
+      --layer-explorer: #66bb6a;
+    }
+
+    .reveal {
+      font-family: var(--r-main-font);
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: var(--r-heading-font);
+      color: var(--r-heading-color);
+      text-transform: none;
+      font-weight: 600;
+    }
+
+    .reveal h1 {
+      font-size: 2.2em;
+    }
+
+    .reveal h2 {
+      font-size: 1.6em;
+    }
+
+    .reveal h3 {
+      font-size: 1.2em;
+    }
+
+    .reveal .subtitle {
+      color: #999;
+      font-size: 0.85em;
+      margin-top: -10px;
+    }
+
+    .reveal .subheading {
+      color: var(--accent-orange);
+      font-size: 0.7em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    /* Metric boxes */
+    .metric-box {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05));
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 12px;
+      padding: 20px 28px;
+      margin: 10px;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .metric-box .number {
+      font-size: 2.4em;
+      font-weight: 700;
+      color: var(--r-heading-color);
+      display: block;
+      line-height: 1.1;
+    }
+
+    .metric-box .label {
+      font-size: 0.65em;
+      color: #aaa;
+      display: block;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Highlight / dim */
+    .highlight {
+      color: var(--r-heading-color);
+      font-weight: 600;
+    }
+
+    .dim {
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    /* Two column layout */
+    .two-column {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .two-column > div {
+      flex: 1;
+    }
+
+    .two-column .col-narrow {
+      flex: 0.8;
+    }
+
+    .two-column .col-wide {
+      flex: 1.2;
+    }
+
+    /* Pain/solution points */
+    .pain-point {
+      background: rgba(255, 82, 82, 0.1);
+      border-left: 4px solid #ff5252;
+      padding: 12px 18px;
+      margin: 10px 0;
+      border-radius: 0 8px 8px 0;
+      text-align: left;
+      font-size: 0.75em;
+    }
+
+    .solution-point {
+      background: rgba(0, 230, 118, 0.1);
+      border-left: 4px solid var(--accent-green);
+      padding: 12px 18px;
+      margin: 10px 0;
+      border-radius: 0 8px 8px 0;
+      text-align: left;
+      font-size: 0.75em;
+    }
+
+    /* Artifact cards */
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .artifact-card {
+      background: rgba(79, 195, 247, 0.08);
+      border: 1px solid rgba(79, 195, 247, 0.25);
+      border-radius: 10px;
+      padding: 14px 12px;
+      text-align: center;
+      font-size: 0.7em;
+      transition: transform 0.2s;
+    }
+
+    .artifact-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .artifact-card .artifact-name {
+      color: var(--layer-ecc);
+      font-weight: 600;
+      font-size: 1.15em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .artifact-card .artifact-path {
+      color: #777;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8em;
+      display: block;
+    }
+
+    /* Layer badges */
+    .layer-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.65em;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .layer-badge.ecc { background: rgba(79, 195, 247, 0.2); color: var(--layer-ecc); border: 1px solid var(--layer-ecc); }
+    .layer-badge.aoe { background: rgba(171, 71, 188, 0.2); color: var(--layer-aoe); border: 1px solid var(--layer-aoe); }
+    .layer-badge.crud { background: rgba(255, 112, 67, 0.2); color: var(--layer-crud); border: 1px solid var(--layer-crud); }
+    .layer-badge.explorer { background: rgba(102, 187, 106, 0.2); color: var(--layer-explorer); border: 1px solid var(--layer-explorer); }
+
+    /* Stack layers */
+    .stack-layer {
+      padding: 14px 24px;
+      margin: 6px 0;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 0.75em;
+    }
+
+    .stack-layer.l1 { background: rgba(79, 195, 247, 0.12); border-left: 4px solid var(--layer-ecc); }
+    .stack-layer.l2 { background: rgba(171, 71, 188, 0.12); border-left: 4px solid var(--layer-aoe); }
+    .stack-layer.l3 { background: rgba(255, 112, 67, 0.12); border-left: 4px solid var(--layer-crud); }
+    .stack-layer.l4 { background: rgba(102, 187, 106, 0.12); border-left: 4px solid var(--layer-explorer); }
+
+    /* Mermaid diagrams */
+    .mermaid {
+      font-size: 0.8em;
+    }
+
+    .mermaid svg {
+      max-height: 500px;
+    }
+
+    /* Transport list */
+    .transport-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0;
+    }
+
+    .transport-list li {
+      padding: 8px 14px;
+      margin: 6px 0;
+      border-radius: 6px;
+      font-size: 0.72em;
+      text-align: left;
+    }
+
+    .transport-list li:nth-child(1) { background: rgba(255, 215, 64, 0.1); border-left: 3px solid var(--accent-yellow); }
+    .transport-list li:nth-child(2) { background: rgba(0, 230, 118, 0.1); border-left: 3px solid var(--accent-green); }
+    .transport-list li:nth-child(3) { background: rgba(179, 136, 255, 0.1); border-left: 3px solid var(--accent-purple); }
+    .transport-list li:nth-child(4) { background: rgba(255, 107, 53, 0.1); border-left: 3px solid var(--accent-orange); }
+
+    /* Error hierarchy list */
+    .error-tree {
+      text-align: left;
+      font-size: 0.68em;
+      font-family: 'Courier New', monospace;
+    }
+
+    .error-tree .root { color: var(--r-heading-color); font-weight: 700; }
+    .error-tree .branch { color: var(--accent-orange); padding-left: 20px; }
+    .error-tree .leaf { color: #aaa; padding-left: 40px; }
+
+    /* Flow step */
+    .flow-step {
+      display: inline-block;
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin: 4px;
+      font-size: 0.65em;
+      vertical-align: middle;
+    }
+
+    .flow-arrow {
+      display: inline-block;
+      color: var(--r-heading-color);
+      font-size: 1.2em;
+      vertical-align: middle;
+      margin: 0 4px;
+    }
+
+    /* Observability grid */
+    .obs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .obs-card {
+      padding: 16px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 0.7em;
+    }
+
+    .obs-card h4 {
+      margin: 0 0 6px 0;
+      font-size: 1.1em;
+    }
+
+    .obs-card p {
+      margin: 0;
+      color: #aaa;
+      font-size: 0.9em;
+    }
+
+    .obs-card.c1 { background: rgba(79, 195, 247, 0.1); border: 1px solid rgba(79, 195, 247, 0.3); }
+    .obs-card.c1 h4 { color: var(--layer-ecc); }
+    .obs-card.c2 { background: rgba(171, 71, 188, 0.1); border: 1px solid rgba(171, 71, 188, 0.3); }
+    .obs-card.c2 h4 { color: var(--layer-aoe); }
+    .obs-card.c3 { background: rgba(255, 112, 67, 0.1); border: 1px solid rgba(255, 112, 67, 0.3); }
+    .obs-card.c3 h4 { color: var(--layer-crud); }
+    .obs-card.c4 { background: rgba(102, 187, 106, 0.1); border: 1px solid rgba(102, 187, 106, 0.3); }
+    .obs-card.c4 h4 { color: var(--layer-explorer); }
+
+    /* Blockquote styling */
+    .reveal blockquote {
+      background: rgba(0, 212, 255, 0.06);
+      border-left: 4px solid var(--r-heading-color);
+      padding: 16px 24px;
+      font-style: italic;
+      color: #bbb;
+      font-size: 0.85em;
+      width: 80%;
+      margin: 20px auto;
+    }
+
+    /* Small text */
+    .small {
+      font-size: 0.65em;
+      color: #888;
+    }
+
+    /* Integration point cards */
+    .integration-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .integration-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: left;
+      font-size: 0.68em;
+    }
+
+    .integration-card h4 {
+      color: var(--r-heading-color);
+      margin: 0 0 8px 0;
+      font-size: 1.1em;
+    }
+
+    .integration-card p {
+      color: #aaa;
+      margin: 0;
+    }
+
+    /* Roadmap item */
+    .roadmap-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 18px;
+      margin: 8px 0;
+      border-radius: 8px;
+      font-size: 0.72em;
+      text-align: left;
+    }
+
+    .roadmap-item .tag {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--r-heading-color);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .roadmap-item.active { background: rgba(0, 230, 118, 0.08); border: 1px solid rgba(0, 230, 118, 0.2); }
+    .roadmap-item.planned { background: rgba(255, 215, 64, 0.06); border: 1px solid rgba(255, 215, 64, 0.15); }
+    .roadmap-item.future { background: rgba(179, 136, 255, 0.06); border: 1px solid rgba(179, 136, 255, 0.15); }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 1: Title -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h1>The Infrastructure Stack</h1>
+        <p class="subtitle">How Gas Town Agents Get Their Plumbing</p>
+        <br>
+        <p class="dim">Gas Town Operations &middot; Architecture Overview</p>
+        <aside class="notes">
+          This presentation tells the story of why we built four layers of infrastructure
+          before deploying a single production agent. The answer is simple: at the scale
+          we are targeting (20-30 autonomous agents), you cannot rely on manual configuration
+          and hope. You need infrastructure that makes every operation visible, every mutation
+          auditable, and every runtime behavior traceable. That is what this stack provides.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 2: The Problem -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>The Problem</h2>
+        <p class="subheading">Why Build Infrastructure First?</p>
+
+        <div class="pain-point">
+          <strong>Manual Configuration</strong> &mdash; Claude Code agents use file-based config: markdown files, JSON settings, directory structures. Managing this by hand for 20+ agents is unsustainable.
+        </div>
+        <div class="pain-point">
+          <strong>No Visibility</strong> &mdash; When an agent fails, you have no structured way to ask "what changed?" or "what was the state before?" You are grepping log files and hoping.
+        </div>
+        <div class="pain-point">
+          <strong>No Consistency</strong> &mdash; Each agent is a snowflake. Skills, hooks, rules, and MCP server configs are copy-pasted and manually diverge over time.
+        </div>
+        <div class="pain-point">
+          <strong>No Audit Trail</strong> &mdash; When something breaks at 2 AM, there is no record of who changed what, when, or why.
+        </div>
+
+        <aside class="notes">
+          The core insight is that Claude Code configuration is file-based. That is its
+          strength for single-agent use, but it becomes a liability at fleet scale. Every
+          .claude/ directory is its own world. There is no standard way to create, update,
+          or delete configuration across agents. There is no event system to notify
+          downstream systems when something changes. We needed to build the plumbing
+          that turns file-based configuration into a managed, observable system.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 3: The Stack Overview (Money Slide) -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>The Stack</h2>
+        <p class="subheading">Four Layers, One Principle: Observability</p>
+
+        <div class="mermaid">
+          graph TB
+            subgraph Stack["The Infrastructure Stack"]
+              direction TB
+              E["<b>Layer 4: Explorer</b><br/>Reference Implementation<br/><i>Scene execution, CLI integration</i>"]
+              C["<b>Layer 3: CrudEngine</b><br/>Persistence Layer<br/><i>Lifecycle management, traffic logging</i>"]
+              A["<b>Layer 2: AOE</b><br/>Runtime Engine<br/><i>Logging, errors, events</i>"]
+              D["<b>Layer 1: ECC</b><br/>Data Model<br/><i>TypeScript schema, 7 artifact types</i>"]
+            end
+
+            E --> C
+            C --> A
+            A --> D
+
+            style E fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style C fill:#bf360c,stroke:#ff7043,color:#fbe9e7
+            style A fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style D fill:#01579b,stroke:#4fc3f7,color:#e1f5fe
+            style Stack fill:#1a1a2e,stroke:#333,color:#eaeaea
+        </div>
+
+        <p class="small">Each layer adds a different kind of visibility. Together, they create full transparency across the agent lifecycle.</p>
+
+        <aside class="notes">
+          This is the architecture at a glance. Notice the direction: bottom-up. ECC
+          provides the data model -- the types and structures that represent Claude Code
+          configuration as structured data. AOE provides the runtime nervous system --
+          logging, error handling, and events. CrudEngine provides lifecycle management
+          on top of those types, with full traffic logging through AOE. Explorer sits at
+          the top as the reference implementation that proves the whole stack works.
+
+          The critical design decision: each layer only depends on the layers below it.
+          No circular dependencies. Clean composition.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 4: Layer 1 - ECC -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Layer 1: ECC</h2>
+        <p class="subheading">The Data Model &mdash; Everything Claude Code</p>
+        <span class="layer-badge ecc">ecc-materializer</span>
+
+        <div class="two-column">
+          <div>
+            <p style="font-size: 0.75em; text-align: left;">
+              ECC turns Claude Code's file-based configuration into <span class="highlight">structured TypeScript data</span>.
+              Seven artifact types, each with full type definitions, validation rules, and file-system mappings.
+            </p>
+            <p style="font-size: 0.65em; color: #888; text-align: left;">
+              Namespace separation: <code>ecc</code> (stable core) and <code>eccx</code> (experimental extensions like Scenes, Acts, and Emergent Patterns).
+            </p>
+          </div>
+          <div>
+            <div class="artifact-grid">
+              <div class="artifact-card">
+                <span class="artifact-name">Skill</span>
+                <span class="artifact-path">.claude/skills/</span>
+              </div>
+              <div class="artifact-card">
+                <span class="artifact-name">Hook</span>
+                <span class="artifact-path">settings.json</span>
+              </div>
+              <div class="artifact-card">
+                <span class="artifact-name">SubAgent</span>
+                <span class="artifact-path">.claude/agents/</span>
+              </div>
+              <div class="artifact-card">
+                <span class="artifact-name">Rule</span>
+                <span class="artifact-path">.claude/rules/</span>
+              </div>
+              <div class="artifact-card">
+                <span class="artifact-name">Agent</span>
+                <span class="artifact-path">.claude/agents/</span>
+              </div>
+              <div class="artifact-card">
+                <span class="artifact-name">Command</span>
+                <span class="artifact-path">.claude/commands/</span>
+              </div>
+              <div class="artifact-card">
+                <span class="artifact-name">MCP Server</span>
+                <span class="artifact-path">settings.json</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="notes">
+          ECC is the foundation. Without it, everything above is just ad-hoc scripting.
+          The key design decision was to model ALL seven artifact types as TypeScript
+          interfaces rather than treating them as opaque files. This gives us compile-time
+          safety, IDE support, and the ability to validate configurations before they
+          touch the filesystem.
+
+          The namespace split (ecc vs eccx) is deliberate: the core types are stable and
+          backward-compatible, while experimental extensions like Scenes and Acts can evolve
+          without breaking downstream consumers. This is how you keep a data model stable
+          while still innovating on top of it.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 5: Layer 2 - AOE -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Layer 2: AOE</h2>
+        <p class="subheading">The Runtime &mdash; Agent Orchestration Engine</p>
+        <span class="layer-badge aoe">ecc-orchestrator</span>
+
+        <div class="two-column">
+          <div>
+            <h3 style="font-size: 0.9em;">Multi-Transport Logging</h3>
+            <ul class="transport-list">
+              <li><strong>Console</strong> &mdash; Development visibility with pretty formatting</li>
+              <li><strong>File</strong> &mdash; Persistent logs for post-mortem analysis</li>
+              <li><strong>Zgent</strong> &mdash; Centralized log aggregation across the fleet</li>
+              <li><strong>Event</strong> &mdash; Real-time streaming to subscribers</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="font-size: 0.9em;">Error Hierarchy</h3>
+            <div class="error-tree">
+              <div class="root">OrchestrationError</div>
+              <div class="branch">ConfigurationError</div>
+              <div class="leaf">EntityNotFoundError</div>
+              <div class="leaf">InvalidConfigError</div>
+              <div class="leaf">CircularDependencyError</div>
+              <div class="branch">RuntimeError</div>
+              <div class="leaf">HookExecutionError</div>
+              <div class="leaf">TimeoutError</div>
+              <div class="leaf">ToolBlockedError</div>
+              <div class="branch">IntegrationError</div>
+              <div class="leaf">BeadsError / MailError / TmuxError</div>
+              <div class="branch">SceneError</div>
+              <div class="leaf">PrerequisiteError / TakeError</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="notes">
+          AOE is the nervous system. Its logging subsystem is not just "console.log with
+          extra steps." Each transport serves a specific operational need. Console is for
+          developers in the moment. File is for persistence. Zgent transport is for
+          centralized aggregation when you have 20 agents running and need to see
+          everything in one place. Event transport enables real-time streaming to UIs
+          or monitoring systems.
+
+          The error hierarchy is equally intentional. ConfigurationError means "fail fast,
+          this should never happen in production." RuntimeError means "something went
+          wrong but might be recoverable." IntegrationError means "an external system
+          failed, not our fault." SceneError is Explorer-specific. This hierarchy makes
+          error handling and alerting tractable at scale.
+
+          Every error serializes to JSON with full cause chains, which is critical for
+          centralized log analysis.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 6: AOE Event System -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Layer 2: AOE Events</h2>
+        <p class="subheading">Type-Safe Pub/Sub</p>
+        <span class="layer-badge aoe">ecc-orchestrator</span>
+
+        <div class="mermaid">
+          graph LR
+            subgraph Events["13 Engine Event Types"]
+              direction TB
+              L["Lifecycle<br/><code>engine:initialized</code><br/><code>engine:shutdown</code>"]
+              H["Hooks<br/><code>hook:before</code><br/><code>hook:after</code><br/><code>hook:error</code>"]
+              T["Tools<br/><code>tool:call</code><br/><code>tool:result</code><br/><code>tool:blocked</code>"]
+              S["Scenes<br/><code>scene:start</code><br/><code>scene:step</code><br/><code>scene:complete</code><br/><code>scene:error</code>"]
+              Lo["Logs<br/><code>log:entry</code>"]
+            end
+
+            Events --> Sub["Subscribers"]
+            Sub --> Mon["Monitoring"]
+            Sub --> UI["Dashboard"]
+            Sub --> Log["Log Aggregation"]
+
+            style Events fill:#1a1a2e,stroke:#ab47bc,color:#eaeaea
+            style L fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style H fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style T fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style S fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style Lo fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style Sub fill:#1a1a2e,stroke:#666,color:#eaeaea
+            style Mon fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style UI fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style Log fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+        </div>
+
+        <p style="font-size: 0.7em;">Every event carries a <span class="highlight">typed data payload</span> via <code>EventDataMap</code>. Subscribers get compile-time guarantees about event structure.</p>
+
+        <aside class="notes">
+          The event system is built around a discriminated union of 13 event types. Each
+          event type has a corresponding typed data structure defined in EventDataMap.
+          This means when you subscribe to 'hook:after', you get compile-time guarantees
+          that the data will have hook name, event type, exit code, output, and duration
+          in milliseconds.
+
+          This is not just a nice-to-have. At scale, untyped events become a debugging
+          nightmare. You end up with runtime crashes because someone changed the shape
+          of an event without updating all consumers. TypeScript's type system prevents
+          that entire class of bugs.
+
+          The event system also enables the Event transport in the logging subsystem --
+          log entries can be streamed as events to any subscriber, creating a unified
+          observability pipeline.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 7: Layer 3 - CrudEngine -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Layer 3: CrudEngine</h2>
+        <p class="subheading">The Persistence Layer &mdash; Trust Through Transparency</p>
+        <span class="layer-badge crud">ecc-crud</span>
+
+        <div class="mermaid">
+          graph TD
+            Op["CRUD Operation<br/><i>create / read / update / delete</i>"] --> Engine["CrudEngine"]
+            Engine --> Handler["Artifact Handler<br/><i>1 per artifact type</i>"]
+            Engine --> TL["Traffic Logger<br/><i>operation start/success/error</i>"]
+            Engine --> Snap["Snapshot<br/><i>before/after state</i>"]
+            Engine --> Sub["Subscription Manager<br/><i>real-time change events</i>"]
+            Handler --> FS["File System<br/><i>.claude/ directory</i>"]
+            TL --> AOE["AOE Logger"]
+            Snap --> Hist["Operation History<br/><i>versioned audit trail</i>"]
+
+            style Op fill:#1a1a2e,stroke:#ff7043,color:#fbe9e7
+            style Engine fill:#bf360c,stroke:#ff7043,color:#fbe9e7
+            style Handler fill:#4e342e,stroke:#8d6e63,color:#efebe9
+            style TL fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style Snap fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style Sub fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style FS fill:#263238,stroke:#607d8b,color:#eceff1
+            style AOE fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style Hist fill:#e65100,stroke:#ff9800,color:#fff3e0
+        </div>
+
+        <aside class="notes">
+          CrudEngine is where trust is built. Every operation -- whether creating a skill,
+          updating a hook, or deleting a rule -- goes through this engine. And every
+          operation is logged with: a unique operation ID, timestamp, duration, success
+          or failure status, and before/after state snapshots.
+
+          The key architectural decision here was dedicated handlers per artifact type.
+          Skills live in directory structures with SKILL.md files. Hooks live in
+          settings.json. Rules live in individual markdown files. Each handler knows the
+          filesystem semantics for its artifact type. The engine provides the common
+          infrastructure: traffic logging, versioning, subscriptions.
+
+          The subscription system enables reactive patterns. When a skill is created,
+          any subscriber gets notified in real-time with the full artifact data.
+          This is how we will build dashboards and monitoring on top of the stack.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 8: CrudEngine - Handlers & Operations -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>CrudEngine Internals</h2>
+        <p class="subheading">7 Handlers, 5 Operations, Full Coverage</p>
+
+        <div class="two-column">
+          <div>
+            <h3 style="font-size: 0.85em;">Artifact Handlers</h3>
+            <div style="font-size: 0.68em; text-align: left;">
+              <div class="stack-layer l3">
+                <strong>skillHandler</strong> &mdash; .claude/skills/{category}/{name}/SKILL.md
+              </div>
+              <div class="stack-layer l3">
+                <strong>hookHandler</strong> &mdash; .claude/settings.json (hooks section)
+              </div>
+              <div class="stack-layer l3">
+                <strong>subAgentHandler</strong> &mdash; .claude/agents/{name}.md
+              </div>
+              <div class="stack-layer l3">
+                <strong>ruleHandler</strong> &mdash; .claude/rules/{name}.md
+              </div>
+              <div class="stack-layer l3">
+                <strong>agentHandler</strong> &mdash; .claude/agents/{name}.md
+              </div>
+              <div class="stack-layer l3">
+                <strong>commandHandler</strong> &mdash; .claude/commands/{name}.md
+              </div>
+              <div class="stack-layer l3">
+                <strong>mcpServerHandler</strong> &mdash; .claude/settings.json (mcpServers)
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size: 0.85em;">Operations</h3>
+            <div style="font-size: 0.68em; text-align: left;">
+              <div class="solution-point"><strong>Create</strong> &mdash; with overwrite and dry-run options</div>
+              <div class="solution-point"><strong>Read</strong> &mdash; with optional content inclusion</div>
+              <div class="solution-point"><strong>Update</strong> &mdash; with merge mode and field-level change tracking</div>
+              <div class="solution-point"><strong>Delete</strong> &mdash; with soft-delete support</div>
+              <div class="solution-point"><strong>Query / List</strong> &mdash; list all artifacts of a type</div>
+            </div>
+            <br>
+            <p style="font-size: 0.6em; color: #888;">
+              7 types &times; 5 operations = <span class="highlight">35+ managed operations</span>, each with typed convenience methods like <code>createSkill()</code>, <code>readHook()</code>, <code>deleteRule()</code>.
+            </p>
+          </div>
+        </div>
+
+        <aside class="notes">
+          Each handler encapsulates the filesystem semantics of its artifact type. Skills
+          use a directory-based structure with category folders and SKILL.md files. Hooks
+          and MCP servers share settings.json but operate on different sections. Rules,
+          agents, and commands each use individual markdown files in their respective
+          directories.
+
+          The operations are designed with real-world needs in mind. Dry-run mode lets
+          you validate an operation without committing it. Merge mode on updates lets
+          you change one field without specifying the entire artifact. Soft delete lets
+          you mark something as deleted without removing the file. These are not academic
+          features -- they are driven by the operational reality of managing agent configs.
+
+          Every operation also gets typed convenience methods. Instead of
+          engine.create('skill', data), you can call engine.createSkill(data) and get
+          full type inference on the input and output.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 9: Layer 4 - Explorer -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Layer 4: Explorer</h2>
+        <p class="subheading">The Reference Implementation</p>
+        <span class="layer-badge explorer">ecc-orchestrator / explorer</span>
+
+        <div class="mermaid">
+          graph LR
+            YAML["Scene YAML<br/><i>Template definition</i>"] --> SL["Scene Loader<br/><i>Parse & validate</i>"]
+            SL --> CG["Config Generator<br/><i>Build .claude/ folder</i>"]
+            CG --> EX["Executor<br/><i>Run Claude Code CLI</i>"]
+            EX --> ES["Event Stream<br/><i>Capture hook events</i>"]
+            ES --> OUT["Observable Output<br/><i>Logs, events, results</i>"]
+
+            style YAML fill:#263238,stroke:#607d8b,color:#eceff1
+            style SL fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style CG fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style EX fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style ES fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+            style OUT fill:#1b5e20,stroke:#66bb6a,color:#e8f5e9
+        </div>
+
+        <div class="two-column" style="margin-top: 20px;">
+          <div>
+            <div class="solution-point"><strong>Scene Loader</strong> &mdash; Loads YAML templates with parameters, variations, prerequisites, and execution steps</div>
+            <div class="solution-point"><strong>Config Generator</strong> &mdash; Creates temporary .claude/ directories from ECC artifact data</div>
+          </div>
+          <div>
+            <div class="solution-point"><strong>Executor</strong> &mdash; Invokes Claude Code CLI with generated configurations</div>
+            <div class="solution-point"><strong>Event Stream</strong> &mdash; Captures hook-based events during execution for analysis</div>
+          </div>
+        </div>
+
+        <aside class="notes">
+          Explorer is not a product. It is a proof that the stack works. It demonstrates
+          the full pipeline: load a scene definition from YAML, generate a Claude Code
+          configuration from ECC data, execute Claude Code against that configuration,
+          and capture events during execution.
+
+          The philosophy here is: the engine is the product, Explorer is a reference
+          implementation. Just like a web browser is not the internet, Explorer is not
+          the infrastructure stack. It is a tool for exercising and validating the stack.
+
+          Scene templates support parameters (with validation), variations (different
+          configurations of the same scene), prerequisites (scenes that must run first),
+          and execution steps with multi-level commentary. This is a rich execution
+          framework built on top of the lower layers.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 10: Observability Philosophy -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Observability First</h2>
+        <p class="subheading">You Can't Manage What You Can't See</p>
+
+        <blockquote>
+          "We built traffic logging before feature completeness. At 20+ agents, visibility IS the product."
+        </blockquote>
+
+        <div class="obs-grid">
+          <div class="obs-card c1">
+            <h4>ECC: Data Visibility</h4>
+            <p>Artifacts are structured data, not opaque files. You can inspect, validate, and diff any configuration programmatically.</p>
+          </div>
+          <div class="obs-card c2">
+            <h4>AOE: Runtime Visibility</h4>
+            <p>Every log entry carries structured context. Every error includes cause chains. Every event has a typed payload.</p>
+          </div>
+          <div class="obs-card c3">
+            <h4>CrudEngine: Mutation Visibility</h4>
+            <p>Every create, update, delete is logged with operation ID, timestamp, duration, and before/after state snapshots.</p>
+          </div>
+          <div class="obs-card c4">
+            <h4>Explorer: Pipeline Visibility</h4>
+            <p>Scene executions are observable end-to-end: loading, config generation, CLI execution, event capture.</p>
+          </div>
+        </div>
+
+        <aside class="notes">
+          This is the deeper insight of the presentation. The infrastructure stack is not
+          four separate tools bolted together. It is a coherent system designed around a
+          single principle: observability at every layer.
+
+          ECC makes artifacts visible as data. AOE makes runtime behavior visible as logs
+          and events. CrudEngine makes mutations visible as traffic. Explorer makes the
+          whole pipeline visible as scene executions.
+
+          Each layer adds a different KIND of visibility. Together, they create full
+          transparency across the entire agent lifecycle. When something goes wrong at
+          2 AM, you can trace from the Explorer scene execution, through the CrudEngine
+          operation log, down to the AOE error with its full cause chain, and identify
+          exactly which ECC artifact was in what state. That is the payoff of
+          observability-first design.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 11: The Composition -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>The Composition</h2>
+        <p class="subheading">Clean Dependencies, No Cycles</p>
+
+        <div class="mermaid">
+          graph BT
+            MAT["<b>ecc-materializer</b><br/><i>Types & templates</i><br/>ECC data model"]
+            ORC["<b>ecc-orchestrator</b><br/><i>Runtime engine</i><br/>Logging, errors, events, Explorer"]
+            CRUD["<b>ecc-crud</b><br/><i>Persistence</i><br/>CRUD ops, traffic logging, versioning"]
+
+            ORC -->|"imports types"| MAT
+            CRUD -->|"imports types"| MAT
+            CRUD -.->|"compatible Logger interface"| ORC
+
+            subgraph Packages["3 npm packages"]
+              MAT
+              ORC
+              CRUD
+            end
+
+            style MAT fill:#01579b,stroke:#4fc3f7,color:#e1f5fe
+            style ORC fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style CRUD fill:#bf360c,stroke:#ff7043,color:#fbe9e7
+            style Packages fill:#1a1a2e,stroke:#333,color:#eaeaea
+        </div>
+
+        <div style="font-size: 0.7em; margin-top: 20px;">
+          <span class="flow-step">ecc-materializer exports types</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">ecc-orchestrator adds runtime</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-step">ecc-crud adds persistence</span>
+        </div>
+
+        <p class="small" style="margin-top: 16px;">
+          CrudEngine uses a <span class="highlight">compatible Logger interface</span> rather than a hard dependency on ecc-orchestrator. Loose coupling by design.
+        </p>
+
+        <aside class="notes">
+          The package dependency graph is deliberately simple. ecc-materializer is the
+          foundation -- it exports the TypeScript types that every other package consumes.
+          ecc-orchestrator imports those types and adds the runtime layer: logging, errors,
+          and events. ecc-crud imports types from ecc-materializer and defines a Logger
+          interface that is COMPATIBLE with the orchestrator's Logger, but does not
+          directly depend on it.
+
+          This loose coupling is intentional. CrudEngine can work with any Logger
+          implementation that satisfies its interface contract. You could use the
+          orchestrator's Logger, or write your own. This makes testing easy (use a null
+          logger) and deployment flexible (choose your transport strategy at runtime).
+
+          No circular dependencies. Clean, bottom-up composition. Each package can be
+          versioned and published independently.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 12: In Practice -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>In Practice</h2>
+        <p class="subheading">Tracing "Create a Skill" Through All 4 Layers</p>
+
+        <div class="mermaid">
+          sequenceDiagram
+            participant Caller
+            participant CrudEngine
+            participant TrafficLogger
+            participant SkillHandler
+            participant FileSystem
+            participant Subscribers
+
+            Caller->>CrudEngine: createSkill(skillData)
+            CrudEngine->>CrudEngine: generateOperationId()
+            CrudEngine->>CrudEngine: captureSnapshot(before: null)
+            CrudEngine->>TrafficLogger: log START (op, type, id)
+            CrudEngine->>SkillHandler: create(projectRoot, skill)
+            SkillHandler->>FileSystem: mkdir .claude/skills/category/
+            SkillHandler->>FileSystem: write SKILL.md
+            SkillHandler-->>CrudEngine: OperationResult success
+            CrudEngine->>TrafficLogger: log SUCCESS (duration, path)
+            CrudEngine->>CrudEngine: captureSnapshot(after: skill)
+            CrudEngine->>CrudEngine: addToHistory(before, after)
+            CrudEngine->>Subscribers: emit(created, skill)
+            CrudEngine-->>Caller: OperationResult with logId
+        </div>
+
+        <aside class="notes">
+          Let us trace a single operation through the entire stack. A caller asks
+          CrudEngine to create a skill. Here is what happens:
+
+          1. CrudEngine generates a unique operation ID for correlation.
+          2. It captures a "before" snapshot (null for creates, since the artifact
+             does not exist yet).
+          3. The traffic logger records the START of the operation with full context.
+          4. The skill handler takes over: it creates the directory structure under
+             .claude/skills/{category}/{name}/ and writes the SKILL.md file.
+          5. On success, the traffic logger records SUCCESS with the duration in
+             milliseconds and the file path.
+          6. An "after" snapshot captures the created artifact state.
+          7. Both snapshots are stored in the operation history for versioning.
+          8. All subscribers are notified with a "created" event carrying the full
+             artifact data.
+          9. The caller gets back an OperationResult with the logId for correlation.
+
+          Every step is observable. Every step leaves a trace. That is the point.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 13: The Numbers -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>The Numbers</h2>
+        <p class="subheading">Maturity Metrics</p>
+
+        <div style="margin: 30px 0;">
+          <div class="metric-box">
+            <span class="number">293+</span>
+            <span class="label">Tests</span>
+          </div>
+          <div class="metric-box">
+            <span class="number">3</span>
+            <span class="label">Packages</span>
+          </div>
+          <div class="metric-box">
+            <span class="number">7</span>
+            <span class="label">Artifact Types</span>
+          </div>
+          <div class="metric-box">
+            <span class="number">35+</span>
+            <span class="label">Managed Ops</span>
+          </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+          <div class="metric-box">
+            <span class="number">10,305</span>
+            <span class="label">Lines Added (CrudEngine)</span>
+          </div>
+          <div class="metric-box">
+            <span class="number">34</span>
+            <span class="label">Files Changed</span>
+          </div>
+          <div class="metric-box">
+            <span class="number">13</span>
+            <span class="label">Event Types</span>
+          </div>
+          <div class="metric-box">
+            <span class="number">4</span>
+            <span class="label">Log Transports</span>
+          </div>
+        </div>
+
+        <p class="small">229 tests (orchestrator) + 64 tests (crud) = 293+ committed tests. Every artifact type has full CRUD coverage.</p>
+
+        <aside class="notes">
+          These numbers tell a maturity story. 293 tests is not a vanity metric -- it
+          means every artifact type has been exercised through create, read, update,
+          delete, and list operations with edge cases, error paths, and validation
+          scenarios covered.
+
+          The 10,305 lines in the CrudEngine commit (dbcf3a2) represent the single
+          largest implementation push in the project's history. 34 files changed in
+          one coherent commit. That is the kind of focused, high-velocity work that
+          a well-designed architecture enables.
+
+          13 event types across lifecycle, hooks, tools, scenes, and logging. 4 log
+          transports covering development, persistence, centralization, and streaming.
+          These numbers reflect infrastructure designed for production, not a prototype.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 14: Integration Points -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>Integration Points</h2>
+        <p class="subheading">Where Other Zgents Plug In</p>
+
+        <div class="integration-grid">
+          <div class="integration-card">
+            <h4>DReader</h4>
+            <p>Discord data collector. Needs CrudEngine to manage its skills and hooks. Publishes its query API through ECC artifact conventions.</p>
+          </div>
+          <div class="integration-card">
+            <h4>Strades Agents</h4>
+            <p>Trading-oriented agents. Need AOE logging for centralized observability across the fleet. Use Zgent log entries with session correlation.</p>
+          </div>
+          <div class="integration-card">
+            <h4>Future Zgents</h4>
+            <p>Any agent going through Gas Town Academy. Gets structured types from ECC, runtime services from AOE, and lifecycle management from CrudEngine.</p>
+          </div>
+        </div>
+
+        <div class="mermaid" style="margin-top: 16px;">
+          graph LR
+            subgraph Stack["Infrastructure Stack"]
+              ECC["ECC Types"]
+              AOE["AOE Runtime"]
+              CRUD["CrudEngine"]
+            end
+
+            DR["DReader"] -->|"manages artifacts"| CRUD
+            ST["Strades"] -->|"uses logging"| AOE
+            FZ["Future Zgent"] -->|"imports types"| ECC
+            FZ -->|"uses logging"| AOE
+            FZ -->|"manages config"| CRUD
+
+            style Stack fill:#1a1a2e,stroke:#00d4ff,color:#eaeaea
+            style ECC fill:#01579b,stroke:#4fc3f7,color:#e1f5fe
+            style AOE fill:#4a148c,stroke:#ab47bc,color:#f3e5f5
+            style CRUD fill:#bf360c,stroke:#ff7043,color:#fbe9e7
+            style DR fill:#263238,stroke:#607d8b,color:#eceff1
+            style ST fill:#263238,stroke:#607d8b,color:#eceff1
+            style FZ fill:#263238,stroke:#607d8b,color:#eceff1
+        </div>
+
+        <aside class="notes">
+          The stack is not built for one agent. It is built for an ecosystem. DReader,
+          our Discord data collector, is a concrete example. As it becomes a well-formed
+          Zgent, it will use CrudEngine to manage its own configuration artifacts. Other
+          Zgents will discover DReader's query API because DReader publishes it through
+          ECC conventions.
+
+          Strades agents demonstrate a different integration point. They primarily need
+          AOE's logging subsystem -- specifically the Zgent transport for centralized log
+          aggregation. When you have multiple trading agents running, you need to see all
+          their logs in one place with session-level correlation.
+
+          Any future Zgent that goes through Gas Town Academy gets all three layers for
+          free: types from ECC, runtime services from AOE, and lifecycle management from
+          CrudEngine. That is the leverage of infrastructure investment.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 15: What's Next -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>What's Next</h2>
+        <p class="subheading">Roadmap</p>
+
+        <div class="roadmap-item active">
+          <span class="tag">gt-crud.6</span>
+          <span>Directory alignment &mdash; ensure CrudEngine file operations match Claude Code 2.1 directory conventions exactly</span>
+        </div>
+        <div class="roadmap-item active">
+          <span class="tag">gt-fc5</span>
+          <span>ECC 2.1 data model extension &mdash; new artifact types and schema updates for Claude Code 2.1 features</span>
+        </div>
+        <div class="roadmap-item planned">
+          <span class="tag">Next</span>
+          <span>Explorer integration with CrudEngine &mdash; scene execution using managed artifacts instead of raw files</span>
+        </div>
+        <div class="roadmap-item planned">
+          <span class="tag">Next</span>
+          <span>Production deployment &mdash; first Zgent fleet running on the full infrastructure stack</span>
+        </div>
+        <div class="roadmap-item future">
+          <span class="tag">Future</span>
+          <span>Dashboard &mdash; real-time UI consuming CrudEngine subscription events and AOE log streams</span>
+        </div>
+        <div class="roadmap-item future">
+          <span class="tag">Future</span>
+          <span>Cross-Zgent coordination &mdash; agents discovering and querying each other's APIs through ECC conventions</span>
+        </div>
+
+        <aside class="notes">
+          The immediate priorities are straightforward. gt-crud.6 ensures our file
+          operations exactly match Claude Code 2.1's directory conventions -- because
+          if we write files in the wrong structure, Claude Code will not find them.
+          gt-fc5 extends the ECC data model with new artifact types and schema updates
+          for Claude Code 2.1 features.
+
+          After those, the big integration milestone is connecting Explorer to CrudEngine
+          so scene execution uses managed artifacts instead of raw file manipulation.
+          Then production deployment: the first fleet of Zgents running on the full stack.
+
+          The longer-term vision is a real-time dashboard that consumes CrudEngine
+          subscription events and AOE log streams, giving operators a live view of the
+          entire agent fleet. And ultimately, cross-Zgent coordination: agents discovering
+          and querying each other through published ECC conventions.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 16: Close -->
+      <!-- ============================================================ -->
+      <section data-transition="fade">
+        <h2>The Infrastructure Stack</h2>
+
+        <div style="margin: 30px 0;">
+          <div class="stack-layer l4" style="font-size: 0.85em;">
+            <strong style="color: var(--layer-explorer);">Explorer</strong> &mdash; makes the pipeline visible as scene executions
+          </div>
+          <div class="stack-layer l3" style="font-size: 0.85em;">
+            <strong style="color: var(--layer-crud);">CrudEngine</strong> &mdash; makes mutations visible as traffic
+          </div>
+          <div class="stack-layer l2" style="font-size: 0.85em;">
+            <strong style="color: var(--layer-aoe);">AOE</strong> &mdash; makes runtime behavior visible as logs and events
+          </div>
+          <div class="stack-layer l1" style="font-size: 0.85em;">
+            <strong style="color: var(--layer-ecc);">ECC</strong> &mdash; makes artifacts visible as structured data
+          </div>
+        </div>
+
+        <blockquote style="margin-top: 30px;">
+          Four layers. One principle. Every operation observable.
+        </blockquote>
+
+        <br>
+        <p class="dim">Questions?</p>
+
+        <aside class="notes">
+          To close: the infrastructure stack is a coherent system, not four tools bolted
+          together. ECC makes configuration visible as data. AOE makes runtime behavior
+          visible as logs and events. CrudEngine makes mutations visible as traffic.
+          Explorer makes the whole pipeline visible as scene executions.
+
+          Every layer adds a different kind of visibility. Together, they create the
+          foundation for managing an autonomous agent fleet at scale. The plumbing is
+          in place. Now we build on it.
+
+          Questions?
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js 4.6.1 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+
+  <script>
+    // Initialize Mermaid with dark theme
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#1a1a2e',
+        primaryTextColor: '#eaeaea',
+        primaryBorderColor: '#00d4ff',
+        lineColor: '#555',
+        secondaryColor: '#16213e',
+        tertiaryColor: '#0f3460',
+        fontFamily: 'Segoe UI, system-ui, sans-serif',
+        fontSize: '14px',
+      },
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis',
+      },
+      sequence: {
+        useMaxWidth: true,
+        actorMargin: 40,
+        messageMargin: 30,
+        mirrorActors: false,
+        bottomMarginAdj: 10,
+        actorFontSize: 13,
+        messageFontSize: 12,
+      },
+    });
+
+    // Render mermaid diagrams on slide change
+    async function renderMermaidDiagrams() {
+      const elements = document.querySelectorAll('.mermaid');
+      for (const element of elements) {
+        if (element.getAttribute('data-processed') === 'true') continue;
+
+        const graphDefinition = element.textContent;
+        const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+
+        try {
+          const { svg } = await mermaid.render(id, graphDefinition);
+          element.innerHTML = svg;
+          element.setAttribute('data-processed', 'true');
+        } catch (error) {
+          console.error('Mermaid rendering error:', error);
+        }
+      }
+    }
+
+    // Initialize Reveal.js
+    Reveal.initialize({
+      hash: true,
+      transition: 'fade',
+      transitionSpeed: 'default',
+      backgroundTransition: 'fade',
+      center: true,
+      width: 1200,
+      height: 700,
+      margin: 0.08,
+      minScale: 0.2,
+      maxScale: 2.0,
+      plugins: [RevealNotes],
+    }).then(() => {
+      // Initial render
+      renderMermaidDiagrams();
+
+      // Re-render on slide change (for lazy loading)
+      Reveal.on('slidechanged', () => {
+        setTimeout(renderMermaidDiagrams, 100);
+      });
+    });
+  </script>
+</body>
+</html>

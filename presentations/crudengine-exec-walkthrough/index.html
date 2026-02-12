@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrudEngine: The Trust Layer for Zgent Factory</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.css">
+    <style>
+        :root {
+            --r-background-color: #1a1a2e;
+            --r-main-color: #eaeaea;
+            --r-heading-color: #00d4ff;
+            --r-link-color: #00d4ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 600;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.6em; color: #00d4ff; }
+        .reveal h3 { font-size: 1.2em; color: #888; }
+        .reveal ul { text-align: left; }
+        .reveal li { margin-bottom: 0.5em; }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .dim { color: #666; }
+        .metric-box {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            margin: 0.5em;
+            text-align: center;
+        }
+        .metric-box .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .metric-box .label {
+            font-size: 0.8em;
+            color: #888;
+        }
+        .pain-point {
+            background: rgba(255, 100, 100, 0.1);
+            border-left: 4px solid #ff6464;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .solution-point {
+            background: rgba(100, 255, 150, 0.1);
+            border-left: 4px solid #64ff96;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .mermaid {
+            font-size: 0.7em;
+        }
+        .two-column {
+            display: flex;
+            gap: 2em;
+        }
+        .two-column > div {
+            flex: 1;
+        }
+        .artifact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5em;
+            font-size: 0.8em;
+        }
+        .artifact-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            padding: 0.8em;
+            text-align: center;
+        }
+        .artifact-card .icon { font-size: 1.5em; margin-bottom: 0.3em; }
+        .status-badge {
+            display: inline-block;
+            background: #64ff96;
+            color: #1a1a2e;
+            padding: 0.2em 0.8em;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Title -->
+            <section>
+                <h1>CrudEngine</h1>
+                <h3>The Trust Layer for Zgent Factory</h3>
+                <p class="dim">Executive Technical Walkthrough</p>
+                <p class="dim" style="font-size: 0.6em;">February 2026 | GasTown Operations</p>
+                <aside class="notes">
+                    Opening: We're building infrastructure that enables autonomous agents to work together at scale.
+                    This presentation covers the CrudEngine - the foundational layer that makes this possible.
+                </aside>
+            </section>
+
+            <!-- Slide 2: Vision -->
+            <section>
+                <h2>The Zgent Factory Vision</h2>
+                <p>Building <span class="highlight">autonomous agents</span> that work together</p>
+                <div style="margin-top: 1.5em;">
+                    <div class="metric-box">
+                        <div class="number">20-30</div>
+                        <div class="label">Simultaneous Agents</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">7</div>
+                        <div class="label">Artifact Types</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">1</div>
+                        <div class="label">Unified Engine</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5em; font-size: 0.9em;">
+                    <span class="highlight">Zgents</span> = Autonomous Claude Code agents that publish APIs and follow shared conventions
+                </p>
+                <aside class="notes">
+                    Gas Town coordinates 20-30+ agents simultaneously on software projects.
+                    Each "Zgent" is a well-formed agent that can interact with other Zgents.
+                    To scale this, we need reliable infrastructure - not manual configuration.
+                </aside>
+            </section>
+
+            <!-- Slide 3: The Scale Challenge -->
+            <section>
+                <h2>The Scale Challenge</h2>
+                <p>Manual configuration <span class="highlight">doesn't scale</span></p>
+                <div class="two-column" style="margin-top: 1.5em;">
+                    <div>
+                        <h3>At 1-2 Agents</h3>
+                        <ul>
+                            <li>Hand-edit config files</li>
+                            <li>Remember what changed</li>
+                            <li>Hope nothing breaks</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>At 20+ Agents</h3>
+                        <ul>
+                            <li class="highlight">Programmatic management</li>
+                            <li class="highlight">Full audit trail</li>
+                            <li class="highlight">Automated validation</li>
+                        </ul>
+                    </div>
+                </div>
+                <aside class="notes">
+                    When you have 1-2 agents, manual configuration works fine.
+                    At scale, you need automation, observability, and reliability.
+                    This is the gap CrudEngine fills.
+                </aside>
+            </section>
+
+            <!-- Slide 4: Pain Points -->
+            <section>
+                <h2>Before CrudEngine</h2>
+                <div class="pain-point">
+                    <strong>No Audit Trail</strong> - Who changed what? When? Why?
+                </div>
+                <div class="pain-point">
+                    <strong>Manual File Manipulation</strong> - Error-prone, inconsistent
+                </div>
+                <div class="pain-point">
+                    <strong>No Visibility</strong> - What are agents creating/modifying?
+                </div>
+                <div class="pain-point">
+                    <strong>No Versioning</strong> - Can't roll back bad changes
+                </div>
+                <p style="margin-top: 1.5em; color: #ff6464;">
+                    Result: Cannot reliably scale beyond a handful of agents
+                </p>
+                <aside class="notes">
+                    These pain points block production deployment of Zgents.
+                    Without solving them, we're stuck at small scale.
+                </aside>
+            </section>
+
+            <!-- Slide 5: Introducing CrudEngine -->
+            <section>
+                <h2>Introducing CrudEngine</h2>
+                <p>The <span class="highlight">central nervous system</span> for Claude Code configuration</p>
+                <div class="solution-point">
+                    <strong>Unified CRUD Interface</strong> - Same pattern for all 7 artifact types
+                </div>
+                <div class="solution-point">
+                    <strong>Full Observability</strong> - Every operation logged with context
+                </div>
+                <div class="solution-point">
+                    <strong>Built-in Versioning</strong> - Before/after snapshots for all changes
+                </div>
+                <div class="solution-point">
+                    <strong>Real-time Subscriptions</strong> - React to changes as they happen
+                </div>
+                <aside class="notes">
+                    CrudEngine is the lifecycle manager for Claude Code artifacts.
+                    Think of it as the database layer that all agents go through.
+                    Every operation is observed, logged, and versioned.
+                </aside>
+            </section>
+
+            <!-- Slide 6: Architecture -->
+            <section>
+                <h2>Architecture Overview</h2>
+                <div class="mermaid">
+                    flowchart LR
+                        subgraph Input
+                            A[ECC Data<br/>JSON schemas]
+                        end
+                        subgraph Engine
+                            B[CrudEngine]
+                            B1[Artifacts]
+                            B2[Logging]
+                            B3[Versioning]
+                            B --> B1
+                            B --> B2
+                            B --> B3
+                        end
+                        subgraph Output
+                            C[.claude/ folders]
+                            D[Zgent Instance]
+                        end
+                        A --> B
+                        B --> C
+                        C --> D
+
+                        style B fill:#00d4ff,color:#1a1a2e
+                        style B1 fill:#1a1a2e,stroke:#00d4ff
+                        style B2 fill:#1a1a2e,stroke:#00d4ff
+                        style B3 fill:#1a1a2e,stroke:#00d4ff
+                </div>
+                <p style="margin-top: 1em; font-size: 0.8em;">
+                    All artifact operations flow through the engine - nothing bypasses it
+                </p>
+                <aside class="notes">
+                    The pipeline: ECC data defines what we want to create.
+                    CrudEngine manages the actual file operations with full observability.
+                    Output is the .claude/ folder that configures each Zgent.
+                </aside>
+            </section>
+
+            <!-- Slide 7: The 7 Artifact Types -->
+            <section>
+                <h2>The 7 Artifact Types</h2>
+                <div class="artifact-grid">
+                    <div class="artifact-card">
+                        <div class="icon">&#9881;</div>
+                        <div><strong>Skills</strong></div>
+                        <div class="dim">Reusable capabilities</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#9889;</div>
+                        <div><strong>Hooks</strong></div>
+                        <div class="dim">Event automation</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#129302;</div>
+                        <div><strong>Agents</strong></div>
+                        <div class="dim">Top-level configs</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128101;</div>
+                        <div><strong>SubAgents</strong></div>
+                        <div class="dim">Nested definitions</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128220;</div>
+                        <div><strong>Rules</strong></div>
+                        <div class="dim">Behavioral constraints</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128187;</div>
+                        <div><strong>Commands</strong></div>
+                        <div class="dim">Slash commands</div>
+                    </div>
+                    <div class="artifact-card">
+                        <div class="icon">&#128268;</div>
+                        <div><strong>MCP Servers</strong></div>
+                        <div class="dim">Tool integrations</div>
+                    </div>
+                    <div class="artifact-card" style="background: transparent; border: none;">
+                    </div>
+                </div>
+                <p style="margin-top: 1em;">
+                    Each type has a <span class="highlight">dedicated handler</span> with consistent CRUD operations
+                </p>
+                <aside class="notes">
+                    These are the 7 Claude Code 2.1 artifact types.
+                    Each has its own storage pattern but unified API through CrudEngine.
+                    Skills go in .claude/skills/, Hooks in settings.json, etc.
+                </aside>
+            </section>
+
+            <!-- Slide 8: Observability -->
+            <section>
+                <h2>Built-in Observability</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Traffic Logging</h3>
+                        <ul>
+                            <li>Operation ID tracking</li>
+                            <li>Timestamps & duration</li>
+                            <li>Success/failure status</li>
+                            <li>Before/after state</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Subscriptions</h3>
+                        <ul>
+                            <li>Real-time change events</li>
+                            <li>Type-specific watchers</li>
+                            <li>Artifact-specific watchers</li>
+                            <li>Integration ready</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="background: #0d0d15; padding: 1em; border-radius: 8px; margin-top: 1em; font-family: monospace; font-size: 0.6em; text-align: left;">
+                    <span style="color: #888;">// Sample traffic log entry</span><br>
+                    <span style="color: #00d4ff;">operationId:</span> "op-7f3a2b"<br>
+                    <span style="color: #00d4ff;">operation:</span> "create"<br>
+                    <span style="color: #00d4ff;">artifactType:</span> "skill"<br>
+                    <span style="color: #00d4ff;">artifactId:</span> "core/my-skill"<br>
+                    <span style="color: #64ff96;">success:</span> true<br>
+                    <span style="color: #00d4ff;">durationMs:</span> 15
+                </div>
+                <aside class="notes">
+                    Every operation is logged with full context.
+                    Subscriptions let other systems react to changes in real-time.
+                    This is how we maintain visibility at scale.
+                </aside>
+            </section>
+
+            <!-- Slide 9: Explorer Integration -->
+            <section>
+                <h2>Explorer Integration</h2>
+                <p>Scene execution is now <span class="highlight">automatically tracked</span></p>
+                <div class="mermaid">
+                    flowchart LR
+                        A[Scene Template] --> B[Config Generator]
+                        B --> C{CrudEngine?}
+                        C -->|Yes| D[Logged Operations]
+                        C -->|No| E[Direct File Write]
+                        D --> F[.claude/ folder]
+                        E --> F
+                        D --> G[Audit Trail]
+
+                        style D fill:#64ff96,color:#1a1a2e
+                        style G fill:#64ff96,color:#1a1a2e
+                        style E fill:#ff6464,color:#1a1a2e
+                </div>
+                <p style="margin-top: 1em; font-size: 0.9em;">
+                    When Explorer generates configs through CrudEngine:<br>
+                    <span class="highlight">Every skill and agent creation is logged</span>
+                </p>
+                <aside class="notes">
+                    Explorer is our reference implementation.
+                    It generates Claude Code configs for scene execution.
+                    With CrudEngine integration, all that activity is now observable.
+                </aside>
+            </section>
+
+            <!-- Slide 10: Demo - Traffic Log -->
+            <section>
+                <h2>Demo: Traffic Logging</h2>
+                <div style="background: #0d0d15; padding: 1.5em; border-radius: 8px; font-family: monospace; font-size: 0.55em; text-align: left;">
+                    <span style="color: #888;">$ bun run demo-crud-integration.ts</span><br><br>
+                    <span style="color: #00d4ff;">[18:43:12]</span> Creating skill: scene/demo-skill<br>
+                    <span style="color: #64ff96;">&#10004;</span> skill created in 12ms<br><br>
+                    <span style="color: #00d4ff;">[18:43:12]</span> Creating agent: demo-agent<br>
+                    <span style="color: #64ff96;">&#10004;</span> agent created in 8ms<br><br>
+                    <span style="color: #888;">--- Recent Operations ---</span><br>
+                    <span style="color: #00d4ff;">1.</span> create skill/scene/demo-skill (12ms) <span style="color: #64ff96;">success</span><br>
+                    <span style="color: #00d4ff;">2.</span> create agent/demo-agent (8ms) <span style="color: #64ff96;">success</span><br><br>
+                    <span style="color: #888;">--- Operation History: 2 entries ---</span>
+                </div>
+                <p style="margin-top: 1em;">
+                    Full audit trail: <span class="highlight">who changed what, when, and why</span>
+                </p>
+                <aside class="notes">
+                    This is actual output from our integration demo.
+                    Every operation is tracked with timing and status.
+                    History is queryable for debugging and analytics.
+                </aside>
+            </section>
+
+            <!-- Slide 11: Business Value -->
+            <section>
+                <h2>Business Value</h2>
+                <div class="solution-point">
+                    <strong>Audit Trail</strong> - Complete history of all configuration changes
+                </div>
+                <div class="solution-point">
+                    <strong>Dry-Run Validation</strong> - Test changes before applying them
+                </div>
+                <div class="solution-point">
+                    <strong>Real-time Events</strong> - Power dashboards and monitoring
+                </div>
+                <div class="solution-point">
+                    <strong>Rollback Capability</strong> - Before/after snapshots for recovery
+                </div>
+                <div style="margin-top: 1.5em;">
+                    <p><span class="highlight">20x leverage:</span> One human PM with 20 Zgents</p>
+                    <p class="dim" style="font-size: 0.8em;">Work flows through the system; nothing gets lost</p>
+                </div>
+                <aside class="notes">
+                    The business case: reliable infrastructure enables scale.
+                    One person can effectively manage 20+ agents.
+                    All work is durable and observable.
+                </aside>
+            </section>
+
+            <!-- Slide 12: Strategic Position -->
+            <section>
+                <h2>Strategic Position</h2>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph Future
+                            A[Zgent Production]
+                            B[Inter-Agent APIs]
+                            C[20+ Agent Scale]
+                        end
+                        subgraph Foundation
+                            D[CrudEngine]
+                        end
+                        D --> A
+                        D --> B
+                        D --> C
+
+                        style D fill:#00d4ff,color:#1a1a2e
+                        style A fill:#1a1a2e,stroke:#64ff96
+                        style B fill:#1a1a2e,stroke:#64ff96
+                        style C fill:#1a1a2e,stroke:#64ff96
+                </div>
+                <p style="margin-top: 1em;">
+                    CrudEngine is the <span class="highlight">trust layer</span><br>
+                    <span class="dim">Must be bulletproof before Zgents go production</span>
+                </p>
+                <aside class="notes">
+                    CrudEngine is foundational infrastructure.
+                    Everything else builds on it - Zgent production, inter-agent communication, scale.
+                    That's why we invested in getting it right.
+                </aside>
+            </section>
+
+            <!-- Slide 13: Status -->
+            <section>
+                <h2>Status & Next Steps</h2>
+                <div style="margin-bottom: 1.5em;">
+                    <span class="status-badge">COMPLETE</span>
+                </div>
+                <div class="two-column">
+                    <div>
+                        <h3>Delivered</h3>
+                        <ul>
+                            <li>7 artifact handlers</li>
+                            <li>Traffic logging</li>
+                            <li>Versioning & history</li>
+                            <li>Subscription system</li>
+                            <li>Explorer integration</li>
+                            <li>64+ tests passing</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Next Steps</h3>
+                        <ul>
+                            <li>gt-crud.6: Directory alignment fix</li>
+                            <li>Production testing</li>
+                            <li>DReader integration</li>
+                            <li>Zgent Academy graduation</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5em;">
+                    <span class="highlight">Path to Zgent Factory is unblocked</span>
+                </p>
+                <aside class="notes">
+                    CrudEngine is complete and committed.
+                    Next: minor fixes, then production deployment.
+                    We're ready to scale.
+                </aside>
+            </section>
+
+            <!-- Slide 14: Close -->
+            <section>
+                <h1>Questions?</h1>
+                <p class="dim" style="margin-top: 2em;">
+                    CrudEngine: The Trust Layer for Zgent Factory
+                </p>
+                <p style="font-size: 0.7em; margin-top: 2em;">
+                    <span class="highlight">Commit:</span> dbcf3a2<br>
+                    <span class="highlight">Files:</span> 34 changed, 10,305 insertions<br>
+                    <span class="highlight">Tests:</span> 64+ passing
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00d4ff',
+                primaryTextColor: '#eaeaea',
+                primaryBorderColor: '#00d4ff',
+                lineColor: '#00d4ff',
+                secondaryColor: '#1a1a2e',
+                tertiaryColor: '#1a1a2e'
+            }
+        });
+    </script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [ RevealNotes ],
+            transition: 'fade',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>

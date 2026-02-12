@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Convergence Map &mdash; Where Everything Connects</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.css">
+    <style>
+        :root {
+            --r-background-color: #1a1a2e;
+            --r-main-color: #eaeaea;
+            --r-heading-color: #00d4ff;
+            --r-link-color: #00d4ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 600;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.6em; color: #00d4ff; }
+        .reveal h3 { font-size: 1.2em; color: #888; }
+        .reveal ul { text-align: left; }
+        .reveal li { margin-bottom: 0.5em; }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .dim { color: #666; }
+        .metric-box {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 1em 1.5em;
+            margin: 0.5em;
+            text-align: center;
+        }
+        .metric-box .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .metric-box .label {
+            font-size: 0.8em;
+            color: #888;
+        }
+        .pain-point {
+            background: rgba(255, 100, 100, 0.1);
+            border-left: 4px solid #ff6464;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .solution-point {
+            background: rgba(100, 255, 150, 0.1);
+            border-left: 4px solid #64ff96;
+            padding: 0.5em 1em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .mermaid {
+            font-size: 0.7em;
+        }
+        .two-column {
+            display: flex;
+            gap: 2em;
+        }
+        .two-column > div {
+            flex: 1;
+        }
+        .three-column {
+            display: flex;
+            gap: 1.5em;
+        }
+        .three-column > div {
+            flex: 1;
+        }
+        .island {
+            background: rgba(0, 212, 255, 0.08);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 1em;
+            text-align: center;
+        }
+        .island h3 {
+            color: #00d4ff;
+            margin-bottom: 0.5em;
+        }
+        .island ul {
+            font-size: 0.75em;
+            list-style: none;
+            padding: 0;
+        }
+        .island ul li {
+            margin-bottom: 0.3em;
+        }
+        .convergence-box {
+            background: rgba(100, 255, 150, 0.05);
+            border: 2px solid rgba(100, 255, 150, 0.3);
+            border-radius: 12px;
+            padding: 1em 1.5em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .convergence-box h3 {
+            color: #64ff96;
+            margin: 0 0 0.3em 0;
+            font-size: 1em;
+        }
+        .convergence-box p {
+            margin: 0;
+            font-size: 0.85em;
+        }
+        .gap-box {
+            background: rgba(255, 200, 50, 0.08);
+            border: 2px solid rgba(255, 200, 50, 0.3);
+            border-radius: 12px;
+            padding: 0.8em 1.2em;
+            margin: 0.5em 0;
+            text-align: left;
+        }
+        .gap-box h3 {
+            color: #ffc832;
+            margin: 0 0 0.3em 0;
+            font-size: 0.95em;
+        }
+        .gap-box p {
+            margin: 0;
+            font-size: 0.8em;
+        }
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin: 1.5em 0;
+        }
+        .timeline-node {
+            background: rgba(0, 212, 255, 0.15);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 0.8em 1.2em;
+            text-align: center;
+            min-width: 140px;
+        }
+        .timeline-node .year {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .timeline-node .desc {
+            font-size: 0.7em;
+            color: #aaa;
+        }
+        .timeline-arrow {
+            color: #00d4ff;
+            font-size: 2em;
+            padding: 0 0.3em;
+        }
+        .key-insight {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(100, 255, 150, 0.1));
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            border-radius: 12px;
+            padding: 1.2em 1.5em;
+            margin: 1em auto;
+            max-width: 85%;
+            text-align: center;
+            font-size: 1.05em;
+        }
+        .equation {
+            font-size: 1.1em;
+            text-align: center;
+            margin: 1em 0;
+            letter-spacing: 0.02em;
+        }
+        .equation .term {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        .equation .equals {
+            color: #64ff96;
+            font-weight: bold;
+            padding: 0 0.4em;
+        }
+        .equation .plus {
+            color: #888;
+            padding: 0 0.3em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Title -->
+            <section>
+                <h1>The Convergence Map</h1>
+                <h3>Where Everything Connects</h3>
+                <p class="dim" style="margin-top: 2em;">A meta-synthesis across the Gas Town ecosystem</p>
+                <p class="dim" style="font-size: 0.6em;">February 2026 | GasTown Operations</p>
+                <aside class="notes">
+                    This is the most important presentation in the series. We are going to look across everything being built — ECC, CrudEngine, AOE, tmuxMOO, the Zgent ecosystem — and show that these are not separate projects. They are facets of one coherent system that nobody explicitly planned but that is clearly forming. By the end, the audience should feel a shift in how they see the work. The connections are not metaphorical. They are structural. The convergence is real.
+                </aside>
+            </section>
+
+            <!-- Slide 2: The Landscape -->
+            <section>
+                <h2>The Landscape</h2>
+                <p style="margin-bottom: 1em;">Three seemingly separate work streams</p>
+                <div class="three-column">
+                    <div class="island">
+                        <h3>Infrastructure</h3>
+                        <ul>
+                            <li>ECC schema (7 types)</li>
+                            <li>CrudEngine persistence</li>
+                            <li>AOE runtime</li>
+                            <li>Explorer reference impl</li>
+                        </ul>
+                    </div>
+                    <div class="island">
+                        <h3>Interaction</h3>
+                        <ul>
+                            <li>tmuxMOO vision</li>
+                            <li>Panes as rooms</li>
+                            <li>Shared presence</li>
+                            <li>Workshop / Trading Floor</li>
+                        </ul>
+                    </div>
+                    <div class="island">
+                        <h3>Ecosystem</h3>
+                        <ul>
+                            <li>Gas Town Academy</li>
+                            <li>Zgent conventions</li>
+                            <li>API publication</li>
+                            <li>Presentation standard</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="dim" style="margin-top: 1em; font-size: 0.8em;">Three islands. Three teams. Three timelines.</p>
+                <aside class="notes">
+                    Present these as isolated efforts. Infrastructure is where the technical plumbing happens — ECC data schema, CrudEngine for CRUD operations with full audit trails, AOE as the runtime engine for logging, errors, and events, and Explorer as the reference implementation. Interaction is the tmuxMOO vision from BRIEFING.md — the idea that tmux panes are rooms from 1990s MOOs, that agents and humans share presence, that you can walk away and come back. Ecosystem is the conventions layer — what makes a Zgent a Zgent, the Academy graduation criteria, the presentation standard. Let this sit for a moment. Three separate things.
+                </aside>
+            </section>
+
+            <!-- Slide 3: The Suspicion -->
+            <section>
+                <h2>The Suspicion</h2>
+                <p style="font-size: 1.3em; margin-top: 1.5em;">These aren't separate.</p>
+                <p class="fragment" style="font-size: 1.1em; margin-top: 1em;">
+                    They are <span class="highlight">three projections</span> of the same system,<br>
+                    viewed from different angles.
+                </p>
+                <p class="fragment dim" style="margin-top: 2em; font-size: 0.9em;">
+                    What follows are seven connections that prove it.
+                </p>
+                <aside class="notes">
+                    Build anticipation here. Pause after saying "These aren't separate." Let the audience sit with the idea. Then reveal: they are three projections of one system. Like looking at a 3D object from three angles — each view is real, each view is partial, and none of them is the whole thing. We are about to walk through seven connections that make this claim concrete. Each one should feel like a small revelation. Together, they should be overwhelming.
+                </aside>
+            </section>
+
+            <!-- Slide 4: Connection 1 - Observability IS the Product -->
+            <section>
+                <h2>Connection 1</h2>
+                <h3>Observability IS the Product</h3>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph "What the human does"
+                            H["Observes"]
+                        end
+                        subgraph "Three observability surfaces"
+                            A["tmuxMOO<br/>Real-time visibility"]
+                            B["Traffic Logs<br/>Historical visibility"]
+                            C["Event System<br/>Streaming visibility"]
+                        end
+                        subgraph "20-30 Agents Working"
+                            D["Agent 1"]
+                            E["Agent 2"]
+                            F["Agent N"]
+                        end
+                        D --> A
+                        D --> B
+                        D --> C
+                        E --> A
+                        E --> B
+                        E --> C
+                        F --> A
+                        F --> B
+                        F --> C
+                        A --> H
+                        B --> H
+                        C --> H
+
+                        style H fill:#00d4ff,color:#1a1a2e
+                        style A fill:#1a1a2e,stroke:#64ff96
+                        style B fill:#1a1a2e,stroke:#64ff96
+                        style C fill:#1a1a2e,stroke:#64ff96
+                </div>
+                <div class="key-insight fragment">
+                    The human doesn't <em>manage</em> agents. The human <em>observes</em> agents.<br>
+                    <span class="highlight">The entire stack exists to make agents observable.</span>
+                </div>
+                <aside class="notes">
+                    This is the foundational insight. When you have 20-30 agents working autonomously, the human's job changes. You are no longer the driver. You are the observer. And if you are the observer, then the system's primary job is to make things observable. tmuxMOO gives you real-time visibility — you can watch agents narrate, scan, and respond in panes. CrudEngine's traffic logs give you historical visibility — every operation, timestamped, with before/after state. The AOE event system gives you streaming visibility — typed events flowing through subscriptions. These are not three separate features. They are three surfaces of one product: observability. The observability-first philosophy we adopted from day one of CRUD Engine design isn't just good engineering practice. It is the product. It is the user interface. The human interacts with the system primarily by watching it work.
+                </aside>
+            </section>
+
+            <!-- Slide 5: Connection 2 - Rooms All the Way Down -->
+            <section>
+                <h2>Connection 2</h2>
+                <h3>Rooms All the Way Down</h3>
+                <div class="mermaid">
+                    flowchart LR
+                        subgraph "tmuxMOO"
+                            A["Pane<br/><small>Visual space</small>"]
+                        end
+                        subgraph "AOE Logging"
+                            B["Log Directory<br/><small>~/.zgents/logs/{id}/</small>"]
+                        end
+                        subgraph "Explorer"
+                            C["Scene<br/><small>YAML execution template</small>"]
+                        end
+                        subgraph "ECC"
+                            D["Context Profile<br/><small>Configuration scope</small>"]
+                        end
+
+                        A <-.->|"isomorphic"| B
+                        B <-.->|"isomorphic"| C
+                        C <-.->|"isomorphic"| D
+                        D <-.->|"isomorphic"| A
+
+                        style A fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style B fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style C fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style D fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                </div>
+                <p style="margin-top: 1em;">Four names for one concept: <span class="highlight">bounded agent environment</span></p>
+                <div class="two-column fragment" style="font-size: 0.75em; margin-top: 0.5em;">
+                    <div>
+                        <ul>
+                            <li><strong>Pane</strong> &mdash; where the agent is visible</li>
+                            <li><strong>Log dir</strong> &mdash; where the agent is persistent</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul>
+                            <li><strong>Scene</strong> &mdash; where the agent is configured</li>
+                            <li><strong>Profile</strong> &mdash; where the agent is customized</li>
+                        </ul>
+                    </div>
+                </div>
+                <aside class="notes">
+                    This one should hit hard. A tmux pane in tmuxMOO is a "room" where a Zgent lives and produces visible output. But the ZgentTransport in AOE writes to ~/.zgents/logs/{zgentId}/ — that is also a room, a persistent space scoped to one agent. Explorer "scenes" define YAML templates that configure execution environments for agents — bounded spaces with specific configurations. And ECC context profiles scope configuration to specific targets. These are four different vocabulary sets for the same structural concept: a bounded environment where a specific agent operates with specific configuration and produces observable output. The room metaphor from 1995 MOOs didn't just survive — it replicated. It shows up everywhere we look because bounded execution context is a fundamental primitive. The pane is the visible room. The log directory is the persistent room. The scene is the configured room. The context profile is the customized room. They should converge.
+                </aside>
+            </section>
+
+            <!-- Slide 6: Connection 3 - Traffic Logs = Narrative Replay -->
+            <section>
+                <h2>Connection 3</h2>
+                <h3>Traffic Logs = Narrative Replay</h3>
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #64ff96;">CrudEngine Traffic Log</h3>
+                        <div style="background: #0d0d15; padding: 0.8em; border-radius: 8px; font-family: monospace; font-size: 0.5em; text-align: left;">
+                            <span style="color: #888;">14:32:01</span> <span style="color: #00d4ff;">create</span> skill/scan-butterfly<br>
+                            <span style="color: #888;">14:32:01</span> <span style="color: #00d4ff;">create</span> agent/gamma-watch<br>
+                            <span style="color: #888;">14:32:02</span> <span style="color: #00d4ff;">update</span> hook/pre-tool-use<br>
+                            <span style="color: #888;">14:33:15</span> <span style="color: #00d4ff;">create</span> skill/alert-handler<br>
+                            <span style="color: #888;">14:33:16</span> <span style="color: #00d4ff;">update</span> agent/gamma-watch<br>
+                            <span style="color: #888;">14:35:42</span> <span style="color: #ff6464;">delete</span> skill/deprecated-scan
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ff96;">tmuxMOO Replay</h3>
+                        <div style="background: #0d0d15; padding: 0.8em; border-radius: 8px; font-family: monospace; font-size: 0.5em; text-align: left;">
+                            <span style="color: #888;">14:32</span> <span style="color: #00d4ff;">[COO]</span> Spawned butterfly scanner<br>
+                            <span style="color: #888;">14:32</span> <span style="color: #00d4ff;">[COO]</span> Gamma watch is online<br>
+                            <span style="color: #888;">14:32</span> <span style="color: #00d4ff;">[COO]</span> Updated tool hooks<br>
+                            <span style="color: #888;">14:33</span> <span style="color: #00d4ff;">[COO]</span> Alert system engaged<br>
+                            <span style="color: #888;">14:33</span> <span style="color: #00d4ff;">[COO]</span> Gamma watch reconfigured<br>
+                            <span style="color: #888;">14:35</span> <span style="color: #ff6464;">[COO]</span> Deprecated scan removed
+                        </div>
+                    </div>
+                </div>
+                <div class="key-insight fragment" style="margin-top: 1em;">
+                    <strong>BRIEFING.md 5.7</strong>: "A replay mode that feeds historical log entries into panes"<br>
+                    <span class="highlight">The audit trail IS the replay script.</span>
+                </div>
+                <aside class="notes">
+                    BRIEFING.md Section 5.7 asks an open question about persistence and replay: how do you show someone what happened while they were away? The answer is already being built. CrudEngine's traffic logging captures every operation with timestamps, operation IDs, before/after state, and durations. That is not just an audit trail for debugging. That is the raw data for tmuxMOO's replay mode. Feed those log entries into panes at accelerated speed and you get a narrated playback of what the agents did while the human was detached. The CrudEngine team did not design traffic logging for replay. The tmuxMOO team did not know traffic logging existed. But the data format is compatible. The use case is aligned. The convergence is emergent — it happened because both teams followed the observability-first principle to its natural conclusion. One team logged everything. The other team needed everything logged. They met in the middle without coordinating.
+                </aside>
+            </section>
+
+            <!-- Slide 7: Connection 4 - Presentations as API -->
+            <section>
+                <h2>Connection 4</h2>
+                <h3>Presentations as API Documentation</h3>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph "Zgent Requirements"
+                            A["Publishes its API<br/><small>Other Zgents can discover capabilities</small>"]
+                            B["Has presentations<br/><small>Explains itself via reveal.js</small>"]
+                        end
+                        subgraph "Convergence"
+                            C["Same requirement<br/>at different abstraction levels"]
+                        end
+                        A --> C
+                        B --> C
+                        C --> D["Machine-readable API<br/><small>JSON schemas, query endpoints</small>"]
+                        C --> E["Human-readable API<br/><small>Slide decks, walkthroughs</small>"]
+
+                        style C fill:#64ff96,color:#1a1a2e
+                        style A fill:#1a1a2e,stroke:#00d4ff
+                        style B fill:#1a1a2e,stroke:#00d4ff
+                </div>
+                <div class="fragment" style="margin-top: 0.5em;">
+                    <div class="equation">
+                        <span class="term">API Publication</span>
+                        <span class="plus">+</span>
+                        <span class="term">Presentation Standard</span>
+                        <span class="equals">=</span>
+                        <span class="term">Self-Documenting Zgent</span>
+                    </div>
+                </div>
+                <p class="fragment dim" style="font-size: 0.8em;">
+                    The Zgent Presentation Standard says: "every well-formed Zgent includes presentations that explain its domain."<br>
+                    That IS API documentation. For humans.
+                </p>
+                <aside class="notes">
+                    The Zgent Presentation Standard, defined in tmuxMOO/ZGENT-PRESENTATION-STANDARD.md, says every well-formed Zgent must include reveal.js presentations that explain what it does. Separately, the Zgent definition in CLAUDE.md says every Zgent must "publish its API" so other Zgents can discover what queries and interactions it supports. These look like two different requirements. One is about presentations. One is about APIs. But they converge. A machine-readable API (JSON schemas, query endpoints) tells other Zgents what this Zgent can do. A human-readable presentation (slide deck, walkthrough) tells humans what this Zgent can do. Same information, different format, different audience. The presentation IS the human-readable API documentation. And as the Zgent Presentation Standard notes, presentations could eventually be auto-generated from CrudEngine traffic logs and Zgent metadata. When that happens, the convergence becomes literal: the API generates the presentation. Two requirements collapse into one.
+                </aside>
+            </section>
+
+            <!-- Slide 8: Connection 5 - The COO as World Builder -->
+            <section>
+                <h2>Connection 5</h2>
+                <h3>The COO as World Builder</h3>
+                <div class="mermaid">
+                    flowchart TB
+                        COO["COO Agent<br/><small>The World Builder</small>"]
+
+                        COO --> DEF["ECC Data<br/><small>World Definition</small>"]
+                        COO --> INST["CrudEngine<br/><small>World Instantiation</small>"]
+                        COO --> EXEC["Explorer<br/><small>World Execution</small>"]
+                        COO --> DISP["tmuxMOO<br/><small>World Display</small>"]
+
+                        DEF --> INST
+                        INST --> EXEC
+                        EXEC --> DISP
+
+                        style COO fill:#00d4ff,color:#1a1a2e,stroke-width:3px
+                        style DEF fill:#1a1a2e,stroke:#00d4ff
+                        style INST fill:#1a1a2e,stroke:#64ff96
+                        style EXEC fill:#1a1a2e,stroke:#64ff96
+                        style DISP fill:#1a1a2e,stroke:#64ff96
+                </div>
+                <div class="fragment" style="font-size: 0.85em; margin-top: 0.5em;">
+                    <p>BRIEFING.md 2.7: <em>"tmuxinator becomes the world builder &mdash; define which agents spawn in which panes"</em></p>
+                    <p style="margin-top: 0.5em;">The COO agent in gtOps <span class="highlight">is</span> that world builder.</p>
+                </div>
+                <aside class="notes">
+                    BRIEFING.md Section 2.7 describes tmuxinator or a custom session manager as the "world builder" — it defines which agents spawn where, specifies layouts for each workflow context, sets hooks that fire when pane content matches patterns. The world definition is a config file, version-controlled and reproducible. Now look at what the COO agent actually does. ECC data defines the world — what agents exist, what skills they have, what hooks fire, what rules constrain them. CrudEngine instantiates the world — it takes those definitions and materializes them into actual file-system artifacts, logging every operation. Explorer executes the world — it loads scenes, generates configs, runs Claude Code, streams events. tmuxMOO displays the world — it presents agent output in visible rooms where humans can observe and interact. The COO orchestrates all four. Define, instantiate, execute, display. That is the world-building pipeline. BRIEFING.md described it as a future capability. It is the current architecture.
+                </aside>
+            </section>
+
+            <!-- Slide 9: Connection 6 - Academy = Test Suite -->
+            <section>
+                <h2>Connection 6</h2>
+                <h3>The Academy IS the Test Suite</h3>
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #00d4ff;">Graduation Criteria</h3>
+                        <div class="solution-point">
+                            <strong>API Publication</strong>
+                            <p class="dim" style="font-size: 0.75em; margin: 0;">Other Zgents can discover capabilities</p>
+                        </div>
+                        <div class="solution-point">
+                            <strong>Convention Compliance</strong>
+                            <p class="dim" style="font-size: 0.75em; margin: 0;">Logging, errors, events, config</p>
+                        </div>
+                        <div class="solution-point">
+                            <strong>Observable Behavior</strong>
+                            <p class="dim" style="font-size: 0.75em; margin: 0;">Hook instrumentation, event emissions</p>
+                        </div>
+                        <div class="solution-point">
+                            <strong>Independent Deployability</strong>
+                            <p class="dim" style="font-size: 0.75em; margin: 0;">Standalone + ecosystem</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ff96;">Test Categories</h3>
+                        <div class="convergence-box">
+                            <h3>Contract Tests</h3>
+                            <p>Verify API schema and query responses</p>
+                        </div>
+                        <div class="convergence-box">
+                            <h3>Convention Lint</h3>
+                            <p>Check directory structure, log format, config shape</p>
+                        </div>
+                        <div class="convergence-box">
+                            <h3>Logging Verification</h3>
+                            <p>Assert events emit, logs write, hooks fire</p>
+                        </div>
+                        <div class="convergence-box">
+                            <h3>Standalone Execution</h3>
+                            <p>Boot in isolation, run core operations</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="fragment" style="margin-top: 0.5em; font-size: 0.9em;">
+                    The Academy is not a manual process.<br>
+                    <span class="highlight">It is an automated validation pipeline.</span>
+                </p>
+                <aside class="notes">
+                    The Gas Town Academy is described as the process by which an agent becomes a well-formed Zgent. Graduation criteria include API publication, convention compliance, observable behavior, and independent deployability. These read like a checklist a human reviews. But look at what each criterion actually requires. API publication means the Zgent exposes a discoverable query interface. That is testable — contract tests verify that the API schema is present and that queries return expected shapes. Convention compliance means the Zgent follows shared logging, error, event, and config patterns. That is testable — a linter can check directory structure, log format, config shape. Observable behavior means hooks fire, events emit, logs write. That is testable — integration tests assert specific events appear when operations execute. Independent deployability means it boots standalone. That is testable — a smoke test starts the Zgent in isolation and runs core operations. Every graduation criterion maps to a test category. The Academy automates itself. DReader, the first candidate, does not need a human to review its readiness. It needs a test suite that exercises the graduation criteria. Run the suite. Pass the suite. Graduate. The Academy is CI/CD for Zgents.
+                </aside>
+            </section>
+
+            <!-- Slide 10: Connection 7 - Scene = Room = Context -->
+            <section>
+                <h2>Connection 7</h2>
+                <h3>Scene = Room = Context</h3>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph "Explorer Domain"
+                            S["Scene<br/><small>YAML template defining<br/>agent + skills + prompt</small>"]
+                        end
+                        subgraph "tmuxMOO Domain"
+                            R["Room<br/><small>tmux pane with agent<br/>output + interaction</small>"]
+                        end
+                        subgraph "ECC Domain"
+                            CTX["Context Profile<br/><small>Config scope with<br/>variable substitution</small>"]
+                        end
+
+                        S --> MERGE
+                        R --> MERGE
+                        CTX --> MERGE
+
+                        MERGE["Bounded Agent<br/>Environment"]
+
+                        MERGE --> UNIFIED["Unified Primitive:<br/>Where an agent lives,<br/>what it's configured with,<br/>what it shows"]
+
+                        style S fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style R fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style CTX fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style MERGE fill:#64ff96,color:#1a1a2e
+                        style UNIFIED fill:#00d4ff,color:#1a1a2e,stroke-width:3px
+                </div>
+                <p class="fragment" style="margin-top: 0.5em; font-size: 0.9em;">
+                    Three names. Three domains. <span class="highlight">One primitive.</span>
+                </p>
+                <aside class="notes">
+                    This is the most structurally significant convergence. In the Explorer domain, a "scene" is a YAML template that defines an agent with specific skills, a prompt, and execution parameters. It is a bounded environment. In the tmuxMOO domain, a "room" is a tmux pane where a specific agent produces output that a human can observe and interact with. It is a bounded environment. In the ECC domain, a "context profile" is a configuration scope that customizes artifacts for a specific target using variable substitution and enrichments. It is a bounded environment. All three describe the same thing from different angles. Where the agent lives (room), what it is configured with (context profile), what it does when it runs (scene). When these converge — when a Scene object knows which Room it renders into and which Context Profile it uses — we have a unified primitive. Define once, execute anywhere, display everywhere. That convergence has not happened yet. It is the most important architectural work remaining.
+                </aside>
+            </section>
+
+            <!-- Slide 11: The Unified Architecture -->
+            <section>
+                <h2>The Unified Architecture</h2>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph "ECOSYSTEM" ["Ecosystem Layer"]
+                            ACAD["Academy<br/><small>Validation Pipeline</small>"]
+                            CONV["Conventions<br/><small>Logging, Errors, Events</small>"]
+                            PRES["Presentations<br/><small>Human API Docs</small>"]
+                        end
+                        subgraph "INTERACTION" ["Interaction Layer"]
+                            MOO["tmuxMOO<br/><small>Real-time Rooms</small>"]
+                            REPLAY["Replay<br/><small>Historical Playback</small>"]
+                            VOICE["Voice Bridge<br/><small>I/O Layer</small>"]
+                        end
+                        subgraph "INFRASTRUCTURE" ["Infrastructure Layer"]
+                            ECC["ECC Schema<br/><small>World Definition</small>"]
+                            CRUD["CrudEngine<br/><small>World Instantiation</small>"]
+                            AOE["AOE Runtime<br/><small>World Execution</small>"]
+                        end
+
+                        ECC --> CRUD
+                        CRUD --> AOE
+                        AOE --> MOO
+                        CRUD -.->|"traffic logs"| REPLAY
+                        AOE -.->|"events"| MOO
+                        AOE -.->|"logging"| CONV
+                        CONV -.-> ACAD
+                        MOO -.-> PRES
+                        ACAD -.->|"validates"| CONV
+
+                        style ECC fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style CRUD fill:#00d4ff,color:#1a1a2e
+                        style AOE fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px
+                        style MOO fill:#1a1a2e,stroke:#64ff96,stroke-width:2px
+                        style REPLAY fill:#1a1a2e,stroke:#64ff96,stroke-width:2px
+                        style VOICE fill:#1a1a2e,stroke:#64ff96,stroke-width:2px
+                        style ACAD fill:#1a1a2e,stroke:#ffc832,stroke-width:2px
+                        style CONV fill:#1a1a2e,stroke:#ffc832,stroke-width:2px
+                        style PRES fill:#1a1a2e,stroke:#ffc832,stroke-width:2px
+                </div>
+                <p class="fragment" style="font-size: 0.85em; margin-top: 0.3em;">
+                    Infrastructure <span class="highlight">enables</span> the interaction model,<br>
+                    which <span class="highlight">grows</span> the ecosystem.
+                </p>
+                <aside class="notes">
+                    This is the money diagram. Show how all three layers compose. Infrastructure at the bottom: ECC defines the world as structured data, CrudEngine instantiates it into file-system artifacts with full audit trails, AOE provides the runtime with logging, errors, and events. Interaction in the middle: tmuxMOO takes AOE's event stream and renders it into visible rooms. Replay takes CrudEngine's traffic logs and plays them back through panes. Voice bridges on top of the text layer. Ecosystem at the top: conventions define the patterns that AOE enforces. The Academy validates those conventions as automated tests. Presentations document the Zgent for human consumption. The arrows matter. Infrastructure flows up into interaction. CrudEngine's traffic logs feed replay. AOE's events feed tmuxMOO's rooms. Conventions flow back down — they define what AOE must log, what CrudEngine must track, what events must emit. This is not three separate projects. This is one system at three levels of abstraction. Remove infrastructure and the interaction model has nothing to display. Remove the interaction model and the ecosystem has no visible surface. Remove the ecosystem and the agents have no conventions to follow. Each layer needs the other two.
+                </aside>
+            </section>
+
+            <!-- Slide 12: What This Means -->
+            <section>
+                <h2>What This Means</h2>
+                <div class="key-insight" style="margin-top: 1.5em;">
+                    We are not building three things.<br>
+                    We are building <span class="highlight">one thing</span> from three angles.
+                </div>
+                <div style="margin-top: 1.5em; font-size: 0.9em;">
+                    <p class="fragment">
+                        <span class="highlight">Infrastructure</span> makes agents <strong>programmable</strong>.
+                    </p>
+                    <p class="fragment">
+                        <span class="highlight">Interaction</span> makes agents <strong>inhabitable</strong>.
+                    </p>
+                    <p class="fragment">
+                        <span class="highlight">Ecosystem</span> makes agents <strong>interoperable</strong>.
+                    </p>
+                </div>
+                <p class="fragment dim" style="margin-top: 1.5em; font-size: 0.85em;">
+                    The convergence was not planned.<br>
+                    It emerged from following the observability-first principle consistently.
+                </p>
+                <aside class="notes">
+                    Let each fragment land individually. Programmable — ECC schemas and CrudEngine let you define agent behavior as data and instantiate it reliably. Without this, agents are hand-configured and fragile. Inhabitable — tmuxMOO gives you a space to be present with agents, to watch them work, to walk away and come back. Without this, agents are invisible processes. Interoperable — conventions, API publication, the Academy pipeline mean agents can discover and query each other. Without this, each agent is an island. The key insight: nobody sat down and designed this three-layer architecture. It emerged. The infrastructure team followed observability-first and built traffic logging. The interaction team followed MOO principles and built rooms. The ecosystem team followed convention-first and built the Academy. They arrived at the same architecture from different directions because the underlying need — making autonomous agents reliable and visible — has this shape. The convergence is evidence that the design is right.
+                </aside>
+            </section>
+
+            <!-- Slide 13: The Gaps -->
+            <section>
+                <h2>The Gaps</h2>
+                <p style="margin-bottom: 0.8em;">Where the convergence is <em>not yet</em> complete</p>
+                <div class="gap-box">
+                    <h3>Scene / Room / Context Unification</h3>
+                    <p>Three data structures describing the same concept. No shared schema. A Scene should know its Room and its Context Profile &mdash; today they are decoupled.</p>
+                </div>
+                <div class="gap-box">
+                    <h3>Academy Pipeline &harr; CrudEngine</h3>
+                    <p>Graduation criteria exist as documentation. CrudEngine tracks artifacts. The Academy should query CrudEngine to verify convention compliance automatically.</p>
+                </div>
+                <div class="gap-box">
+                    <h3>Traffic Log &harr; tmuxMOO Replay</h3>
+                    <p>Traffic logs exist. Rooms exist. The replay adapter that feeds one into the other has not been built.</p>
+                </div>
+                <div class="gap-box">
+                    <h3>Presentation Auto-Generation</h3>
+                    <p>The Zgent Presentation Standard notes this as future work. CrudEngine metadata + API schemas should generate presentation stubs.</p>
+                </div>
+                <aside class="notes">
+                    This slide is important because it prevents the presentation from feeling like hand-waving. The connections are real but incomplete. First gap: Scene, Room, and Context Profile are three data structures in three different packages with no shared schema. They describe the same thing. They should share types or at least have a mapping layer. This is the most important architectural work to do next. Second gap: the Academy graduation criteria exist as prose in CLAUDE.md and GLOSSARY.md. CrudEngine tracks all artifact operations. The Academy should be able to query CrudEngine: "Does this Zgent have all required artifact types? Do its logs follow convention format? Does its event schema match the standard?" That bridge has not been built. Third gap: CrudEngine traffic logs are structured JSONL. tmuxMOO rooms display text. A replay adapter that reads traffic log entries and renders them as narrated pane output does not exist yet. The data is there. The display is there. The connector is missing. Fourth gap: the Presentation Standard says presentations could be auto-generated from Zgent metadata and CrudEngine traffic. That capability does not exist. These gaps are the work that this convergence map reveals. You cannot see them from within any single domain. They only become visible when you overlay the three.
+                </aside>
+            </section>
+
+            <!-- Slide 14: The 30-Year Arc -->
+            <section>
+                <h2>The 30-Year Arc</h2>
+                <div class="timeline">
+                    <div class="timeline-node">
+                        <div class="year">1995</div>
+                        <div class="desc">MOO VEE<br>Programmable objects<br>Persistent rooms<br>Telnet transport</div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-node">
+                        <div class="year">2025</div>
+                        <div class="desc">Strades Vision<br>Agent behaviors<br>LLM-powered NL<br>"Slow dawning"</div>
+                    </div>
+                    <div class="timeline-arrow">&rarr;</div>
+                    <div class="timeline-node">
+                        <div class="year">2026</div>
+                        <div class="desc">Gas Town<br>Zgent ecosystem<br>tmux as transport<br>Observability-first</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1em; font-size: 0.85em;">
+                    <p>The thread that runs through all three:</p>
+                    <div class="equation fragment">
+                        <span class="term">Text-first</span>
+                        <span class="plus">+</span>
+                        <span class="term">Multi-user</span>
+                        <span class="plus">+</span>
+                        <span class="term">Persistent</span>
+                        <span class="plus">+</span>
+                        <span class="term">Programmable</span>
+                        <span class="plus">+</span>
+                        <span class="term">Observable</span>
+                    </div>
+                </div>
+                <p class="fragment dim" style="font-size: 0.8em; margin-top: 0.5em;">
+                    Same vision. Different technology. <span class="highlight">This time it works.</span>
+                </p>
+                <aside class="notes">
+                    The historical perspective. In 1995, Steve built Virtual Educational Environments on MOO infrastructure. Programmable objects with verbs. Persistent rooms. Natural language parsing. Multi-user presence. The vision was right. The technology — telnet, LambdaMOO, 90s infrastructure — could not deliver it. In 2025, Steve looked at what Strades was building and had what he called "a slow dawning event." Agent behaviors are programmable objects. tmux panes are persistent rooms. LLMs are the natural language parser that MOO never had. Thirty years later, every concept maps directly. In 2026, Gas Town is implementing it. Zgents are the programmable objects. tmuxMOO is the persistent rooms. The Academy is the quality control that MOOs never had. CrudEngine is the persistence layer. AOE is the runtime. And the addition that 1995 did not have: observability. Text-first, multi-user, persistent, programmable — those are the 1995 primitives. Observable is the 2026 addition. That is the new thing. The ability to not just build the world but to watch the world, audit the world, replay the world. Observability is what makes this attempt different. This time, when you walk away and come back, you don't just see that things happened. You see exactly what happened, when, why, and you can replay it.
+                </aside>
+            </section>
+
+            <!-- Slide 15: What Comes Next -->
+            <section>
+                <h2>What Comes Next</h2>
+                <p style="margin-bottom: 1em;">The refinements this perspective demands</p>
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #00d4ff;">Architectural</h3>
+                        <ul style="font-size: 0.8em;">
+                            <li>Define <span class="highlight">BoundedEnvironment</span> shared type<br><span class="dim">(Scene + Room + Context unification)</span></li>
+                            <li>Build replay adapter<br><span class="dim">(traffic log &rarr; tmuxMOO pane)</span></li>
+                            <li>Wire Academy to CrudEngine<br><span class="dim">(automated graduation checks)</span></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ff96;">Immediate</h3>
+                        <ul style="font-size: 0.8em;">
+                            <li>Graduate DReader as first Zgent<br><span class="dim">(prove the Academy pipeline)</span></li>
+                            <li>Auto-generate presentation stub<br><span class="dim">(from CrudEngine metadata)</span></li>
+                            <li>Update GLOSSARY.md<br><span class="dim">(add convergence vocabulary)</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="key-insight fragment" style="margin-top: 1em; font-size: 0.9em;">
+                    Every gap identified here is a <span class="highlight">new bead</span>.<br>
+                    The convergence map generates its own backlog.
+                </div>
+                <aside class="notes">
+                    This presentation is not just analysis — it is a backlog generator. On the architectural side: define a BoundedEnvironment type that captures what Scene, Room, and Context Profile share. This is a new type in ECC or a bridge type between packages. Build the replay adapter that reads traffic log JSONL and renders it into tmuxMOO panes — this connects CrudEngine to tmuxMOO for the first time. Wire the Academy graduation pipeline to CrudEngine so that graduation checks can query artifact state automatically. On the immediate side: DReader should be the first Zgent to go through the Academy pipeline for real. That will validate or invalidate every assumption about what graduation means. Auto-generate a presentation stub from CrudEngine metadata — prove that the "presentations as API" convergence works in practice. Update GLOSSARY.md to include the convergence vocabulary: BoundedEnvironment, replay adapter, observability surface. Each of these is a bead. The convergence map is self-referential — it generates the work that drives further convergence.
+                </aside>
+            </section>
+
+            <!-- Slide 16: Questions / Close -->
+            <section>
+                <h1>The Convergence Map</h1>
+                <div class="key-insight" style="margin-top: 1.5em; font-size: 0.95em;">
+                    What looks like three separate projects is actually<br>
+                    <span class="highlight">one system expressing itself at three levels of abstraction</span>.
+                </div>
+                <div style="margin-top: 1.5em; font-size: 0.85em;">
+                    <p><span class="highlight">Infrastructure</span> makes agents programmable.</p>
+                    <p><span class="highlight">Interaction</span> makes agents inhabitable.</p>
+                    <p><span class="highlight">Ecosystem</span> makes agents interoperable.</p>
+                </div>
+                <p class="dim" style="margin-top: 2em; font-size: 0.7em;">
+                    February 2026 | GasTown Operations<br>
+                    7 connections | 4 gaps | 1 system
+                </p>
+                <aside class="notes">
+                    Close with the master insight. Restate it cleanly. Three projects, one system, three levels of abstraction. The convergence was not planned — it emerged from following the observability-first principle consistently across all three work streams. That emergence is evidence that the architecture is right. The gaps identified here become the next phase of work. The convergence map is both a retrospective and a roadmap. Questions from the audience.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00d4ff',
+                primaryTextColor: '#eaeaea',
+                primaryBorderColor: '#00d4ff',
+                lineColor: '#00d4ff',
+                secondaryColor: '#1a1a2e',
+                tertiaryColor: '#1a1a2e'
+            }
+        });
+    </script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [ RevealNotes ],
+            transition: 'fade',
+            backgroundTransition: 'fade'
+        });
+    </script>
+</body>
+</html>
