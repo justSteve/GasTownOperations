@@ -1,0 +1,84 @@
+# Scene: CrudEngine Demo
+# Demonstrates CrudEngine integration with skill and agent creation
+
+scene:
+  id: "crud-demo"
+  act: 0
+  title: "CrudEngine Integration Demo"
+  duration_estimate: "10 seconds"
+
+purpose:
+  one_liner: "Demonstrate CrudEngine integration for artifact creation"
+  learning_outcomes:
+    - "Show traffic logging during skill creation"
+    - "Show traffic logging during agent creation"
+    - "Demonstrate operation history"
+
+prerequisites:
+  scenes: []
+  concepts: []
+
+assets:
+  files:
+    - path: skills/explorer-skill.SKILL.md
+      role: "Core skill for Explorer scene execution"
+      content: |
+        # Explorer Skill
+
+        This skill enables scene exploration capabilities.
+
+        ## Capabilities
+
+        - Load and parse scene YAML files
+        - Resolve parameter values
+        - Generate configurations
+
+        ## Usage
+
+        Use this skill when exploring Claude Code configuration patterns.
+
+    - path: skills/logging-skill.SKILL.md
+      role: "Skill for observing and logging operations"
+      content: |
+        # Logging Skill
+
+        Provides traffic logging and observability features.
+
+        ## Features
+
+        - Log all CRUD operations
+        - Track operation history
+        - Emit change events
+
+    - path: agents/demo-assistant.AGENT.md
+      role: "Assistant agent for demo purposes"
+      content: |
+        # Demo Assistant
+
+        You are a helpful assistant for demonstrating the Explorer engine.
+
+        ## Behavior
+
+        - Respond concisely
+        - Explain what you're doing
+        - Help verify the pipeline works
+
+  mock_data: []
+
+parameters: []
+
+execution_steps:
+  - step: 1
+    action: verify_artifacts
+    input: "Check that skills and agents were created"
+    commentary:
+      commentary_l1: "Verifying artifact creation"
+      commentary_l2: |
+        The CrudEngine should have logged creation of:
+        - 2 skills (explorer-skill, logging-skill)
+        - 1 agent (demo-assistant)
+
+variations: []
+related_scenes: []
+
+export_artifacts: []

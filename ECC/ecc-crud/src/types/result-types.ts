@@ -18,7 +18,7 @@ export interface OperationError {
   /** Human-readable error message */
   message: string;
   /** Additional context about the error */
-  context?: Record<string, unknown>;
+  context?: Record<string, unknown> | undefined;
 }
 
 /**
@@ -62,22 +62,22 @@ export interface OperationResult<T = unknown> {
   durationMs: number;
 
   /** The data returned on success (artifact, list, etc.) */
-  data?: T;
+  data?: T | undefined;
 
   /** File path affected by the operation */
-  path?: string;
+  path?: string | undefined;
 
   /** Error details on failure */
-  error?: OperationError;
+  error?: OperationError | undefined;
 
   /** State of the artifact before the operation (for versioning) */
-  beforeState?: T;
+  beforeState?: T | undefined;
 
   /** State of the artifact after the operation (for versioning) */
-  afterState?: T;
+  afterState?: T | undefined;
 
   /** Reference to the traffic log entry for this operation */
-  logId?: string;
+  logId?: string | undefined;
 }
 
 /**

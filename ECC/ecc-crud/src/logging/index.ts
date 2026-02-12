@@ -1,13 +1,23 @@
 /**
  * Traffic logging module
  *
- * Placeholder for CRUD traffic logging capabilities.
- * Will integrate with @ecc/orchestrator logging subsystem.
+ * CRUD traffic logging capabilities for observability.
+ * Integrates with @ecc/orchestrator logging subsystem.
+ *
+ * @module @ecc/crud/logging
  */
 
-// Future exports:
-// export * from './traffic-logger.js';
-// export * from './traffic-types.js';
+export {
+  // Types
+  type LogContext,
+  type Logger,
+  type TrafficLogEntry,
+  type TrafficLoggingContext,
+  type TrafficLogger,
+  // Functions
+  generateOperationId,
+  createTrafficLogger,
+  withTrafficLogging,
+} from './traffic-logger.js';
 
-// Placeholder export to make this a valid module
 export const LOGGING_VERSION = '0.1.0';

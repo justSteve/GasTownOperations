@@ -22,7 +22,8 @@
   "author": "gtOps",
   "license": "MIT",
   "dependencies": {
-    "ecc-materializer": "file:../ecc-materializer"
+    "ecc-materializer": "file:../ecc-materializer",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@types/bun": "latest",

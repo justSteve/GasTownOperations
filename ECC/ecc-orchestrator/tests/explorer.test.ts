@@ -250,8 +250,8 @@ describe('Config Generator', () => {
   });
 
   describe('generateConfig', () => {
-    it('creates config directory structure', () => {
-      const config = generateConfig(scene, {}, {
+    it('creates config directory structure', async () => {
+      const config = await generateConfig(scene, {}, {
         observerScript: OBSERVER_SCRIPT,
       });
       configDir = config.configDir;
@@ -263,8 +263,8 @@ describe('Config Generator', () => {
       expect(existsSync(join(config.configDir, '.claude', 'hooks'))).toBe(true);
     });
 
-    it('generates settings.json with observer hooks', () => {
-      const config = generateConfig(scene, {}, {
+    it('generates settings.json with observer hooks', async () => {
+      const config = await generateConfig(scene, {}, {
         observerScript: OBSERVER_SCRIPT,
       });
       configDir = config.configDir;
@@ -277,8 +277,8 @@ describe('Config Generator', () => {
       expect(settings.hooks.preToolUse.length).toBeGreaterThan(0);
     });
 
-    it('generates skill files from assets', () => {
-      const config = generateConfig(scene, {}, {
+    it('generates skill files from assets', async () => {
+      const config = await generateConfig(scene, {}, {
         observerScript: OBSERVER_SCRIPT,
       });
       configDir = config.configDir;
@@ -289,8 +289,8 @@ describe('Config Generator', () => {
   });
 
   describe('cleanupConfig', () => {
-    it('removes config directory', () => {
-      const config = generateConfig(scene, {}, {
+    it('removes config directory', async () => {
+      const config = await generateConfig(scene, {}, {
         observerScript: OBSERVER_SCRIPT,
       });
       const dir = config.configDir;
@@ -403,11 +403,11 @@ describe('Real Scene Loading', () => {
 // ============================================================================
 
 describe('Integration', () => {
-  it('full pipeline: load scene -> generate config -> create executor', () => {
+  it('full pipeline: load scene -> generate config -> create executor', async () => {
     const scene = loadScene(join(TEST_DIR, 'test-scene.yaml'));
     const params = resolveParameters(scene, { test_param: 'integration_test' });
 
-    const config = generateConfig(scene, params, {
+    const config = await generateConfig(scene, params, {
       observerScript: OBSERVER_SCRIPT,
     });
 

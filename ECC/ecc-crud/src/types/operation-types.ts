@@ -210,7 +210,7 @@ export interface CreateOperation<T> {
   artifact: T;
 
   /** Optional create operation settings */
-  options?: CreateOperationOptions;
+  options?: CreateOperationOptions | undefined;
 }
 
 /**
@@ -240,7 +240,7 @@ export interface ReadOperation {
   id: string;
 
   /** Optional read operation settings */
-  options?: ReadOperationOptions;
+  options?: ReadOperationOptions | undefined;
 }
 
 /**
@@ -278,7 +278,7 @@ export interface UpdateOperation<T> {
   changes: Partial<T>;
 
   /** Optional update operation settings */
-  options?: UpdateOperationOptions;
+  options?: UpdateOperationOptions | undefined;
 }
 
 /**
@@ -308,7 +308,7 @@ export interface DeleteOperation {
   id: string;
 
   /** Optional delete operation settings */
-  options?: DeleteOperationOptions;
+  options?: DeleteOperationOptions | undefined;
 }
 
 /**
@@ -343,7 +343,7 @@ export interface QueryOperation {
   filter?: QueryFilter;
 
   /** Optional query operation settings */
-  options?: QueryOperationOptions;
+  options?: QueryOperationOptions | undefined;
 }
 
 // ============================================================================

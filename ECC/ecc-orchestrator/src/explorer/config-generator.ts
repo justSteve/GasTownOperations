@@ -3,6 +3,9 @@
  *
  * Creates a temporary .claude/ folder structure for scene execution,
  * injecting observer hooks into settings.json and generating skills/agents.
+ *
+ * When a CrudEngine is provided, artifact creation is routed through it,
+ * enabling traffic logging, versioning, and change subscriptions.
  */
 
 import { mkdirSync, writeFileSync, rmSync, existsSync, chmodSync } from 'node:fs';
@@ -16,6 +19,9 @@ import type {
   GeneratedSettings,
   HookConfig,
 } from './types.js';
+
+// CrudEngine types - optional dependency
+import type { CrudEngine, EccSkill, EccAgent } from '@ecc/crud';
 
 // ============================================================================
 // Config Generator
@@ -33,16 +39,26 @@ export interface ConfigGeneratorOptions {
   eventLogPath?: string;
   /** Whether to clean up on process exit */
   cleanupOnExit?: boolean;
+  /**
+   * CrudEngine instance for artifact creation.
+   * When provided, skills/agents/hooks are created through the engine,
+   * enabling traffic logging and versioning.
+   * The engine should be configured to write to the temp configDir.
+   */
+  crudEngine?: CrudEngine;
 }
 
 /**
  * Generate a complete Claude Code configuration for a scene.
+ *
+ * When a CrudEngine is provided in options, artifacts are created through it,
+ * enabling traffic logging, operation history, and change subscriptions.
  */
-export function generateConfig(
+export async function generateConfig(
   scene: SceneTemplate,
   parameters: ResolvedParameters,
   options: ConfigGeneratorOptions
-): GeneratedConfig {
+): Promise<GeneratedConfig> {
   const configId = randomUUID().slice(0, 8);
   const baseDir = options.baseDir || tmpdir();
   const configDir = join(baseDir, `explorer-${scene.scene.id}-${configId}`);
@@ -61,10 +77,10 @@ export function generateConfig(
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 
   // Generate skills from scene assets
-  const skills = generateSkills(scene, parameters, claudeDir);
+  const skills = await generateSkills(scene, parameters, claudeDir, options.crudEngine, configDir);
 
   // Generate agents from scene assets
-  const agents = generateAgents(scene, parameters, claudeDir);
+  const agents = await generateAgents(scene, parameters, claudeDir, options.crudEngine, configDir);
 
   // Generate hook scripts from scene assets
   const hooks = generateHooks(scene, parameters, claudeDir);
@@ -137,42 +153,85 @@ function generateSettings(
   return settings;
 }
 
-function generateSkills(
+async function generateSkills(
   scene: SceneTemplate,
   parameters: ResolvedParameters,
-  claudeDir: string
-): Array<{ path: string; content: string }> {
+  claudeDir: string,
+  crudEngine?: CrudEngine,
+  configDir?: string
+): Promise<Array<{ path: string; content: string }>> {
   const skills: Array<{ path: string; content: string }> = [];
 
   for (const asset of scene.assets.files) {
     if (asset.path.includes('skills/') || asset.path.endsWith('.SKILL.md')) {
       const content = asset.content || generateDefaultSkillContent(asset);
+      const interpolatedContent = interpolateParameters(content, parameters);
       const fileName = asset.path.split('/').pop() || 'skill.md';
-      const skillPath = join(claudeDir, 'skills', fileName);
+      const skillName = fileName.replace('.SKILL.md', '').replace('.md', '');
 
-      writeFileSync(skillPath, interpolateParameters(content, parameters));
-      skills.push({ path: skillPath, content });
+      if (crudEngine && configDir) {
+        // Use CrudEngine for traffic logging and versioning
+        const eccSkill: EccSkill = {
+          id: `scene/${skillName}`,
+          pluginId: 'explorer',
+          name: skillName,
+          category: 'scene',
+          description: asset.role || 'Generated skill for Explorer scene',
+          content: interpolatedContent,
+        };
+
+        const result = await crudEngine.createSkill(eccSkill, { overwrite: true });
+        if (result.success && result.path) {
+          skills.push({ path: result.path, content: interpolatedContent });
+        }
+      } else {
+        // Fallback: direct file write (backward compatible)
+        const skillPath = join(claudeDir, 'skills', fileName);
+        writeFileSync(skillPath, interpolatedContent);
+        skills.push({ path: skillPath, content: interpolatedContent });
+      }
     }
   }
 
   return skills;
 }
 
-function generateAgents(
+async function generateAgents(
   scene: SceneTemplate,
   parameters: ResolvedParameters,
-  claudeDir: string
-): Array<{ path: string; content: string }> {
+  claudeDir: string,
+  crudEngine?: CrudEngine,
+  configDir?: string
+): Promise<Array<{ path: string; content: string }>> {
   const agents: Array<{ path: string; content: string }> = [];
 
   for (const asset of scene.assets.files) {
     if (asset.path.includes('agents/') || asset.path.endsWith('.AGENT.md')) {
       const content = asset.content || generateDefaultAgentContent(asset);
+      const interpolatedContent = interpolateParameters(content, parameters);
       const fileName = asset.path.split('/').pop() || 'agent.md';
-      const agentPath = join(claudeDir, 'agents', fileName);
+      const agentName = fileName.replace('.AGENT.md', '').replace('.md', '');
 
-      writeFileSync(agentPath, interpolateParameters(content, parameters));
-      agents.push({ path: agentPath, content });
+      if (crudEngine && configDir) {
+        // Use CrudEngine for traffic logging and versioning
+        const eccAgent: EccAgent = {
+          id: agentName,
+          pluginId: 'explorer',
+          name: agentName,
+          description: asset.role || 'Generated agent for Explorer scene',
+          instructions: interpolatedContent,
+        };
+
+        const result = await crudEngine.createAgent(eccAgent, { overwrite: true });
+        if (result.success && result.path) {
+          agents.push({ path: result.path, content: interpolatedContent });
+        }
+      } else {
+        // Fallback: direct file write (backward compatible)
+        const agentPath = join(claudeDir, 'agents', fileName);
+        writeFileSync(agentPath, interpolatedContent);
+        agents.push({ path: agentPath, content: interpolatedContent });
+      }
     }
   }
 
