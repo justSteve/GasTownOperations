@@ -1,0 +1,82 @@
+# Zgent Session Spec: DReader
+# Discord reader agent — collects and narrates Discord channel activity.
+#
+# Usage: session-builder.sh dreader.yaml
+
+zgent: dreader
+
+display:
+  theme:
+    accent: "#ff6b6b"
+    bg: "#1a1a2e"
+    fg: "#eaeaea"
+    border-style: "rounded"
+    pane-label: "DReader"
+  status:
+    left: "#[fg=#ff6b6b,bold] DReader #[fg=#888]| #{session_name}"
+    right: "#[fg=#888]#{pane_title} | %H:%M"
+    style: "bg=#0d0d1a"
+    interval: 5
+  layout: main-vertical
+
+input:
+  prefix: "C-Space"
+  mouse: true
+  bindings:
+    "M-d": "select-window -t :narrative"
+    "M-s": "select-window -t :status"
+  key-table: dreader
+  table-bindings:
+    "q": "display-popup -w 80% -h 60% -E 'dreader query --interactive'"
+    "r": "send-keys -t :narrative 'dreader refresh' Enter"
+    "h": "display-popup -w 60% -h 40% -E 'cat /var/log/moo/dreader-help.txt'"
+
+panes:
+  - name: narrative
+    command: "dreader --mode=narrative"
+    style:
+      fg: "#eaeaea"
+      bg: "#1a1a2e"
+    border-label: "#{?#{==:#{pane_active},1},#[fg=#ff6b6b],#[fg=#555]}DReader Narrative"
+    focus: true
+
+  - name: status
+    command: "dreader --mode=status"
+    size: "25%"
+    split: horizontal
+    style:
+      fg: "#aaaaaa"
+      bg: "#12122a"
+    border-label: "#{?#{==:#{pane_active},1},#[fg=#ff6b6b],#[fg=#555]}Status"
+
+  - name: log
+    command: "tail -f /var/log/moo/dreader-narrative.jsonl | jq -r '.content'"
+    size: "20%"
+    split: horizontal
+    style:
+      fg: "#777777"
+      bg: "#0d0d1a"
+    border-label: "#{?#{==:#{pane_active},1},#[fg=#ff6b6b],#[fg=#555]}Log Stream"
+
+hooks:
+  after-select-pane: "run-shell 'echo #{pane_index} > /tmp/dreader-active-pane'"
+  pane-focus-in: "set pane-border-style 'fg=#ff6b6b'"
+  pane-focus-out: "set pane-border-style 'fg=#555555'"
+  session-created: "run-shell 'echo {\"ts\":\"$(date -Is)\",\"event\":\"session-created\",\"zgent\":\"dreader\"} >> /var/log/moo/dreader-events.jsonl'"
+
+comms:
+  publish: "/var/log/moo/dreader-narrative.jsonl"
+  subscribe:
+    - "/var/log/moo/spx-narrative.jsonl"
+    - "/var/log/moo/broadcast.jsonl"
+  inbox: "/var/moo/dreader-inbox"
+  capabilities:
+    - "query:volume"
+    - "query:sentiment"
+    - "query:channel-summary"
+    - "subscribe:narrative"
+
+env:
+  DREADER_LOG_LEVEL: "info"
+  DREADER_CHANNELS: "spx-flow,market-chat,alerts"
+  MOO_ZGENT_ID: "dreader"

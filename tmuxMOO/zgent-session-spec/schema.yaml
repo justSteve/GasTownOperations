@@ -1,0 +1,76 @@
+# Zgent Session Spec Schema
+# Declarative description of a Zgent's tmux presence.
+# The session builder reads this spec and generates tmux commands.
+#
+# Usage: session-builder.sh <spec.yaml>
+
+# --- Top-level fields ---
+
+# zgent: string (required)
+#   Unique identifier for this Zgent. Becomes the tmux session name.
+
+# display: object
+#   Visual presentation of the Zgent's tmux session.
+#
+#   theme: object
+#     accent: string    - CSS hex color for borders, highlights
+#     bg: string        - CSS hex color for background
+#     fg: string        - CSS hex color for foreground text
+#     border-style: string - "single" | "double" | "heavy" | "rounded" | "simple" | "none"
+#     pane-label: string   - Default label prefix for pane borders
+#
+#   status: object
+#     left: string   - tmux format string for status-left
+#     right: string  - tmux format string for status-right
+#     style: string  - tmux style string for status bar
+#     interval: int  - status-interval in seconds (default: 5)
+#
+#   layout: string
+#     One of: main-horizontal, main-vertical, tiled, even-horizontal, even-vertical
+#     Or "custom" to use panes[].size and panes[].position for manual layout
+
+# input: object
+#   Keyboard and mouse configuration.
+#
+#   prefix: string       - tmux prefix key (e.g., "C-Space", "C-b")
+#   bindings: map        - key → tmux command mappings (bound in prefix table)
+#   root-bindings: map   - key → tmux command (bound in root table, no prefix needed)
+#   key-table: string    - Custom key table name for agent-specific bindings
+#   table-bindings: map  - key → tmux command (bound in the custom key-table)
+#   mouse: bool          - Enable mouse support (default: true)
+
+# panes: list (required)
+#   Each pane in the session. First pane is created with the session.
+#
+#   - name: string (required)   - Identifier, used in border label
+#     command: string            - Shell command to run in this pane
+#     style: object
+#       fg: string
+#       bg: string
+#     border-label: string       - Override pane border label
+#     size: string               - Percentage or line count ("30%", "15")
+#     split: string              - "horizontal" | "vertical" (default: vertical)
+#     focus: bool                - Start with focus on this pane
+
+# hooks: map
+#   tmux hook name → command string
+#   Supports all tmux hooks: after-select-pane, pane-focus-in,
+#   pane-focus-out, after-new-window, session-created, etc.
+#   Commands can use tmux format strings.
+
+# comms: object
+#   Inter-Zgent communication configuration.
+#
+#   publish: string         - Path to this Zgent's narrative log (JSONL)
+#   subscribe: list         - Paths to other Zgents' narrative logs to tail
+#   inbox: string           - Path to named pipe for incoming queries
+#   socket: string          - Path to Unix socket for bidirectional IPC
+#   capabilities: list      - Advertised query capabilities
+
+# env: map
+#   Environment variables to set in the session.
+#   key → value pairs exported before pane commands run.
+
+# extends: string
+#   Path to a base spec to inherit from. All fields are deep-merged,
+#   with this spec's values taking precedence.

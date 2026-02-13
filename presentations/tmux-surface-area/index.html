@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The tmux Surface Area</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.css">
+    <style>
+        :root {
+            --r-background-color: #1a1a2e;
+            --r-main-color: #eaeaea;
+            --r-heading-color: #00d4ff;
+            --r-link-color: #00d4ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 600;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.6em; color: #00d4ff; }
+        .reveal h3 { font-size: 1.2em; color: #888; }
+        .reveal ul { text-align: left; }
+        .reveal li { margin-bottom: 0.35em; }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .dim { color: #666; }
+        .reveal .slides section { overflow-y: auto; }
+        .mermaid { font-size: 0.7em; }
+        .mermaid svg { max-height: 380px; }
+        .metric-box {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 0.7em 1.2em;
+            margin: 0.3em;
+            text-align: center;
+        }
+        .metric-box .number {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .metric-box .label {
+            font-size: 0.75em;
+            color: #888;
+        }
+        .two-column {
+            display: flex;
+            gap: 2em;
+        }
+        .two-column > div {
+            flex: 1;
+        }
+        .hook-list {
+            font-size: 0.55em;
+            column-count: 3;
+            column-gap: 1em;
+            text-align: left;
+        }
+        .hook-list li {
+            margin-bottom: 0.15em;
+            break-inside: avoid;
+        }
+        .code-example {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 0.6em 1em;
+            text-align: left;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.65em;
+            line-height: 1.5;
+            color: #c8d6e5;
+            overflow-x: auto;
+        }
+        .code-example .keyword { color: #c678dd; }
+        .code-example .string { color: #98c379; }
+        .code-example .format { color: #e5c07b; }
+        .code-example .comment { color: #5c6370; font-style: italic; }
+        .scope-badge {
+            display: inline-block;
+            padding: 0.1em 0.5em;
+            border-radius: 4px;
+            font-size: 0.65em;
+            font-weight: bold;
+            margin: 0.1em;
+        }
+        .scope-server { background: rgba(255, 100, 100, 0.2); border: 1px solid #ff6464; color: #ff6464; }
+        .scope-session { background: rgba(100, 255, 150, 0.2); border: 1px solid #64ff96; color: #64ff96; }
+        .scope-window { background: rgba(100, 150, 255, 0.2); border: 1px solid #6496ff; color: #6496ff; }
+        .scope-pane { background: rgba(255, 200, 100, 0.2); border: 1px solid #ffc864; color: #ffc864; }
+        .capability-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+            padding: 0.3em 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
+            font-size: 0.8em;
+        }
+        .capability-row .cap-name { color: #00d4ff; font-weight: bold; min-width: 160px; }
+        .capability-row .cap-desc { color: #ccc; }
+        .var-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.3em;
+            font-size: 0.55em;
+            text-align: left;
+        }
+        .var-grid .var-item {
+            padding: 0.2em 0.4em;
+            background: rgba(0,0,0,0.3);
+            border-radius: 3px;
+            font-family: 'Fira Code', monospace;
+        }
+        .var-grid .var-category {
+            grid-column: 1 / -1;
+            color: #00d4ff;
+            font-weight: bold;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding-top: 0.3em;
+            font-size: 1.1em;
+        }
+        .mapping-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            padding: 0.25em 0;
+            font-size: 0.75em;
+            text-align: left;
+        }
+        .mapping-row .tmux-side {
+            min-width: 200px;
+            font-family: monospace;
+            color: #e5c07b;
+        }
+        .mapping-row .arrow { color: #00d4ff; font-size: 1.2em; }
+        .mapping-row .moo-side { color: #98c379; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ==================== SLIDE 1: Title ==================== -->
+            <section>
+                <h1>The tmux Surface Area</h1>
+                <h3>Everything tmux can do for the MOO vision</h3>
+                <p style="margin-top: 2em;">
+                    <div class="metric-box">
+                        <div class="number">90+</div>
+                        <div class="label">Options</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">68</div>
+                        <div class="label">Hooks</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">120+</div>
+                        <div class="label">Format Variables</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="number">4</div>
+                        <div class="label">Scope Levels</div>
+                    </div>
+                </p>
+                <p class="dim" style="margin-top: 1em;">From the tmux source code -- options-table.c, format.c, key-bindings.c</p>
+                <aside class="notes">
+                    This presentation is a comprehensive audit of tmux's programmable surface area, drawn directly from the C source code.
+                    We are looking at tmux not as a terminal multiplexer, but as a runtime for AI agent environments.
+                    The numbers above are real: 90+ configurable options across 4 scope levels (server, session, window, pane),
+                    68 named hooks that fire on lifecycle events, and over 120 format variables for dynamic string interpolation.
+                    This is more surface area than most application frameworks provide.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 2: The Scope Hierarchy ==================== -->
+            <section>
+                <h2>The Four Scope Levels</h2>
+                <div class="mermaid">
+                    graph TD
+                        S["Server<br/><span style='font-size:0.7em'>Global singleton</span>"]
+                        SE["Session<br/><span style='font-size:0.7em'>Named environment</span>"]
+                        W["Window<br/><span style='font-size:0.7em'>Tab with layout</span>"]
+                        P["Pane<br/><span style='font-size:0.7em'>Terminal instance</span>"]
+                        S --> SE
+                        SE --> W
+                        W --> P
+                        style S fill:#442222,stroke:#ff6464,color:#eee
+                        style SE fill:#224422,stroke:#64ff96,color:#eee
+                        style W fill:#222244,stroke:#6496ff,color:#eee
+                        style P fill:#443322,stroke:#ffc864,color:#eee
+                </div>
+                <p style="margin-top: 1em;">
+                    <span class="scope-server">Server</span> default-terminal, escape-time, buffer-limit, copy-command<br>
+                    <span class="scope-session">Session</span> status-*, prefix, history-limit, key-table, mouse<br>
+                    <span class="scope-window">Window</span> window-style, pane-border-*, popup-*, mode-keys<br>
+                    <span class="scope-pane">Pane</span> window-active-style, allow-passthrough, synchronize-panes
+                </p>
+                <aside class="notes">
+                    tmux options cascade through four scope levels, defined in options-table.c using OPTIONS_TABLE_SERVER,
+                    OPTIONS_TABLE_SESSION, OPTIONS_TABLE_WINDOW, and OPTIONS_TABLE_PANE flags.
+                    Some options like window-style and allow-passthrough are scoped to BOTH window and pane
+                    (OPTIONS_TABLE_WINDOW|OPTIONS_TABLE_PANE), meaning you can set a default at the window level
+                    and override per-pane. This is exactly the inheritance model we need for MOO rooms --
+                    a room has a default appearance, but each object/agent in the room can have its own.
+                    The key-table option on sessions is critical: it means we can have different key binding
+                    contexts per session, essentially giving each agent its own command vocabulary.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 3: Status Line Deep Dive ==================== -->
+            <section>
+                <h2>Status Line: The Room HUD</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Multi-Line Status</h3>
+                        <ul>
+                            <li><code>status</code> accepts: off, on, <span class="highlight">2, 3, 4, 5</span></li>
+                            <li>Each line is an independent <code>status-format[n]</code></li>
+                            <li>Line 0: windows (default)</li>
+                            <li>Line 1: pane info</li>
+                            <li>Line 2: session info</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Formatting Options</h3>
+                        <ul>
+                            <li><code>status-left</code> / <code>status-right</code></li>
+                            <li><code>status-style</code> <span class="dim">(bg=green,fg=black)</span></li>
+                            <li><code>status-left-style</code> / <code>status-right-style</code></li>
+                            <li><code>status-justify</code>: left, centre, right, absolute-centre</li>
+                            <li><code>status-position</code>: top or bottom</li>
+                            <li><code>status-interval</code>: refresh rate in seconds</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-example" style="margin-top: 0.5em;">
+<span class="comment"># Up to 5 status lines -- a real dashboard</span>
+<span class="keyword">set</span> -g status 3
+<span class="keyword">set</span> -g status-format[1] <span class="string">"#[align=left]Panes: #{P:#P[#{pane_width}x#{pane_height}] }"</span>
+<span class="keyword">set</span> -g status-format[2] <span class="string">"#[align=left]Sessions: #{S:#S#{session_alert} }"</span>
+                </div>
+                <aside class="notes">
+                    The status line is probably the single most powerful display mechanism tmux offers.
+                    From options-table.c, the 'status' option uses options_table_status_list which accepts
+                    "off", "on", "2", "3", "4", "5" -- meaning up to 5 independent status lines.
+                    Each line is fully programmable via status-format[n], and the defaults in the source
+                    (OPTIONS_TABLE_STATUS_FORMAT1/2/3) show how they iterate over windows, panes, and sessions
+                    using the #{W:...}, #{P:...}, #{S:...} iterators.
+                    For the MOO vision, these status lines become a persistent HUD showing room state:
+                    which agents are present (panes), what room you're in (session), what's happening (activity alerts).
+                    The status-interval default is 15 seconds, but can be set to 1 for near-real-time updates.
+                    Window-status format strings like window-status-current-format support full conditional styling,
+                    so we can color-code windows by agent type or activity state.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 4: Pane Borders ==================== -->
+            <section>
+                <h2>Pane Borders: Room Labels</h2>
+                <div class="two-column">
+                    <div>
+                        <ul>
+                            <li><code>pane-border-status</code>: <span class="highlight">off, top, bottom</span></li>
+                            <li><code>pane-border-format</code>: format string per pane</li>
+                            <li><code>pane-border-style</code>: color and attributes</li>
+                            <li><code>pane-active-border-style</code>: active pane highlight</li>
+                            <li><code>pane-border-indicators</code>: off, colour, arrows, both</li>
+                            <li><code>pane-border-lines</code>: single, double, heavy, simple, number, spaces</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-example">
+<span class="comment"># Label every pane with its title and command</span>
+<span class="keyword">setw</span> pane-border-status top
+<span class="keyword">setw</span> pane-border-format \
+  <span class="string">"#{?pane_active,#[reverse],}#P "</span> \
+  <span class="string">"#{pane_title} "</span> \
+  <span class="string">"#{?pane_pipe,|PIPE|,} "</span> \
+  <span class="string">"[#{pane_current_command}]"</span>
+
+<span class="comment"># Active pane changes color by mode</span>
+<span class="comment"># Default from source:</span>
+<span class="keyword">setw</span> pane-active-border-style \
+  <span class="string">"#{?pane_in_mode,fg=yellow,</span>
+<span class="string">    #{?synchronize-panes,fg=red,fg=green}}"</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    Pane borders are the second display layer. The pane-border-format option, found at line 1288
+                    of options-table.c, defaults to '#{?pane_active,#[reverse],}#{pane_index}#[default] "#{pane_title}"'.
+                    Notice how the DEFAULT already uses conditional formatting -- this is a format DSL expression
+                    that reverses the text if the pane is active.
+                    The pane-active-border-style default is even more interesting: it uses a NESTED conditional
+                    that changes color based on whether you're in copy mode (yellow) or synchronize-panes is on (red).
+                    The border lines option offers 6 styles including 'number' which shows pane indices and
+                    'heavy' which uses Unicode heavy box-drawing characters.
+                    For MOO: each pane border becomes a room nameplate. The format string can show agent name,
+                    current activity, pipe status (is the room being logged?), and any custom metadata.
+                    Pane-border-status at 'top' puts the label above the pane content, making it look like a room header.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 5: Window & Pane Styling ==================== -->
+            <section>
+                <h2>Window & Pane Styling</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Per-Pane Appearance</h3>
+                        <ul>
+                            <li><code>window-style</code>: inactive pane bg/fg</li>
+                            <li><code>window-active-style</code>: active pane bg/fg</li>
+                            <li><code>pane-colours</code>: custom 256-color palette override</li>
+                            <li><code>cursor-colour</code> / <code>cursor-style</code>: per-pane cursor</li>
+                            <li><code>fill-character</code>: custom fill for unused space</li>
+                        </ul>
+                        <h3>Scrollbars (New)</h3>
+                        <ul>
+                            <li><code>pane-scrollbars</code>: off, modal, on</li>
+                            <li><code>pane-scrollbars-style</code>: bg, fg, width, pad</li>
+                            <li><code>pane-scrollbars-position</code>: left or right</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-example">
+<span class="comment"># Dim inactive panes (room you're not looking at)</span>
+<span class="keyword">setw</span> window-style <span class="string">"bg=#111122"</span>
+<span class="keyword">setw</span> window-active-style <span class="string">"bg=#1a1a2e"</span>
+
+<span class="comment"># Per-pane: override for specific agent</span>
+<span class="keyword">set</span> -p window-style <span class="string">"bg=#1a2211"</span>
+
+<span class="comment"># Custom cursor for agent identity</span>
+<span class="keyword">set</span> -p cursor-colour <span class="string">"#00d4ff"</span>
+<span class="keyword">set</span> -p cursor-style <span class="string">"blinking-bar"</span>
+
+<span class="comment"># Override color palette per-pane</span>
+<span class="keyword">set</span> -p pane-colours[1] <span class="string">"#ff6464"</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    This is where tmux becomes visually programmable per-agent. The window-style and
+                    window-active-style options (lines 1438/1459 in options-table.c) are scoped to
+                    OPTIONS_TABLE_WINDOW|OPTIONS_TABLE_PANE, meaning you can set them per-pane with 'set -p'.
+                    In MOO terms: each agent's room has its own background color, its own cursor appearance,
+                    and even its own color palette. The pane-colours option (line 1331) is an array that lets you
+                    remap any of the 256 terminal colors per-pane -- so color 1 (red) in one pane could
+                    mean something entirely different in another.
+                    The new pane-scrollbars feature (added recently to tmux HEAD) gives us visual scroll indicators.
+                    The cursor-style option supports: default, blinking-block, block, blinking-underline,
+                    underline, blinking-bar, bar -- seven distinct visual states we can use to signal agent mode.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 6: Popups and Menus ==================== -->
+            <section>
+                <h2>Popups & Menus: Overlays</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>display-popup</h3>
+                        <ul>
+                            <li>Floating pane overlay with shell or command</li>
+                            <li>Configurable size: <code>-w 80% -h 60%</code></li>
+                            <li>Position: <code>-x C -y C</code> (centered)</li>
+                            <li><code>popup-style</code>, <code>popup-border-style</code></li>
+                            <li><code>popup-border-lines</code>: single, double, heavy, rounded, padded, none</li>
+                            <li>Can run any command, including tmux commands</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>display-menu</h3>
+                        <ul>
+                            <li>Custom context menus with keybindings</li>
+                            <li>Conditional items with format strings</li>
+                            <li>Default menus for session, window, pane</li>
+                            <li><code>menu-style</code>, <code>menu-selected-style</code></li>
+                            <li><code>menu-border-style</code>, <code>menu-border-lines</code></li>
+                        </ul>
+                        <div class="code-example" style="margin-top: 0.5em;">
+<span class="comment"># Agent command palette as popup</span>
+<span class="keyword">display-popup</span> -w 50% -h 40% \
+  -E <span class="string">"fzf --prompt='Agent> '"</span>
+
+<span class="comment"># Context menu for pane actions</span>
+<span class="keyword">display-menu</span> -T <span class="string">"#[align=centre]Agent"</span> \
+  <span class="string">"Observe"</span> o <span class="string">{capture-pane -p}</span> \
+  <span class="string">"Speak"</span> s <span class="string">{command-prompt 'send-keys %%'}</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    Popups and menus are the overlay layer of tmux. display-popup creates a floating pane that
+                    can contain any command -- a shell, a script, even another tmux command. The -E flag closes
+                    the popup when the command exits. For MOO: popups are portals -- temporary views into another
+                    room or a tool interface.
+                    display-menu creates context menus with conditional items. The source code at key-bindings.c
+                    shows the default menus (DEFAULT_SESSION_MENU, DEFAULT_WINDOW_MENU, DEFAULT_PANE_MENU) which
+                    use format conditionals like '#{?#{>:#{session_windows},1},,-}Swap Left' -- the dash prefix
+                    disables the item if there's only one window. This conditional enable/disable pattern is
+                    exactly what we need for context-sensitive agent commands: disable 'Speak' if the agent is muted,
+                    disable 'Move' if the room is locked.
+                    Menu styling is fully independent with its own style, border-style, and border-lines options.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 7: Key Tables ==================== -->
+            <section>
+                <h2>Key Tables: Agent Command Sets</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Built-in Tables</h3>
+                        <ul>
+                            <li><span class="highlight">root</span> -- always active (no prefix needed)</li>
+                            <li><span class="highlight">prefix</span> -- after prefix key press</li>
+                            <li><span class="highlight">copy-mode</span> / <span class="highlight">copy-mode-vi</span></li>
+                        </ul>
+                        <h3>Custom Tables with <code>-T</code></h3>
+                        <ul>
+                            <li><code>bind -T agent-nav ...</code></li>
+                            <li>Switch via <code>switch-client -T agent-nav</code></li>
+                            <li>Session default via <code>key-table</code> option</li>
+                            <li>Repeat flag: <code>bind -r</code> with <code>repeat-time</code></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-example">
+<span class="comment"># Agent-specific key table</span>
+<span class="keyword">bind</span> -T agent-mode h <span class="string">select-pane -L</span>
+<span class="keyword">bind</span> -T agent-mode j <span class="string">select-pane -D</span>
+<span class="keyword">bind</span> -T agent-mode k <span class="string">select-pane -U</span>
+<span class="keyword">bind</span> -T agent-mode l <span class="string">select-pane -R</span>
+<span class="keyword">bind</span> -T agent-mode o <span class="string">display-popup \
+  "capture-pane -t {last} -p"</span>
+<span class="keyword">bind</span> -T agent-mode s <span class="string">command-prompt \
+  "send-keys -t {last} '%%'"</span>
+
+<span class="comment"># Activate for a session</span>
+<span class="keyword">set</span> -s -t agent-session key-table agent-mode
+
+<span class="comment"># Or switch temporarily</span>
+<span class="keyword">bind</span> F5 <span class="string">switch-client -T agent-mode</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    Key tables are the command dispatch mechanism. From key-bindings.c, tables are stored in a
+                    red-black tree (RB_HEAD key_tables) and can be created dynamically -- there is no fixed list.
+                    key_bindings_get_table(name, create=1) will create a table on demand if it doesn't exist.
+                    The key-table session option (line 698 in options-table.c, default 'root') determines which
+                    table is checked FIRST for key presses. By setting this per-session, each agent session can
+                    have a completely different command vocabulary.
+                    The key_bindings_add function (line 189 in key-bindings.c) shows that bindings can have notes
+                    (documentation strings) and repeat flags. Repeat bindings stay in the table for repeat-time
+                    milliseconds (default 500ms), enabling modal interactions.
+                    For MOO: each agent type gets its own key table. A 'navigator' agent might have hjkl for
+                    movement between rooms, while a 'builder' agent might have keys for creating/destroying panes.
+                    The switch-client -T command lets you temporarily enter an agent's mode, like picking up a tool.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 8: Mouse & Input Control ==================== -->
+            <section>
+                <h2>Mouse & Input Control</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Mouse Bindings</h3>
+                        <ul>
+                            <li>Per-location: StatusLeft, StatusRight, StatusDefault, Status</li>
+                            <li>Pane borders: Border</li>
+                            <li>Pane content: direct pane clicks</li>
+                            <li>Mouse events: MouseDown1, MouseUp1, MouseDrag1, DoubleClick1, TripleClick1</li>
+                            <li>WheelUp, WheelDown</li>
+                        </ul>
+                        <h3>Interactive Input</h3>
+                        <ul>
+                            <li><code>command-prompt</code>: custom prompts with format</li>
+                            <li><code>command-prompt -I</code>: pre-filled input</li>
+                            <li><code>command-prompt -p</code>: custom prompt text</li>
+                            <li><code>focus-follows-mouse</code>: auto-select pane</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-example">
+<span class="comment"># Click pane border to see agent info</span>
+<span class="keyword">bind</span> -T root MouseDown1Border \
+  <span class="string">display-popup -w 40% -h 30% \
+  "echo Agent: #{pane_title}; \
+   echo PID: #{pane_pid}; \
+   echo Cmd: #{pane_current_command}; \
+   echo Size: #{pane_width}x#{pane_height}"</span>
+
+<span class="comment"># Double-click status to rename window</span>
+<span class="keyword">bind</span> -T root DoubleClick1Status \
+  <span class="string">command-prompt -I "#W" \
+  "rename-window '%%'"</span>
+
+<span class="comment"># Right-click pane for context menu</span>
+<span class="keyword">bind</span> -T root MouseDown3Pane \
+  <span class="string">display-menu -T "#[align=centre]Agent" \
+  "Observe" o {capture-pane -p} \
+  "Kill" X {kill-pane}</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    Mouse bindings are location-aware. You bind different actions depending on WHERE the click
+                    happens: StatusLeft, StatusRight, StatusDefault (the window list area), Status (any status area),
+                    Border (pane borders), and unqualified (pane content). Each location supports MouseDown1-3,
+                    MouseUp1-3, MouseDrag1-3, DoubleClick1-3, TripleClick1-3, WheelUp, and WheelDown.
+                    The command-prompt command (cmd-command-prompt.c) creates an interactive input line that can
+                    execute arbitrary commands with user input substituted for %%. The -I flag pre-fills the prompt
+                    with a format string value, and -p sets a custom prompt message.
+                    For MOO: mouse clicks on pane borders could open an agent inspection popup. Double-clicking
+                    a status entry could rename a room. Right-click on a pane could show a context menu of
+                    available agent verbs. The focus-follows-mouse option (line 667) would let the user
+                    'enter' a room just by hovering over it.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 9: Hooks - Complete List ==================== -->
+            <section>
+                <h2>Hooks: 68 Event Points</h2>
+                <p style="font-size: 0.75em;">Every hook from <code>options-table.c</code> -- 3 scope levels, all support arrays</p>
+                <ul class="hook-list">
+                    <li style="color:#64ff96"><b>after-bind-key</b></li>
+                    <li style="color:#64ff96"><b>after-capture-pane</b></li>
+                    <li style="color:#64ff96"><b>after-copy-mode</b></li>
+                    <li style="color:#64ff96"><b>after-display-message</b></li>
+                    <li style="color:#64ff96"><b>after-display-panes</b></li>
+                    <li style="color:#64ff96"><b>after-kill-pane</b></li>
+                    <li style="color:#64ff96"><b>after-list-buffers</b></li>
+                    <li style="color:#64ff96"><b>after-list-clients</b></li>
+                    <li style="color:#64ff96"><b>after-list-keys</b></li>
+                    <li style="color:#64ff96"><b>after-list-panes</b></li>
+                    <li style="color:#64ff96"><b>after-list-sessions</b></li>
+                    <li style="color:#64ff96"><b>after-list-windows</b></li>
+                    <li style="color:#64ff96"><b>after-load-buffer</b></li>
+                    <li style="color:#64ff96"><b>after-lock-server</b></li>
+                    <li style="color:#64ff96"><b>after-new-session</b></li>
+                    <li style="color:#64ff96"><b>after-new-window</b></li>
+                    <li style="color:#64ff96"><b>after-paste-buffer</b></li>
+                    <li style="color:#64ff96"><b>after-pipe-pane</b></li>
+                    <li style="color:#64ff96"><b>after-queue</b></li>
+                    <li style="color:#64ff96"><b>after-refresh-client</b></li>
+                    <li style="color:#64ff96"><b>after-rename-session</b></li>
+                    <li style="color:#64ff96"><b>after-rename-window</b></li>
+                    <li style="color:#64ff96"><b>after-resize-pane</b></li>
+                    <li style="color:#64ff96"><b>after-resize-window</b></li>
+                    <li style="color:#64ff96"><b>after-save-buffer</b></li>
+                    <li style="color:#64ff96"><b>after-select-layout</b></li>
+                    <li style="color:#64ff96"><b>after-select-pane</b></li>
+                    <li style="color:#64ff96"><b>after-select-window</b></li>
+                    <li style="color:#64ff96"><b>after-send-keys</b></li>
+                    <li style="color:#64ff96"><b>after-set-buffer</b></li>
+                    <li style="color:#64ff96"><b>after-set-environment</b></li>
+                    <li style="color:#64ff96"><b>after-set-hook</b></li>
+                    <li style="color:#64ff96"><b>after-set-option</b></li>
+                    <li style="color:#64ff96"><b>after-show-environment</b></li>
+                    <li style="color:#64ff96"><b>after-show-messages</b></li>
+                    <li style="color:#64ff96"><b>after-show-options</b></li>
+                    <li style="color:#64ff96"><b>after-split-window</b></li>
+                    <li style="color:#64ff96"><b>after-unbind-key</b></li>
+                    <li style="color:#e5c07b"><b>alert-activity</b></li>
+                    <li style="color:#e5c07b"><b>alert-bell</b></li>
+                    <li style="color:#e5c07b"><b>alert-silence</b></li>
+                    <li style="color:#c678dd"><b>client-active</b></li>
+                    <li style="color:#c678dd"><b>client-attached</b></li>
+                    <li style="color:#c678dd"><b>client-detached</b></li>
+                    <li style="color:#c678dd"><b>client-focus-in</b></li>
+                    <li style="color:#c678dd"><b>client-focus-out</b></li>
+                    <li style="color:#c678dd"><b>client-resized</b></li>
+                    <li style="color:#c678dd"><b>client-session-changed</b></li>
+                    <li style="color:#c678dd"><b>client-light-theme</b></li>
+                    <li style="color:#c678dd"><b>client-dark-theme</b></li>
+                    <li style="color:#ff6464"><b>command-error</b></li>
+                    <li style="color:#ffc864"><b>pane-died</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#ffc864"><b>pane-exited</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#ffc864"><b>pane-focus-in</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#ffc864"><b>pane-focus-out</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#ffc864"><b>pane-mode-changed</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#ffc864"><b>pane-set-clipboard</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#ffc864"><b>pane-title-changed</b> <span class="dim">(pane scope)</span></li>
+                    <li style="color:#98c379"><b>session-closed</b></li>
+                    <li style="color:#98c379"><b>session-created</b></li>
+                    <li style="color:#98c379"><b>session-renamed</b></li>
+                    <li style="color:#98c379"><b>session-window-changed</b></li>
+                    <li style="color:#6496ff"><b>window-layout-changed</b> <span class="dim">(win scope)</span></li>
+                    <li style="color:#6496ff"><b>window-linked</b></li>
+                    <li style="color:#6496ff"><b>window-pane-changed</b> <span class="dim">(win scope)</span></li>
+                    <li style="color:#6496ff"><b>window-renamed</b> <span class="dim">(win scope)</span></li>
+                    <li style="color:#6496ff"><b>window-resized</b> <span class="dim">(win scope)</span></li>
+                    <li style="color:#6496ff"><b>window-unlinked</b></li>
+                </ul>
+                <aside class="notes">
+                    This is the complete list of 68 hooks from options-table.c lines 1553-1620.
+                    Color coding: green = after-command hooks (session scope), yellow = alert hooks,
+                    purple = client hooks, orange = pane hooks (pane scope, set with OPTIONS_TABLE_PANE_HOOK),
+                    teal/green = session lifecycle, blue = window hooks (window scope, OPTIONS_TABLE_WINDOW_HOOK).
+                    There are three macro types that define scope:
+                    - OPTIONS_TABLE_HOOK: session scope (most hooks)
+                    - OPTIONS_TABLE_PANE_HOOK: window+pane scope (7 pane-* hooks)
+                    - OPTIONS_TABLE_WINDOW_HOOK: window scope (4 window-* hooks)
+                    Every hook has the IS_ARRAY flag, meaning you can register MULTIPLE commands per hook event.
+                    The separator is empty string, and commands are indexed like: set-hook -a after-new-window[0] "..."
+                    This means multiple independent systems can listen for the same event without interfering.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 10: Hook Patterns ==================== -->
+            <section>
+                <h2>Hook Architecture</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Properties</h3>
+                        <ul>
+                            <li><span class="highlight">Array-valued</span>: multiple handlers per hook</li>
+                            <li><span class="highlight">Scoped</span>: global, session, window, or pane</li>
+                            <li><span class="highlight">after-*</span>: fires after ANY tmux command</li>
+                            <li><span class="highlight">Lifecycle</span>: created/closed/renamed/changed</li>
+                            <li><span class="highlight">Focus</span>: focus-in/focus-out at client and pane level</li>
+                            <li><span class="highlight">Error handling</span>: command-error hook</li>
+                        </ul>
+                        <h3>Hook Categories</h3>
+                        <ul>
+                            <li><span style="color:#64ff96">38 after-* hooks</span> (command completion)</li>
+                            <li><span style="color:#e5c07b">3 alert hooks</span> (activity/bell/silence)</li>
+                            <li><span style="color:#c678dd">9 client hooks</span> (attach/detach/focus/theme)</li>
+                            <li><span style="color:#ffc864">7 pane hooks</span> (focus/died/exited/clipboard)</li>
+                            <li><span style="color:#98c379">4 session hooks</span> (lifecycle)</li>
+                            <li><span style="color:#6496ff">5 window hooks</span> (layout/rename/resize)</li>
+                            <li><span style="color:#ff6464">1 error hook</span> (command-error)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-example">
+<span class="comment"># Log every pane creation</span>
+<span class="keyword">set-hook</span> -g after-split-window \
+  <span class="string">"run 'echo PANE_CREATED \
+  #{pane_id} >> /tmp/moo.log'"</span>
+
+<span class="comment"># Auto-label new windows</span>
+<span class="keyword">set-hook</span> -g after-new-window \
+  <span class="string">"rename-window 'agent-#{window_index}'"</span>
+
+<span class="comment"># Track focus changes (pane scope)</span>
+<span class="keyword">set-hook</span> -gp pane-focus-in \
+  <span class="string">"run 'echo FOCUS_IN #{pane_id} \
+  #{pane_title} >> /tmp/moo.log'"</span>
+
+<span class="comment"># Detect agent death</span>
+<span class="keyword">set-hook</span> -gp pane-died \
+  <span class="string">"run 'echo AGENT_DIED #{pane_id} \
+  status=#{pane_dead_status} \
+  signal=#{pane_dead_signal} \
+  >> /tmp/moo.log'"</span>
+
+<span class="comment"># Multiple handlers: append with -a</span>
+<span class="keyword">set-hook</span> -ga after-new-session[1] \
+  <span class="string">"run 'notify-send New Session'"</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    The hook system is the backbone of event-driven programming in tmux.
+                    The 38 after-* hooks mean that ANY tmux command can trigger custom behavior. When a command
+                    has CMD_AFTERHOOK in its flags (visible in every cmd-*.c file), the after-{command-name} hook
+                    fires with the full context of that command available as format variables.
+                    Array indexing ([0], [1], etc.) and the -a (append) flag let you stack handlers.
+                    This means separate subsystems can independently subscribe to events.
+                    The pane hooks (OPTIONS_TABLE_PANE_HOOK) can be set per-pane, meaning one agent's death
+                    handler can differ from another's. pane-focus-in and pane-focus-out give us 'entering room'
+                    and 'leaving room' events. pane-title-changed lets agents signal state changes by updating
+                    their pane title, which then triggers hooks in the surrounding environment.
+                    The command-error hook is the global error handler -- any failed tmux command can be caught
+                    and logged, enabling robust error handling in an automated environment.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 11: Programmatic Control ==================== -->
+            <section>
+                <h2>Programmatic Control</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Control Mode (<code>-CC</code>)</h3>
+                        <ul>
+                            <li>External program drives tmux via stdin/stdout</li>
+                            <li>Parseable output: <code>%begin</code>, <code>%end</code>, <code>%error</code></li>
+                            <li>Notifications: <code>%session-changed</code>, <code>%window-add</code></li>
+                            <li>Full command interface over pipe</li>
+                        </ul>
+                        <h3>run-shell</h3>
+                        <ul>
+                            <li>Execute shell commands from tmux context</li>
+                            <li>Access to all format variables in arguments</li>
+                            <li><code>-b</code>: background (non-blocking)</li>
+                            <li><code>-d delay</code>: delayed execution</li>
+                            <li><code>-C</code>: run tmux command instead of shell</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-example">
+<span class="comment"># Control mode: external program drives tmux</span>
+$ tmux -CC attach
+%begin 1234 0
+%end 1234 0
+<span class="comment"># Send commands, get structured responses</span>
+
+<span class="comment"># run-shell with format expansion</span>
+<span class="keyword">run-shell</span> <span class="string">"echo #{session_name} has \
+  #{session_windows} windows"</span>
+
+<span class="comment"># Background with delay (deferred action)</span>
+<span class="keyword">run-shell</span> -b -d 5 <span class="string">"echo 'delayed!' >> /tmp/log"</span>
+
+<span class="comment"># run-shell -C: run tmux command from hook</span>
+<span class="keyword">run-shell</span> -C <span class="string">"display-message \
+  'Pane #{pane_id} is #{pane_width}x#{pane_height}'"</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    Control mode (-CC) is the master API. When tmux runs in control mode, it becomes a structured
+                    protocol server: every command response is wrapped in %begin/%end delimiters with a command
+                    number, and async events come as %notification lines. This is used by iTerm2's tmux integration
+                    and could be used by a MOO orchestrator to drive the entire environment programmatically.
+                    run-shell (cmd-run-shell.c) is the bridge between tmux and the outside world. Its flags are
+                    interesting: -b for background (non-blocking), -d for delayed execution (event scheduling!),
+                    -C to run a tmux command instead of a shell command. The command string gets full format
+                    expansion, so you can use #{pane_id}, #{session_name}, etc. in the shell command.
+                    The -d flag is particularly useful for MOO: it's a timer primitive. 'run-shell -d 30 "check_agent"'
+                    schedules a check 30 seconds in the future. Combined with hooks, you get a basic event loop.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 12: Inter-Pane Communication ==================== -->
+            <section>
+                <h2>Inter-Pane Communication</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>send-keys / capture-pane</h3>
+                        <div class="capability-row">
+                            <span class="cap-name">send-keys -t</span>
+                            <span class="cap-desc">Send keystrokes to any pane</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">send-keys -l</span>
+                            <span class="cap-desc">Send literal text (no key lookup)</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">capture-pane -p</span>
+                            <span class="cap-desc">Print pane contents to stdout</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">capture-pane -S -E</span>
+                            <span class="cap-desc">Capture range: -S -10 -E 5</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">capture-pane -e</span>
+                            <span class="cap-desc">Include escape sequences (colors)</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>pipe-pane / wait-for</h3>
+                        <div class="capability-row">
+                            <span class="cap-name">pipe-pane</span>
+                            <span class="cap-desc">Stream pane output to command/file</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">pipe-pane -I</span>
+                            <span class="cap-desc">Pipe stdin INTO pane</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">pipe-pane -O</span>
+                            <span class="cap-desc">Pipe pane output OUT</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">wait-for -S</span>
+                            <span class="cap-desc">Signal a named channel</span>
+                        </div>
+                        <div class="capability-row">
+                            <span class="cap-name">wait-for -L / -U</span>
+                            <span class="cap-desc">Lock/unlock a named channel</span>
+                        </div>
+                        <div class="code-example" style="margin-top: 0.5em;">
+<span class="comment"># Room transcript: log everything</span>
+<span class="keyword">pipe-pane</span> -o <span class="string">"cat >> ~/room-#{pane_id}.log"</span>
+
+<span class="comment"># Agent speaks to another pane</span>
+<span class="keyword">send-keys</span> -t %42 <span class="string">"hello from agent"</span> Enter
+
+<span class="comment"># Synchronization primitive</span>
+<span class="keyword">wait-for</span> -S agent-ready  <span class="comment"># signal</span>
+<span class="keyword">wait-for</span> agent-ready     <span class="comment"># wait/block</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="notes">
+                    This slide covers the primitives that make inter-agent communication possible.
+                    send-keys (cmd-send-keys.c) targets any pane with -t, and -l sends literal text without
+                    key name interpretation. This is 'speaking' in MOO terms: one agent sends text to another's room.
+                    capture-pane (cmd-capture-pane.c) is 'observing': reading what's visible in another room.
+                    The -S and -E flags select a range of lines (-S -10 means 10 lines before visible area),
+                    and -e preserves escape sequences so you can capture styled output.
+                    pipe-pane (cmd-pipe-pane.c) with flags -I, -O, -o is the persistent logging mechanism.
+                    The -O flag pipes output to a command (room transcript), -I pipes input FROM a command
+                    (injecting text), and -o opens in 'or' mode (only if not already piped). The pane_pipe
+                    format variable tells you if a pane currently has a pipe attached.
+                    wait-for (cmd-wait-for.c) provides named synchronization channels. -S sends a signal,
+                    bare wait-for blocks until signaled, and -L/-U provide mutex lock/unlock. This is the
+                    synchronization primitive for coordinating agents: 'wait-for agent-ready' blocks until
+                    another pane signals 'wait-for -S agent-ready'.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 13: Format DSL - Basics ==================== -->
+            <section>
+                <h2>Format DSL: A Language in #{}</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Operators (from format.c)</h3>
+                        <ul>
+                            <li><code>#{?cond,true,false}</code> -- conditional</li>
+                            <li><code>#{==:a,b}</code> -- string equality</li>
+                            <li><code>#{!=:a,b}</code> -- string inequality</li>
+                            <li><code>#{>=:a,b}</code> / <code>#{<=:a,b}</code> -- numeric comparison</li>
+                            <li><code>#{&&:a,b}</code> / <code>#{||:a,b}</code> -- n-ary boolean</li>
+                            <li><code>#{m:pattern,string}</code> -- fnmatch pattern</li>
+                            <li><code>#{m/r:regex,string}</code> -- regex match</li>
+                            <li><code>#{C:search}</code> -- search windows</li>
+                            <li><code>#{s/old/new/:value}</code> -- substitution</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Modifiers (from format.c)</h3>
+                        <ul>
+                            <li><code>#{e|+:a,b}</code> -- math: + - * / %</li>
+                            <li><code>#{t:timestamp}</code> -- time formatting</li>
+                            <li><code>#{t/p:timestamp}</code> -- pretty time</li>
+                            <li><code>#{b:path}</code> -- basename</li>
+                            <li><code>#{d:path}</code> -- dirname</li>
+                            <li><code>#{n:string}</code> -- length</li>
+                            <li><code>#{w:string}</code> -- display width</li>
+                            <li><code>#{q:string}</code> -- shell quote</li>
+                            <li><code>#{=/N/marker:string}</code> -- truncate</li>
+                            <li><code>#{p/N/:string}</code> -- pad to width</li>
+                            <li><code>#{E:option}</code> -- expand style</li>
+                            <li><code>#{T:option}</code> -- expand with time</li>
+                            <li><code>#{N/w:name}</code> -- window name</li>
+                        </ul>
+                    </div>
+                </div>
+                <aside class="notes">
+                    The format DSL is essentially a functional programming language embedded in format strings.
+                    From format.c around line 4190, the comparators are detected: ==, !=, <=, >=, &&, ||.
+                    At line 4345, the comment says 'Handle n-ary boolean operators' -- meaning && and || can
+                    take MORE than two arguments: #{&&:a,b,c} is true only if all three are true.
+                    The modifier switch statement (line 4820) shows all single-character modifiers:
+                    m (match), s (substitute), = (truncate), p (pad), w (width), e (math expression),
+                    l (literal), a (character), b (basename), c (colour), d (dirname), n (length),
+                    t (time), q (quote), E (expand), T (expand+time), N (name), S (sessions), W (windows),
+                    P (panes). That's 20+ modifiers.
+                    The math operator 'e' supports +, -, *, /, % and is used as #{e|+:a,b}.
+                    This is enough to build complex computed displays without any external scripting.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 14: Format Variables ==================== -->
+            <section>
+                <h2>Format Variables: 120+ Data Points</h2>
+                <div class="var-grid">
+                    <div class="var-category">Pane (38 variables)</div>
+                    <div class="var-item">pane_active</div>
+                    <div class="var-item">pane_at_top/bottom/left/right</div>
+                    <div class="var-item">pane_bg / pane_fg</div>
+                    <div class="var-item">pane_current_command</div>
+                    <div class="var-item">pane_current_path</div>
+                    <div class="var-item">pane_dead / pane_dead_signal</div>
+                    <div class="var-item">pane_dead_status</div>
+                    <div class="var-item">pane_height / pane_width</div>
+                    <div class="var-item">pane_id / pane_index / pane_pid</div>
+                    <div class="var-item">pane_in_mode / pane_mode</div>
+                    <div class="var-item">pane_input_off / pane_pipe</div>
+                    <div class="var-item">pane_title / pane_tty</div>
+                    <div class="var-item">pane_start_command / pane_path</div>
+                    <div class="var-item">pane_synchronized</div>
+                    <div class="var-item">pane_unseen_changes</div>
+
+                    <div class="var-category">Window (26 variables)</div>
+                    <div class="var-item">window_active / window_id</div>
+                    <div class="var-item">window_active_clients[_list]</div>
+                    <div class="var-item">window_active_sessions[_list]</div>
+                    <div class="var-item">window_flags / window_raw_flags</div>
+                    <div class="var-item">window_height / window_width</div>
+                    <div class="var-item">window_index / window_name</div>
+                    <div class="var-item">window_layout / window_visible_layout</div>
+                    <div class="var-item">window_panes</div>
+                    <div class="var-item">window_zoomed_flag</div>
+
+                    <div class="var-category">Session (22 variables)</div>
+                    <div class="var-item">session_name / session_id</div>
+                    <div class="var-item">session_path / session_group</div>
+                    <div class="var-item">session_windows / session_attached</div>
+                    <div class="var-item">session_activity_flag</div>
+                    <div class="var-item">session_bell_flag</div>
+                    <div class="var-item">session_silence_flag</div>
+                    <div class="var-item">session_stack / session_alerts</div>
+
+                    <div class="var-category">Client (20 variables)</div>
+                    <div class="var-item">client_name / client_session</div>
+                    <div class="var-item">client_height / client_width</div>
+                    <div class="var-item">client_cell_height/width</div>
+                    <div class="var-item">client_key_table / client_prefix</div>
+                    <div class="var-item">client_tty / client_pid</div>
+                    <div class="var-item">client_control_mode</div>
+                    <div class="var-item">client_flags / client_theme</div>
+
+                    <div class="var-category">System / Cursor</div>
+                    <div class="var-item">host / host_short / pid</div>
+                    <div class="var-item">cursor_x / cursor_y</div>
+                    <div class="var-item">cursor_character / cursor_colour</div>
+                    <div class="var-item">socket_path / version</div>
+                    <div class="var-item">mouse_x / mouse_y / mouse_word</div>
+                </div>
+                <aside class="notes">
+                    Every one of these variables comes from the format_table array in format.c, starting at line 3029.
+                    There are 38 pane_* variables, 26 window_* variables, 22 session_* variables, and 20 client_* variables,
+                    plus system variables like host, pid, version, socket_path, and all the cursor_* and mouse_* variables.
+                    The most MOO-relevant ones: pane_title (agent name), pane_current_command (what agent is running),
+                    pane_pid (agent process), pane_pipe (is the room being logged), pane_dead/pane_dead_status/pane_dead_signal
+                    (agent death information), pane_unseen_changes (has activity happened we haven't looked at),
+                    client_key_table (which command set is active), client_control_mode (is this an API client).
+                    The window_active_clients and window_active_sessions variables tell you who is observing a room.
+                    session_stack gives you the window visit order, which is 'where has the user been'.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 15: Complex Format Example ==================== -->
+            <section>
+                <h2>Format DSL: Real-World Example</h2>
+                <h3>Agent status line from tmux format primitives</h3>
+                <div class="code-example" style="font-size: 0.58em;">
+<span class="comment"># Agent status: name + state + health indicator</span>
+<span class="keyword">set</span> -g status-right <span class="string">"</span>
+<span class="format">#{?#{==:#{pane_current_command},python},</span>
+<span class="string">  #[fg=#64ff96]AGENT:RUNNING</span><span class="format">,</span>
+<span class="format">  #{?pane_dead,</span>
+<span class="string">    #[fg=#ff6464]AGENT:DEAD(#{pane_dead_status})</span><span class="format">,</span>
+<span class="string">    #[fg=#e5c07b]AGENT:#{pane_current_command}</span>
+<span class="format">  }</span>
+<span class="format">}</span>
+<span class="string"> | #{pane_title}</span>
+<span class="string"> | #{pane_width}x#{pane_height}</span>
+<span class="string"> | #{?pane_pipe,#[fg=#c678dd]LOGGING,#[fg=#666]no-log}</span>
+<span class="string"> | #{?#{>=:#{e|+:#{pane_width},0},80},#[fg=#64ff96]OK,#[fg=#ff6464]NARROW}</span>
+<span class="string">"</span>
+                </div>
+                <div class="code-example" style="font-size: 0.58em; margin-top: 0.5em;">
+<span class="comment"># Iterators: loop over all panes in the window</span>
+<span class="keyword">set</span> -g status-format[1] <span class="string">"</span>
+<span class="format">#{P:</span>
+<span class="string">  #[range=pane|#{pane_id}] </span>
+<span class="string">  #{?pane_active,#[reverse],}</span>
+<span class="string">  #{pane_index}:#{=/12/...:pane_title}</span>
+<span class="string">  [#{pane_current_command}]</span>
+<span class="string">  #{?pane_dead,#[fg=red]DEAD,}</span>
+<span class="string">  #[default] </span>
+<span class="format">,</span>
+<span class="comment">  <%-- current pane template (same but with list=focus) --%></span>
+<span class="string">  #[list=focus reverse]#{pane_index}*#[default] </span>
+<span class="format">}</span>
+<span class="string">"</span>
+                </div>
+                <aside class="notes">
+                    This shows the real power of the format DSL. The first example builds a status line that:
+                    1. Checks if the current command is 'python' (the agent runtime) -- green if yes
+                    2. Otherwise checks if the pane is dead -- red with exit status
+                    3. Otherwise shows the command name in yellow
+                    4. Shows pane title (agent name), dimensions, pipe status
+                    5. Uses math (#{e|+:...}) to check if the pane is wide enough (>=80 columns)
+                    The second example uses the #{P:template,current_template} iterator to loop over ALL panes
+                    in the current window, showing each one in the status line with truncated name (#{=/12/...:...}),
+                    command, and death status. The #[range=pane|#{pane_id}] makes each entry clickable.
+                    This is a live dashboard showing all agents in the current room, built entirely in tmux's
+                    format DSL with no external scripts. The default status-format[1] from the tmux source
+                    (OPTIONS_TABLE_STATUS_FORMAT2) already does this pattern.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 16: MOO Mapping Diagram ==================== -->
+            <section>
+                <h2>tmux to MOO: The Mapping</h2>
+                <div class="mermaid">
+                    graph LR
+                        subgraph "tmux Primitives"
+                            P[Pane]
+                            SL[Status Line]
+                            H[Hooks]
+                            KT[Key Tables]
+                            CP[capture-pane]
+                            SK[send-keys]
+                            PP[pipe-pane]
+                            PU[Popup]
+                            WF[wait-for]
+                            RS[run-shell]
+                        end
+                        subgraph "MOO Concepts"
+                            R[Room / Agent]
+                            RD[Room Description]
+                            V[Verbs / Triggers]
+                            CS[Command Sets]
+                            OB[Observe]
+                            SP[Speak / Act]
+                            TR[Transcript]
+                            PO[Portal / Overlay]
+                            SY[Synchronization]
+                            EX[External Action]
+                        end
+                        P --> R
+                        SL --> RD
+                        H --> V
+                        KT --> CS
+                        CP --> OB
+                        SK --> SP
+                        PP --> TR
+                        PU --> PO
+                        WF --> SY
+                        RS --> EX
+                        style P fill:#443322,stroke:#ffc864
+                        style SL fill:#224422,stroke:#64ff96
+                        style H fill:#442222,stroke:#ff6464
+                        style KT fill:#222244,stroke:#6496ff
+                        style CP fill:#333,stroke:#888
+                        style SK fill:#333,stroke:#888
+                        style PP fill:#333,stroke:#888
+                        style PU fill:#333,stroke:#888
+                        style WF fill:#333,stroke:#888
+                        style RS fill:#333,stroke:#888
+                        style R fill:#443322,stroke:#ffc864
+                        style RD fill:#224422,stroke:#64ff96
+                        style V fill:#442222,stroke:#ff6464
+                        style CS fill:#222244,stroke:#6496ff
+                        style OB fill:#333,stroke:#888
+                        style SP fill:#333,stroke:#888
+                        style TR fill:#333,stroke:#888
+                        style PO fill:#333,stroke:#888
+                        style SY fill:#333,stroke:#888
+                        style EX fill:#333,stroke:#888
+                </div>
+                <aside class="notes">
+                    This is the core insight of the entire presentation. Every MOO primitive has a direct tmux analog:
+                    - Pane = Room or Agent (a bounded environment running a process)
+                    - Status line = Room description / ambient information (what you see when you 'look')
+                    - Hooks = Verbs and triggers (things happen in response to events)
+                    - Key tables = Agent-specific command sets (what you can do depends on context)
+                    - capture-pane = Observe (read what's in another room without entering)
+                    - send-keys = Speak / Act (inject text into another room)
+                    - pipe-pane = Transcript (persistent logging of room activity)
+                    - Popup = Portal (temporary overlay view into another space)
+                    - wait-for = Synchronization (coordinate between agents)
+                    - run-shell = External action (reach outside the tmux world)
+                    The mapping is nearly 1:1. The session becomes a 'world', windows become 'areas',
+                    and panes become individual rooms. This is not a metaphor -- it's an isomorphism.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 17: Detailed Mapping Table ==================== -->
+            <section>
+                <h2>Capability Mapping: Detail View</h2>
+                <div style="font-size: 0.85em;">
+                    <div class="mapping-row">
+                        <span class="tmux-side">pane + pane-border-format</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Room with nameplate</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">status-format[0..4]</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Room description / HUD</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">pane-focus-in / pane-focus-out</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">"Player enters/leaves room"</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">after-split-window / pane-died</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Agent spawn / Agent death</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">session-created / session-closed</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">World created / destroyed</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">bind -T agent-verbs</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Verb dispatch table</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">capture-pane -p -t %N</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">@look (observe a room)</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">send-keys -t %N -l "msg"</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">@say / @whisper</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">pipe-pane -O "cat >> log"</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Room transcript / audit log</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">display-popup + run-shell</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">@examine (inspect object)</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">window-style "bg=#color"</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Room theme / atmosphere</span>
+                    </div>
+                    <div class="mapping-row">
+                        <span class="tmux-side">wait-for -S / wait-for</span>
+                        <span class="arrow">&rarr;</span>
+                        <span class="moo-side">Event signaling between rooms</span>
+                    </div>
+                </div>
+                <aside class="notes">
+                    This detailed mapping shows specific tmux features matched to MOO verbs.
+                    The focus hooks give us room entry/exit events. split-window and pane-died give us
+                    agent lifecycle. session-created/closed give us world lifecycle. Key tables with -T
+                    give us verb dispatch -- each agent type can have different available verbs.
+                    capture-pane is @look: read what's visible in a room. send-keys -l is @say: inject text.
+                    pipe-pane is the room's persistent transcript. display-popup is @examine: a temporary
+                    detailed view. window-style is room theming: different rooms have different colors.
+                    wait-for is the synchronization primitive: agents can signal each other across rooms.
+                    What's remarkable is that ALL of these are built-in tmux commands with no extensions needed.
+                    The MOO runtime is already there -- it just needs a declarative layer on top.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 18: What's Possible Now vs What Needs Extension ==================== -->
+            <section>
+                <h2>Coverage Assessment</h2>
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #64ff96;">What tmux Already Provides</h3>
+                        <ul>
+                            <li>Room creation and destruction (split/kill)</li>
+                            <li>Room labeling and theming (borders, styles)</li>
+                            <li>Agent lifecycle events (68 hooks)</li>
+                            <li>Inter-agent communication (send-keys/capture-pane)</li>
+                            <li>Persistent logging (pipe-pane)</li>
+                            <li>Programmable display (format DSL, 120+ vars)</li>
+                            <li>Context-sensitive commands (key tables)</li>
+                            <li>Overlays and menus (popup/menu)</li>
+                            <li>Timer scheduling (run-shell -d)</li>
+                            <li>Synchronization primitives (wait-for)</li>
+                            <li>External API (control mode -CC)</li>
+                            <li>Multi-line dashboards (status 2-5)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #ff6464;">What Needs a Layer on Top</h3>
+                        <ul>
+                            <li>Declarative session spec (YAML/JSON &rarr; tmux commands)</li>
+                            <li>Named room registry (pane ID &rarr; room name mapping)</li>
+                            <li>Agent type system (role &rarr; key-table + style + hooks)</li>
+                            <li>Message bus (structured inter-pane protocol beyond raw text)</li>
+                            <li>State persistence (save/restore room layouts and state)</li>
+                            <li>Discovery protocol (agent advertises its capabilities)</li>
+                            <li>Rate limiting / queuing (buffer send-keys for slow agents)</li>
+                            <li>Aggregate observation (capture multiple panes at once)</li>
+                        </ul>
+                    </div>
+                </div>
+                <aside class="notes">
+                    This is the honest assessment. The left column shows everything tmux gives us FOR FREE:
+                    room CRUD, theming, events, communication, logging, display, commands, overlays, timers,
+                    synchronization, external API, and dashboards. That's a LOT of infrastructure.
+                    The right column is what we need to BUILD: a declarative layer that maps a Zgent session
+                    specification to tmux commands, a name registry so agents can find each other by role
+                    rather than by pane ID, an agent type system that bundles key-tables + styles + hooks
+                    into a reusable package, a structured message protocol so agents can send JSON rather
+                    than raw keystrokes, state persistence so rooms survive server restarts, a discovery
+                    protocol following Zgent conventions, rate limiting for reliability, and aggregate
+                    observation for capturing multiple rooms simultaneously.
+                    Most of these are thin orchestration layers, not fundamental capability gaps.
+                    tmux provides the primitives; we provide the semantics.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 19: The 80% Runtime ==================== -->
+            <section>
+                <h2>tmux is 80% of a MOO Runtime</h2>
+                <div class="mermaid">
+                    graph TB
+                        subgraph "Declarative Layer (we build this)"
+                            SPEC["Zgent Session Spec<br/>YAML/JSON"]
+                            REG["Room Registry"]
+                            TYPES["Agent Types"]
+                            MSG["Message Protocol"]
+                        end
+                        subgraph "tmux Runtime (already exists)"
+                            SESSION["Sessions = Worlds"]
+                            WINDOW["Windows = Areas"]
+                            PANE["Panes = Rooms"]
+                            HOOKS["68 Hooks = Events"]
+                            FORMAT["120+ Vars = State"]
+                            KEYTBL["Key Tables = Verbs"]
+                            IPC["send/capture/pipe = Communication"]
+                            CTRL["Control Mode = External API"]
+                        end
+                        SPEC --> SESSION
+                        SPEC --> WINDOW
+                        SPEC --> PANE
+                        REG --> PANE
+                        TYPES --> KEYTBL
+                        TYPES --> HOOKS
+                        MSG --> IPC
+                        style SPEC fill:#1a2244,stroke:#00d4ff,color:#eee
+                        style REG fill:#1a2244,stroke:#00d4ff,color:#eee
+                        style TYPES fill:#1a2244,stroke:#00d4ff,color:#eee
+                        style MSG fill:#1a2244,stroke:#00d4ff,color:#eee
+                        style SESSION fill:#1a3322,stroke:#64ff96,color:#eee
+                        style WINDOW fill:#1a3322,stroke:#64ff96,color:#eee
+                        style PANE fill:#1a3322,stroke:#64ff96,color:#eee
+                        style HOOKS fill:#1a3322,stroke:#64ff96,color:#eee
+                        style FORMAT fill:#1a3322,stroke:#64ff96,color:#eee
+                        style KEYTBL fill:#1a3322,stroke:#64ff96,color:#eee
+                        style IPC fill:#1a3322,stroke:#64ff96,color:#eee
+                        style CTRL fill:#1a3322,stroke:#64ff96,color:#eee
+                </div>
+                <p style="font-size: 0.85em; margin-top: 0.5em;">
+                    The <span class="highlight">green layer</span> exists today.
+                    The <span style="color: #00d4ff;">blue layer</span> is the Zgent Factory's job.
+                </p>
+                <aside class="notes">
+                    This is the key architectural insight. tmux already provides 8 major subsystems that
+                    directly serve the MOO vision: sessions as worlds, windows as areas, panes as rooms,
+                    68 hooks as an event system, 120+ format variables as observable state, key tables as
+                    verb dispatchers, send-keys/capture-pane/pipe-pane as a communication layer, and
+                    control mode as an external API.
+                    What we need to build is a thin declarative layer: a Zgent Session Spec that describes
+                    a desired room layout and agent configuration in YAML or JSON, a room registry that
+                    maps human-readable names to pane IDs, an agent type system that bundles together
+                    the key-table, style options, and hook handlers for a particular kind of agent, and
+                    a structured message protocol that rides on top of send-keys but adds routing and typing.
+                    This is a SMALL amount of code sitting on top of a LARGE amount of built-in capability.
+                    We are not building a MOO runtime -- we are wrapping one that already exists.
+                </aside>
+            </section>
+
+            <!-- ==================== SLIDE 20: Closing ==================== -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li><span class="highlight">90+ options</span> across 4 scope levels give per-agent visual and behavioral control</li>
+                    <li><span class="highlight">68 hooks</span> provide a complete event system covering lifecycle, focus, commands, and errors</li>
+                    <li><span class="highlight">120+ format variables</span> and a full DSL with conditionals, math, and iteration</li>
+                    <li><span class="highlight">Key tables</span> enable agent-specific command vocabularies</li>
+                    <li><span class="highlight">send-keys + capture-pane + pipe-pane</span> = observe, speak, and log</li>
+                    <li><span class="highlight">wait-for</span> provides native synchronization between agents</li>
+                    <li><span class="highlight">Control mode</span> exposes everything to external programs</li>
+                    <li>tmux is not "80% of a MOO" by analogy -- the mapping is <span class="highlight">structural</span></li>
+                </ul>
+                <p style="margin-top: 1.5em; font-size: 1.1em;">
+                    Next: <span class="highlight">Declarative Zgent Session Spec</span>
+                </p>
+                <p class="dim" style="font-size: 0.7em;">YAML that compiles to tmux commands -- rooms, agents, verbs, hooks</p>
+                <aside class="notes">
+                    The conclusion: tmux's surface area is not just sufficient for the MOO vision, it's
+                    remarkably well-aligned. The four scope levels (server/session/window/pane) map directly
+                    to MOO's hierarchy (infrastructure/world/area/room). The hook system is already an event bus.
+                    The format DSL is already a reactive display system. Key tables are already verb dispatchers.
+                    The inter-pane communication primitives are already observation and speech.
+                    What makes this presentation different from 'tmux is cool' is that every claim is grounded
+                    in the source code. The 68 hooks are listed by name from options-table.c. The 120+ variables
+                    are enumerated from format.c. The operators and modifiers are documented from the actual
+                    switch statement in the format replacement function.
+                    The next step is a Declarative Zgent Session Spec: a YAML format that describes rooms,
+                    agents, verbs, and hooks, which compiles down to tmux commands. That spec is the blue
+                    layer in the previous diagram -- the thin orchestration layer that makes tmux into a MOO.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+    <script>
+        Reveal.initialize({ hash: true, plugins: [RevealNotes] });
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "title": "The tmux Surface Area",
+  "slug": "tmux-surface-area",
+  "description": "Briefing on tmux's full customization capabilities for the MOO vision",
+  "created": "2026-02-12",
+  "bead": "gt-tmux.2",
+  "slides": 20,
+  "audience": "Technical executive",
+  "tags": ["tmux", "tmuxMOO", "infrastructure"]
+}

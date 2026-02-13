@@ -4,6 +4,7 @@
     "zgent-anatomy",
     "rooms-and-presence",
     "infrastructure-stack",
-    "convergence-map"
+    "convergence-map",
+    "tmux-surface-area"
   ]
 }

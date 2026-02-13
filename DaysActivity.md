@@ -1,5 +1,78 @@
 # DaysActivity - 2026-02-12
 
+## 17:55 - Session Handoff
+
+**Summary**: Updated Rooms & Presence presentation (tmuxMOO→MOOtmux, Agent→Strader, "Demo Today"→"Generation 1: The Target"). Created comprehensive Gen 1 implementation plan with DReader mock exercising Layer 0 JSONL comms from INTER-ZGENT-COMMS.md.
+
+**State**: GT v0.5.0-317, Doctor not checked
+
+**Open Work**:
+- **MOOtmux Gen 1**: Implementation plan ready (6 phases), prioritize phases 1-2
+- **Folder rename**: tmuxMOO/ → MOOtmux/ (housekeeping)
+- **gt-moo.1 REDO**: Subsumed by Gen 1 plan phases 1-2
+- **gt-moo.3**: Subsumed by Gen 1 plan phase 3
+- **gt-pres1**: Verify presentation, close bead
+- **gt-crud.6**: Directory alignment fix
+- **gt-zf1**: Zgent Factory epic (ongoing)
+
+**Key Additions to Gen 1 Plan**:
+- Phase 2: DReader mock (headless, no pane) sends alerts to Strader via JSONL narrative log
+- Exercises both Layer 0 (file-based JSONL) and Layer 1 (capture-pane) from comms design
+- Architecture validates cross-room communication before real DReader integration
+
+**Files Changed**:
+presentations/rooms-and-presence/index.html (tmuxMOO→MOOtmux, Agent→Strader, demo→target)
+MOOtmux-Gen1-Plan.md (new - 6-phase implementation plan with DReader comms)
+
+---
+
+## 13:06 - Session Handoff
+
+**Summary**: Tested tmuxMOO demo - confirmed it's Hello World level (scripts print pre-canned messages then hang). Edited Rooms & Presence presentation: Deacon→Agent, Gas Town→tmuxMOO (kept "Gas Town Operations" in footer per user request).
+
+**State**: GT v0.5.0-317, Doctor not checked
+
+**Open Work**:
+- **gt-moo.1 REDO**: Demo needs rebuild with actual interactivity
+- **gt-moo.3**: Command parser prototype (blocked on working demo)
+- **gt-ref**: Refinement presentations (4/4 complete)
+- **gt-pres1**: Verify presentation, close bead
+- **gt-crud.6**: Directory alignment fix
+- **gt-zf1**: Zgent Factory epic (ongoing)
+
+**Demo Assessment**:
+The current `tmuxMOO/demo/` is a static mockup only:
+- `narrator.sh` prints an array of pre-canned messages with sleeps, then `while true; do sleep 60; done`
+- No continuous output loop, no randomized timing
+- No input handler for `/ask` or `/scan` commands
+- Panes go silent after initial burst
+
+**Next COO - Rebuild gt-moo.1**:
+1. Replace narrator.sh with continuous narrative loop (randomized intervals)
+2. Add input handler in command pane (parse `/ask <agent> <question>`)
+3. Agents should respond to queries via named pipes or tmux send-keys
+4. Consider simple state machine for each agent type
+
+**Files Changed**:
+presentations/rooms-and-presence/index.html (Deacon→Agent, Gas Town→tmuxMOO)
+
+---
+
+## 09:20 - Session Handoff
+
+**Summary**: Brief context continuation session. Verified full conversation history accessible across handoffs (tmux co-execution patterns, presentation work, tmuxMOO exploration all visible). No new artifacts produced.
+
+**State**: GT v0.5.0-317, Doctor not checked
+
+**Open Work**:
+- **gt-ref**: Refinement presentations (4/4 complete)
+- **gt-moo.3**: Command parser prototype
+- **gt-pres1**: Verify presentation, close bead
+- **gt-crud.6**: Directory alignment fix
+- **gt-zf1**: Zgent Factory epic (ongoing)
+
+---
+
 ## 03:30 - Session Handoff
 
 **Summary**: Created gt-ref epic with 4 synthesis presentations via parallel agents. Produced 62 slides across Zgent Anatomy, Rooms & Presence, Infrastructure Stack, and Convergence Map — all reveal.js with Mermaid diagrams and comprehensive speaker notes. Quality review completed: fixed missing RevealNotes plugin in Infrastructure Stack. The Convergence Map surfaced 7 non-obvious connections across Infrastructure/Interaction/Ecosystem work streams and identified 4 architectural gaps that become the next backlog.
